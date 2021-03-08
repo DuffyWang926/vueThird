@@ -21,6 +21,7 @@
 <script >
 import { ElMessageBox, ElMessage } from 'element-plus'
 export default {
+  name: "MyTable",
   props: {
     data: {
       type: Array,

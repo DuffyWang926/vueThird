@@ -25,6 +25,7 @@ export default {
     requireComponent.keys().forEach(filePath => {
       const componentConfig = requireComponent(filePath)
       const fileName = validateFileName(filePath)
+      console.log(componentConfig.default.name);
       const componentName = fileName.toLowerCase() === 'index' ?
         capitalizeFirstLetter(componentConfig.default.name) :
         fileName
