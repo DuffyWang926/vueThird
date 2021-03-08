@@ -43,7 +43,7 @@ export default {
     previewShow: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     switchShow: {
       type: Boolean,
