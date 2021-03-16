@@ -9,9 +9,13 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="角色">
-            <el-select v-model="queryInfo.roleId">
+            <el-select
+              v-model="queryInfo.roleId"
+              placeholder="请选择"
+              filterable
+            >
               <el-option
-                v-for="item in roles.value"
+                v-for="item in roles"
                 :key="item.id"
                 :label="item.roleName"
                 :value="item.id"
@@ -19,47 +23,48 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="1">
-          <el-button>查询</el-button>
+        <el-col :span="2">
+          <el-button size="medium" type="primary">查询</el-button>
         </el-col>
-        <el-col :span="1">
-          <el-button>新增</el-button>
+        <el-col :span="2">
+          <el-button size="medium" type="success">新增</el-button>
         </el-col>
-        <my-table :data="roles.value" :columns="columns" :operation-width="200">
-          <template v-slot:userbtns="scope">
-            <el-button
-              size="mini"
-              type="warning"
-              @click="editRole(scope.row.id)"
-              :disabled="scope.row.id === 1"
-              >修改</el-button
-            >
-            <el-button
-              size="mini"
-              type="danger"
-              @click="deleteRole(scope.row.id)"
-              :disabled="scope.row.id === 1"
-              >删除</el-button
-            >
-          </template>
-        </my-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          v-model:currentPage="currentPage"
-          :page-size="100"
-          layout="total, prev, pager, next, sizes, jumper"
-          :total="count"
-          background
-        >
-        </el-pagination>
       </el-row>
     </el-form>
+    <my-table :data="roles" :columns="columns" :operation-width="200">
+      <template v-slot:userbtns="scope">
+        <el-button
+          size="mini"
+          type="warning"
+          @click="editRole(scope.row.id)"
+          :disabled="scope.row.id === 1"
+          >修改</el-button
+        >
+        <el-button
+          size="mini"
+          type="danger"
+          @click="deleteRole(scope.row.id)"
+          :disabled="scope.row.id === 1"
+          >删除</el-button
+        >
+      </template>
+    </my-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      v-model:currentPage="queryInfo.pagenum"
+      :page-size="queryInfo.pagesize"
+      layout="total, prev, pager, next, sizes, jumper"
+      :total="count"
+      :page-sizes="[10, 20, 50, 100]"
+      background
+    >
+    </el-pagination>
   </el-card>
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import service from '@/utils/request'
 export default {
   name: 'RoleManage',
@@ -71,29 +76,47 @@ export default {
       roleId: ''
     })
     let count = ref(0)
+    // const { data: res } = await service.get('login')
     let getRoles = async () => {
-      const { data: res } = await service.get('roles', queryInfo)
-      console.log(res.data)
-      roles.value = res.data.roles
-      count.value = res.data.count
+      try {
+        const { data: res } = await service.get('roles', { params: queryInfo })
+        roles.value = res.roles
+        count.value = res.count
+      } catch (e) {
+        console.log(e)
+      }
     }
     getRoles()
-    editRole = (id) => {}
-    deleteRole = (id) => {}
-    handleSizeChange = (val) => {
+    const columns = [
+      {
+        title: '序号',
+        prop: 'id'
+      },
+      { title: '角色', prop: 'roleName' }
+    ]
+    const editRole = (id) => {}
+    const deleteRole = (id) => {}
+    const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
       getRoles()
     }
-    handleCurrentChange = (val) => {
+    const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
       getRoles()
     }
+    const currentPage = ref(1)
     return {
       roles,
       queryInfo,
       count,
-      getRoles
+      getRoles,
+      columns,
+      editRole,
+      deleteRole,
+      currentPage,
+      handleSizeChange,
+      handleCurrentChange
     }
   }
 }

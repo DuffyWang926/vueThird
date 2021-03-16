@@ -5,23 +5,23 @@ import router from '@/router'
 let service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL, // api 的 base_url
   timeout: 10000, // 请求超时时间
-  headers:{
-    "Content-Type":'application/json',
+  headers: {
+    "Content-Type": 'application/json',
     'Cache-Control': 'no-cache',
     // "authKey" :store.getters.authkey,
-    "authKey" : localStorage.getItem('authkey'),
-    "appType":5,
-    "version":'1.0.01'
+    "authKey": localStorage.getItem('authkey'),
+    "appType": 5,
+    "version": '1.0.01'
   }
 });
 let lastUrl = '';
 let queryData = '';
 service.interceptors.request.use(
   config => {
-    console.log(config,'config')
+    console.log(config, 'config')
     let flag = false;
     let date = new Date();
-    if(lastUrl === config.url && flag){
+    if (lastUrl === config.url && flag) {
       while (new Date() - date < 200) {
         continue;
       }
@@ -40,7 +40,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    debugger
+    // debugger
     console.log(res)
     if (Number(res.status) !== 0) {
       ElMessage({
