@@ -1,3 +1,7 @@
+import './role'
+import './restrictRegions'
+import './goods'
+
 const Mock = require('mockjs')
 
 const userData = {

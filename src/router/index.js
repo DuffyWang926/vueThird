@@ -1,8 +1,8 @@
-
 import { createRouter, createWebHistory } from 'vue-router'
 
 const indexRouter = {
   path: '/',
+  component: () => import('@/views/index'),
   redirect: '/index',
   children: []
 }
