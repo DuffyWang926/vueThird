@@ -40,8 +40,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data;
-    debugger
-    console.log(res)
+   /* debugger */
+    /* console.log(res) */
     if (Number(res.status) !== 0) {
       ElMessage({
         message: res.message,

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const indexRouter = {
   path: '/',
+  component: () => import('@/views/index'),
   redirect: '/index',
   children: []
 }
@@ -32,6 +33,14 @@ const routes = [
       index: 1
     },
     component: () => import('@/views/error/404')
+  },
+  {
+    path: '/memberManagement',
+    name: 'memberManagement',
+    meta: {
+      index: 1
+    },
+    component: () => import('@/views/memberManagement/index')
   },
 ]
 

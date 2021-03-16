@@ -4,6 +4,7 @@
       :data="state.tableData"
       :columns="state.columns"
       :operation-width="350"
+	  preview-show
       @preview="handlePreview"
       switch-show
       switch-prop="on"
