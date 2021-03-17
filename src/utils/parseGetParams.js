@@ -5,7 +5,7 @@ export default function parseGetParams(str) {
   params.forEach(item => {
     const name = item.split('=')[0]
     const value = item.split('=')[1]
-    obj[name] = value
+    obj[name] = decodeURI(value)
   })
   return obj
 }

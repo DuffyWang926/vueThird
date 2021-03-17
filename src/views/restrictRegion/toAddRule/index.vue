@@ -75,18 +75,21 @@ export default {
     const regionFilterText = ref('')
     let regionFilterTimer = null
     watch(regionFilterText, (newValue) => {
-      regionTreeLoading.value = true
       const nodes = regionTreeRef.value.store.nodesMap
-      for (var i in nodes) {
-        nodes[i].collapse()
-      }
       if (newValue === '') {
+        for (var i in nodes) {
+          nodes[i].collapse()
+        }
         regionTreeRef.value.filter(newValue)
         regionTreeLoading.value = false
         return
       }
       clearTimeout(regionFilterTimer)
       regionFilterTimer = setTimeout(() => {
+        for (var i in nodes) {
+          nodes[i].collapse()
+        }
+        regionTreeLoading.value = true
         const matchedRegion = region.filter(
           (item) => item.name.indexOf(newValue) !== -1
         )
@@ -126,7 +129,7 @@ export default {
           regionTreeRef.value.filter(newValue)
           regionTreeLoading.value = false
         }, 1000)
-      }, 500)
+      }, 1500)
     })
     const regionFilterNode = (value, data) => {
       if (!value) return true

@@ -3,6 +3,7 @@ import './restrictRegions'
 import './goods'
 import "./restrictRegions.js"
 import "./members.js"
+import './categories'
 
 const Mock = require('mockjs')
 

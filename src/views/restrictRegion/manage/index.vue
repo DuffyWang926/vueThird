@@ -137,6 +137,10 @@ export default {
         }
       }
       if (res.status === 0) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功！'
+        })
         getRestrictRegions()
       }
     }

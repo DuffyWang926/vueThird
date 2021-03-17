@@ -25,7 +25,7 @@ const goodsList = [
 //   }
 // })
 
-Mock.mock(RegExp('http://127.0.0.1:8079/getAllGoods'), options => {
+Mock.mock('http://127.0.0.1:8079/getAllGoodsTree', options => {
   return {
     status: 0,
     data: {
@@ -34,3 +34,19 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getAllGoods'), options => {
     }
   }
 })
+
+Mock.mock('http://127.0.0.1:8079/getAllGoodsList', options => {
+  return {
+    status: 0,
+    data: {
+      goodsList: [
+        { id: '1', name: '啦啦啦' },
+        { id: '2', name: '哈哈哈' },
+        { id: '3', name: '糖果' },
+        { id: '4', name: '药' },
+        { id: '5', name: '泻药' },
+      ]
+    }
+  }
+})
+
