@@ -1,5 +1,4 @@
 import parseGetParams from '@/utils/parseGetParams'
-// import regions from './region'
 
 const Mock = require('mockjs')
 
@@ -17,7 +16,9 @@ for (let i = 1; i <= 100; i++) {
   }))
 }
 
-Mock.mock(RegExp('http://127.0.0.1:8079/getRestrictRegions?' + '.*'), options => {
+
+Mock.mock(RegExp('http://172.20.12.194:8079/getRestrictRegions?' + '.*'), options => {
+
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
   console.log(options)
@@ -30,7 +31,10 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getRestrictRegions?' + '.*'), options =>
   }
 })
 
-Mock.mock(RegExp('http://127.0.0.1:8079/deleteRestrictRegion?' + '.*'), options => {
+
+
+Mock.mock(RegExp('http://172.20.12.194:8079/deleteRestrictRegion?' + '.*'), options => {
+
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
   console.log(options)
@@ -44,6 +48,7 @@ Mock.mock(RegExp('http://127.0.0.1:8079/deleteRestrictRegion?' + '.*'), options 
   }
 })
 
+
 Mock.mock(RegExp('http://127.0.0.1:8079/addRestrictRegions'), options => {
   console.log(options.body);
   return {
@@ -55,3 +60,5 @@ Mock.mock(RegExp('http://127.0.0.1:8079/addRestrictRegions'), options => {
 })
 
 
+
+/* console.log(regions); */

@@ -33,6 +33,14 @@ const routes = [
     },
     component: () => import('@/views/error/404')
   },
+  {
+    path: '/memberManagement',
+    name: 'memberManagement',
+    meta: {
+      index: 1
+    },
+    component: () => import('@/views/memberManagement/index')
+  },
 ]
 
 const routerContext = require.context('./modules', true, /\.js$/)
