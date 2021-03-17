@@ -1,6 +1,7 @@
 import './role'
 import './restrictRegions'
 import './goods'
+import './categories'
 
 const Mock = require('mockjs')
 

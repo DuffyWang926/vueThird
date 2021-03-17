@@ -14,6 +14,7 @@
       v-model="goodsFilterText"
     ></el-input>
     <el-tree
+      v-if="goodsList.length > 0"
       ref="goodsTreeRef"
       :props="goodsTreeProps"
       :filter-node-method="goodsFilterNode"
@@ -23,6 +24,7 @@
       node-key="id"
       @check-change="handleGoodsCheckChange"
       @check="handleCheck"
+      default-expand-all
     >
     </el-tree>
   </div>
@@ -30,7 +32,7 @@
 
 <script>
 import service from '@/utils/request'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { ElMessageBox } from 'element-plus'
 export default {
   name: 'MyGoodsSelect',
@@ -53,14 +55,21 @@ export default {
   setup(props, { emit }) {
     const goodsList = ref([])
     const getAllGoodsList = async () => {
-      const { data: res } = await service.get('getAllGoods')
+      const { data: res } = await service.get('getAllGoodsTree')
       console.log(res)
       goodsList.value = res.goodsList
       goodsList.value.push({
         id: '0',
         name: '选择全部商品',
+        pid: null,
         leaf: false
       })
+      await nextTick()
+      const nodes = goodsTreeRef.value.store.nodesMap
+      for (var i in nodes) {
+        nodes[i].collapse()
+      }
+      goodsTreeRef.value.setCheckedKeys(props.modelValue, false)
     }
     getAllGoodsList()
     console.log(goodsList.value)
@@ -104,9 +113,11 @@ export default {
     const goodsNameSelectedList = computed(() => {
       const filtered = []
       props.modelValue.forEach((id) => {
-        const item = goodsList.value.find((item) => item.id === id)
-        if (props.modelValue.indexOf(item.pid) === -1) {
-          filtered.push(item)
+        if (goodsList.value.length > 0) {
+          const item = goodsList.value.find((item) => item.id == id + '')
+          if (props.modelValue.indexOf(item.pid) === -1) {
+            filtered.push(item)
+          }
         }
       })
       return filtered.map((item) => item.name).join(',')
@@ -137,18 +148,21 @@ export default {
       }
     }
     watch(goodsFilterText, (newValue) => {
-      goodsTreeLoading.value = true
       const nodes = goodsTreeRef.value.store.nodesMap
-      for (var i in nodes) {
-        nodes[i].collapse()
-      }
       if (newValue === '') {
         goodsTreeRef.value.filter(newValue)
         goodsTreeLoading.value = false
+        for (var i in nodes) {
+          nodes[i].collapse()
+        }
         return
       }
       clearTimeout(goodsFilterTimer)
       goodsFilterTimer = setTimeout(() => {
+        for (var i in nodes) {
+          nodes[i].collapse()
+        }
+        goodsTreeLoading.value = true
         const matchedGoods = goodsList.value.filter(
           (item) => item.name.indexOf(newValue) !== -1
         )
@@ -190,7 +204,7 @@ export default {
           goodsTreeRef.value.filter(newValue)
           goodsTreeLoading.value = false
         }, 1000)
-      }, 500)
+      }, 1500)
     })
     return {
       goodsList,
@@ -214,10 +228,9 @@ export default {
   margin-bottom: 20px;
 }
 .tree-container {
-  height: 400px;
+  width: 100%;
   .el-tree {
-    width: 500px;
-    height: 500px;
+    width: 100%;
     overflow: auto;
   }
 }
