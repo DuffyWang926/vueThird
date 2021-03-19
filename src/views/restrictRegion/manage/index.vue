@@ -35,7 +35,7 @@
             >批量删除</el-button
           >
         </el-col>
-        <el-col :span="2" :offset="6" style="justify-content: flex-end">
+        <el-col :span="3" :offset="5">
           <el-button
             size="large"
             type="info"

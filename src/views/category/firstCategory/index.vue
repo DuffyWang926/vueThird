@@ -18,7 +18,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="8">
           <el-button size="large" type="success" @click="handleSubmit"
             >查询</el-button
           >
