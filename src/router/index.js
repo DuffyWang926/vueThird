@@ -75,7 +75,7 @@ router.afterEach((to, from) => {
         title: item.meta.title,
       })
       store.commit('links/addLink', {
-        url: item.path,
+        url: to.fullPath,
         title: item.meta.title,
       })
     }

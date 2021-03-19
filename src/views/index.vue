@@ -53,9 +53,9 @@
           <el-tag
             v-for="item in links"
             :key="item.url"
-            :effect="item.url === currentChildPath ? 'dark' : 'light'"
+            :effect="item.url === currentLink ? 'dark' : 'light'"
             @close="handleLinkClose(item)"
-            :closable="item.url !== currentChildPath"
+            :closable="item.url !== currentLink"
             @click="handleLinkClick(item)"
             >{{ item.title }}</el-tag
           >
@@ -147,13 +147,14 @@ export default {
     const currentChildPath = computed(() => {
       return route.matched.find((item) => item.meta.index === 3).path
     })
+    const currentLink = computed(() => {
+      return store.getters['links/currentLink']
+    })
     const handleLinkClose = (item) => {
       store.commit('links/deleteLink', item)
     }
     const handleLinkClick = (item) => {
-      router.push({
-        path: item.url
-      })
+      router.push(item.url)
     }
     const isCollapse = ref(false)
     return {
@@ -162,6 +163,7 @@ export default {
       isCollapse,
       links,
       currentChildPath,
+      currentLink,
       handleLinkClose,
       handleLinkClick
     }
