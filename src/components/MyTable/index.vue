@@ -11,10 +11,18 @@
       <el-table-column
         v-for="item in columns"
         :key="item.title + item.prop"
-        :prop="item.prop"
         :label="item.title"
         :width="item.width || ''"
       >
+        <template v-slot="scope">
+          <el-image
+            v-if="item.image"
+            :src="scope.row[item.prop]"
+            style="width: 100px; height: 100px"
+            fit="cover"
+          ></el-image>
+          <span v-else>{{ scope.row[item.prop] }}</span>
+        </template>
       </el-table-column>
       <el-table-column
         :width="operationWidth"
@@ -189,10 +197,6 @@ export default {
         .then(() => {
           row[props.switchProp] = !row[props.switchProp]
           emit('switch', row)
-          ElMessage({
-            type: 'success',
-            message: '变更成功!'
-          })
         })
         .catch(() => {
           ElMessage({
@@ -213,5 +217,5 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 </style>

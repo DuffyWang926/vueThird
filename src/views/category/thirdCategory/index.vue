@@ -38,7 +38,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="8">
           <el-button size="large" type="success" @click="handleSubmit"
             >查询</el-button
           >
@@ -57,6 +57,11 @@
       delete-show
       @delete="deleteCategory"
     >
+      <template v-slot:userbtns="scope">
+        <el-button size="mini" type="primary" @click="goToProduct(scope.row.id)"
+          >对应商品</el-button
+        >
+      </template>
     </my-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -117,6 +122,7 @@ import service from '@/utils/request'
 export default {
   name: 'SecondCategory',
   setup() {
+    const router = useRouter()
     const queryInfo = reactive({
       firstCategoryId: useRoute().query.firstCategoryId,
       secondCategoryId: useRoute().query.secondCategoryId,
@@ -206,6 +212,16 @@ export default {
       }
       getCategories()
     }
+    const goToProduct = async (id) => {
+      router.push({
+        path: '/categoryProducts',
+        query: {
+          firstCategoryId: queryInfo.firstCategoryId,
+          secondCategoryId: queryInfo.secondCategoryId,
+          thirdCategoryId: id
+        }
+      })
+    }
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
@@ -289,6 +305,7 @@ export default {
       count,
       editCategory,
       deleteCategory,
+      goToProduct,
       handleSizeChange,
       handleCurrentChange,
       dialogVisible,
