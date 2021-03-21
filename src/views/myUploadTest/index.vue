@@ -1,5 +1,5 @@
 <template>
-  <my-upload v-model:image-list="imageList" multiple></my-upload>
+  <my-upload v-model:image-list="imageList" isVideo></my-upload>
 </template>
 
 <script>
@@ -8,7 +8,7 @@ export default {
   setup() {
     const imageList = ref([])
     imageList.value.push(
-      'https://image.huashangjk.com/121/2/17/1615944928908y5wqjRmxzA.jpeg'
+      'https://image.huashangjk.com/121/2/21/1616315777751hUdRjGWJeQ.mp4'
     )
     return {
       imageList
