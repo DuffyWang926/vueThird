@@ -143,10 +143,10 @@ export default {
       return links
     }
     const links = computed(getLinks)
-    const route = useRoute()
-    const currentChildPath = computed(() => {
-      return route.matched.find((item) => item.meta.index === 3).path
-    })
+    // const route = useRoute()
+    // const currentChildPath = computed(() => {
+    //   return route.matched.find((item) => item.meta.index === 3).path
+    // })
     const currentLink = computed(() => {
       return store.getters['links/currentLink']
     })
@@ -162,7 +162,7 @@ export default {
       currentActivePath,
       isCollapse,
       links,
-      currentChildPath,
+      // currentChildPath,
       currentLink,
       handleLinkClose,
       handleLinkClick
