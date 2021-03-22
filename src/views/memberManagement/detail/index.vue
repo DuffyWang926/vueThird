@@ -57,7 +57,7 @@
         <span>银行卡信息</span>
         </div>
     </template>
-     <my-table :columns="columns"  :data="[info]"  :operationShow = 'false' preview-show @preview="">
+     <my-table :columns="columns"  :data="[info]"  :operationShow = 'false'>
      </my-table>
   </el-card>
 
@@ -90,16 +90,6 @@
      }
     getMemberInfo()
     const $router = useRouter()
-    const queryInfo = reactive({
-      membersImg: '',
-      membersId: '',
-      membersTel: '',
-      membersStatus: '',
-      membersName: '',
-      membersCard: '',
-      membersIdCard: '',
-      membersBankNum: '',
-    })
     const detailList = [
       {
         title: '头像',
@@ -277,7 +267,6 @@
     }
     return {
      detailList,
-     queryInfo,
      info,
      walletList,
      columns,
@@ -289,7 +278,6 @@
      handleInputConfirm,
      handleClose
     }
-
    }
  }
 </script>

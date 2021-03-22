@@ -166,10 +166,4 @@ export default {
       align-items: center;
       margin:20px 0;
     }
-   /* .detail_entray{
-      background-color: #409EFF;
-      padding: 8px 12px;
-      color: white;
-      border-radius: 4px;
-    } */
 </style>

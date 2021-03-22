@@ -47,6 +47,11 @@ for (let i = 1; i <= 999; i++) {
         'cardHolderTel|18500000000-18599999999':100,//持卡人手机号码
         'createTime' : '@date("yyyy-MM-dd") @time("a HH:mm:ss")',//创建时间
         'dataStatus|1': ['正常', '异常'],//数据状态
+        'wechatOrElse|1': ['是','否'],//是否绑定微信登录
+        'membersType|1': ['A', 'B', 'C', 'D', 'E', 'F'],//会员类型
+        'blackOuts|1': ['正常', '已拉黑'],//拉黑状态
+        'cashStatus|1': ['可提现', '已提现', '不可提现'],//提现状态
+        
   }))
 }
 
