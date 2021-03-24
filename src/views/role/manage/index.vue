@@ -1,0 +1,336 @@
+<template>
+  <el-card>
+    <template #header>
+      <div class="card-header">
+        <span>权限管理</span>
+      </div>
+    </template>
+    <el-form :model="queryInfo" label-position="left">
+      <el-row :gutter="20">
+        <el-col :span="10">
+          <el-form-item label="角色">
+            <el-select
+              v-model="queryInfo.roleId"
+              placeholder="请选择"
+              filterable
+            >
+              <el-option :label="请选择" value="" v-show="false"></el-option>
+              <el-option
+                v-for="item in allRoles"
+                :key="item.id"
+                :label="item.roleName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">
+          <el-button size="medium" type="primary" @click="handleSearch"
+            >查询</el-button
+          >
+        </el-col>
+        <el-col :span="2">
+          <el-button
+            size="medium"
+            type="success"
+            @click="addDialogVisible = true"
+            >新增</el-button
+          >
+        </el-col>
+      </el-row>
+    </el-form>
+    <my-table :data="roles" :columns="columns" :operation-width="200">
+      <template v-slot:userbtns="scope">
+        <el-button
+          size="mini"
+          type="warning"
+          @click="editRole(scope.row.id)"
+          :disabled="scope.row.id === 1"
+          >修改</el-button
+        >
+        <el-button
+          size="mini"
+          type="danger"
+          @click="deleteRole(scope.row.id)"
+          :disabled="scope.row.id === 1"
+          >删除</el-button
+        >
+      </template>
+    </my-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      v-model:currentPage="queryInfo.pagenum"
+      :page-size="queryInfo.pagesize"
+      layout="total, prev, pager, next, sizes, jumper"
+      :total="count"
+      :page-sizes="[10, 20, 50, 100]"
+      background
+    >
+    </el-pagination>
+  </el-card>
+  <el-dialog
+    v-model="addDialogVisible"
+    width="500px"
+    @close="handleClose"
+    destroy-on-close
+  >
+    <template #title>新增角色</template>
+    <el-form :model="addForm">
+      <el-form-item label="角色名称">
+        <el-input v-model="addForm.roleName"></el-input>
+      </el-form-item>
+      <el-form-item label="权限列表" label-position="top">
+        <my-rights-select
+          v-model="addForm.rights"
+          v-model:leaf-value="addForm.leafRights"
+          v-model:half-checked-value="addForm.halfCheckedRights"
+        ></my-rights-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <el-dialog
+    v-model="editDialogVisible"
+    width="500px"
+    @close="handleClose"
+    destroy-on-close
+  >
+    <template #title>新增角色</template>
+    <el-form :model="editForm">
+      <el-form-item label="角色名称" label-position="top" prop="roleName">
+        <el-input v-model="editForm.roleName"></el-input>
+      </el-form-item>
+      <el-form-item label="权限列表" label-position="top">
+        <my-rights-select
+          v-model="editForm.rights"
+          v-model:leaf-value="editForm.leafRights"
+          v-model:half-checked-value="editForm.halfCheckedRights"
+          :current-role-id="editForm.id"
+        ></my-rights-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleEdit">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
+
+<script>
+import { ref, reactive } from 'vue'
+import service from '@/utils/request'
+import { ElMessageBox, ElMessage } from 'element-plus'
+export default {
+  name: 'RoleManage',
+  setup() {
+    const roles = ref([])
+    const allRoles = ref([])
+    const getAllRoles = async () => {
+      const { data: res } = await service.post('getAllRoles')
+      allRoles.value = res.roles
+      console.log(res.roles)
+    }
+    const handleSearch = () => {
+      queryInfo.pagenum = 1
+      getRoles()
+    }
+    getAllRoles()
+    let queryInfo = reactive({
+      pagenum: 1,
+      pagesize: 10,
+      roleId: ''
+    })
+    const count = ref(0)
+    // const { data: res } = await service.post('login')
+    const getRoles = async () => {
+      try {
+        const { data: res } = await service.post('roles', queryInfo)
+        roles.value = res.roles
+        count.value = res.count
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    getRoles()
+    const columns = [
+      {
+        title: '序号',
+        prop: 'id'
+      },
+      { title: '角色', prop: 'roleName' }
+    ]
+    const editRole = (id) => {
+      editForm.id = id
+      editForm.roleName = roles.value.find((item) => item.id == id).roleName
+      editDialogVisible.value = true
+    }
+    const deleteRole = (id) => {
+      ElMessageBox.confirm('是否删除该角色', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await service.post('deleteRole', {
+            id
+          })
+          if (res.status === 0) {
+            ElMessage.success('删除成功')
+          }
+          if (roles.value.length === 1) {
+            if (queryInfo.pagenum > 1) {
+              queryInfo.pagenum--
+            }
+          }
+          getRoles()
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
+    const handleSizeChange = (val) => {
+      queryInfo.pagenum = 1
+      queryInfo.pagesize = val
+      getRoles()
+    }
+    const handleCurrentChange = (val) => {
+      queryInfo.pagenum = val
+      getRoles()
+    }
+    const currentPage = ref(1)
+    const addDialogVisible = ref(false)
+    const addForm = reactive({
+      roleName: '',
+      rights: [],
+      leafRights: [],
+      halfCheckedRights: []
+    })
+    const handleClose = () => {
+      addForm.roleName = ''
+      addForm.rights = []
+      addForm.leafRights = []
+      addForm.halfCheckedRights = []
+      editForm.id = null
+      editForm.roleName = ''
+      editForm.rights = []
+      editForm.leafRights = []
+      editForm.halfCheckedRights = []
+    }
+    const handleAdd = () => {
+      if (addForm.roleName.length === 0) {
+        return ElMessage.error('角色名不能为空！')
+      }
+      if (addForm.halfCheckedRights.length === 0) {
+        return ElMessage.error('角色不能没有任何权限！')
+      }
+      ElMessageBox.confirm('确定添加角色吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const addFormCopy = {}
+          addFormCopy.roleName = addForm.roleName
+          addFormCopy.rightIds = addForm.halfCheckedRights
+          // passwordFormCopy.id = passwordForm.id
+          // passwordFormCopy.password = passwordForm.password
+          const res = await service.post('addRole', addFormCopy)
+          if (res.status === 0) {
+            ElMessage.success('添加成功！')
+          }
+          addDialogVisible.value = false
+          getRoles()
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消添加'
+          })
+        })
+    }
+    const editDialogVisible = ref(false)
+    const editForm = reactive({
+      id: null,
+      roleName: '',
+      rights: [],
+      leafRights: [],
+      halfCheckedRights: []
+    })
+    const handleEdit = () => {
+      if (editForm.roleName.length === 0) {
+        return ElMessage.error('角色名不能为空！')
+      }
+      if (editForm.halfCheckedRights.length === 0) {
+        return ElMessage.error('角色不能没有任何权限！')
+      }
+      ElMessageBox.confirm('确定修改角色吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const editFormCopy = {}
+          editFormCopy.roleName = editForm.roleName
+          editFormCopy.rightIds = editForm.halfCheckedRights
+          // passwordFormCopy.id = passwordForm.id
+          // passwordFormCopy.password = passwordForm.password
+          const res = await service.post('editRole', editFormCopy)
+          if (res.status === 0) {
+            ElMessage.success('修改成功！')
+          }
+          editDialogVisible.value = false
+          getRoles()
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消修改'
+          })
+        })
+    }
+    return {
+      roles,
+      allRoles,
+      queryInfo,
+      handleSearch,
+      count,
+      getRoles,
+      columns,
+      editRole,
+      deleteRole,
+      currentPage,
+      handleSizeChange,
+      handleCurrentChange,
+      addDialogVisible,
+      addForm,
+      handleClose,
+      handleAdd,
+      editDialogVisible,
+      editForm,
+      handleEdit
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.el-select {
+  width: 300px;
+}
+</style>

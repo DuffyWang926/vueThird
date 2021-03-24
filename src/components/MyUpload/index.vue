@@ -13,8 +13,12 @@
     :multiple="multiple"
     :limit="limit"
     :file-list="myFileList"
+    v-loading="currentFiles > 0"
   >
     <el-button type="primary">{{ uploadText }}</el-button>
+    <template #tip>
+      <slot> <div>注：图片上传不得超过10M。</div></slot>
+    </template>
   </el-upload>
   <el-dialog v-model="dialogVisible" @close="handleClose">
     <template #title> 预览图片/视频 </template>
@@ -66,7 +70,7 @@ export default {
     const qiniuData = reactive({
       key: '',
       token:
-        'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:1fWxIA4HOIEmWaiO1uIMFW86uvY=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE2MzIxNzQxfQ=='
+        'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:P2UfIf6dxzrb1R13_bHYLECZTEk=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE2NDc4MzgzfQ=='
     })
     const imageList = props.imageList
     const myFileList = ref(
@@ -77,14 +81,38 @@ export default {
         }
       })
     )
+    const currentFiles = ref(0)
     const handleBeforeUpload = (file) => {
       console.log('handle before upload')
       if (props.isVideo) {
+        if (
+          [
+            'video/mp4',
+            'video/ogg',
+            'video/flv',
+            'video/avi',
+            'video/wmv',
+            'video/rmvb'
+          ].indexOf(file.type) == -1
+        ) {
+          ElMessage.error('上传视频只能是 mp4、ogg、flv、avi、wmv、rmvb 格式!')
+          return false
+        }
+        const isLt30M = file.size / 1024 / 1024 < 30
+        if (!isLt30M) {
+          ElMessage.error('上传文件过大！')
+          return false
+        }
       } else {
         const isJPG = file.type === 'image/jpeg'
         const isPNG = file.type === 'image/png'
         if (!isJPG && !isPNG) {
           ElMessage.error('图片只能是 JPG/PNG 格式!')
+          return false
+        }
+        const isLt10M = file.size / 1024 / 1024 < 10
+        if (!isLt10M) {
+          ElMessage.error('上传文件过大！')
           return false
         }
       }
@@ -138,14 +166,17 @@ export default {
       form.append('file', fileObj)
       form.append('token', qiniuData.token)
       form.append('key', qiniuData.key)
+      currentFiles.value++
       axios
         .post(`https://upload-z1.qiniup.com/`, form)
         .then((res) => {
           console.log(res)
           handleSuccess(res.data)
+          currentFiles.value--
         })
         .catch((res) => {
           console.error('Error！')
+          currentFiles.value--
         })
     }
     const handleExceed = () => {
@@ -188,7 +219,8 @@ export default {
       uploadRequest,
       dialogVisible,
       currentFile,
-      handleClose
+      handleClose,
+      currentFiles
     }
   }
 }
@@ -196,6 +228,12 @@ export default {
 
 <style scoped lang="scss">
 .upload-demo {
+  .el-upload {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
   /deep/.el-upload-list__item.is-ready,
   /deep/.el-upload-list__item.is-uploading,
   // /deep/.el-upload-list__item.el-list-enter-active,

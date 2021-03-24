@@ -5,6 +5,8 @@ import "./restrictRegions.js"
 import "./members.js"
 import './categories'
 import './warehouse'
+import './rightsReq'
+import './users'
 
 const Mock = require('mockjs')
 
