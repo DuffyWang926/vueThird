@@ -15,8 +15,14 @@ import './mock/mock'
 
 import eventBus from './utils/eventBus'
 
+// import VueQuillEditor from 'vue-quill-editor'
+// import 'quill/dist/quill.core.css'
+// import 'quill/dist/quill.snow.css'
+// import 'quill/dist/quill.bubble.css'
+
 const app = createApp(App);
 app.use(store).use(router).mount('#app');
 app.use(components)
 app.use(eventBus)
 app.use(elementUI)
+// app.use(VueQuillEditor)

@@ -41,9 +41,17 @@ service.interceptors.response.use(
   response => {
     const res = response.data;
     console.log(res)
+    // console.log(res.is_succ)
+    if (res.is_succ !== undefined) {
+      if (res.is_succ === 1) {
+        res.status = 0
+      } else {
+        res.status = 1
+      }
+    }
     if (Number(res.status) !== 0) {
       ElMessage({
-        message: res.message,
+        message: res.data.message || res.message,
         type: 'error',
         duration: 2 * 1000
       });

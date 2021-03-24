@@ -11,10 +11,9 @@ for (let i = 1; i <= 100; i++) {
   }))
 }
 
-Mock.mock(RegExp('http://127.0.0.1:8079/roles' + '.*'), options => {
-  const queryInfo = parseGetParams(options.url)
-  console.log(queryInfo)
-  console.log(options)
+Mock.mock('http://127.0.0.1:8079/roles', options => {
+  console.log(options.body)
+  const queryInfo = JSON.parse(options.body)
   if (queryInfo.roleId) {
     return {
       status: 0,
@@ -34,8 +33,18 @@ Mock.mock(RegExp('http://127.0.0.1:8079/roles' + '.*'), options => {
   }
 })
 
-Mock.mock(RegExp('http://127.0.0.1:8079/deleteRestrictRegionGroup' + '.*'), options => {
-  console.log(options.body);
+Mock.mock('http://127.0.0.1:8079/getAllRoles', options => {
+  return {
+    status: 0,
+    data: {
+      roles
+    }
+  }
+})
+
+Mock.mock('http://127.0.0.1:8079/deleteRole', options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo);
   return {
     status: 0,
     data: {
@@ -43,3 +52,26 @@ Mock.mock(RegExp('http://127.0.0.1:8079/deleteRestrictRegionGroup' + '.*'), opti
     }
   }
 })
+
+Mock.mock('http://127.0.0.1:8079/addRole', options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo);
+  return {
+    status: 0,
+    data: {
+      message: '添加成功'
+    }
+  }
+})
+
+Mock.mock('http://127.0.0.1:8079/editRole', options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo);
+  return {
+    status: 0,
+    data: {
+      message: '修改成功'
+    }
+  }
+})
+

@@ -1,33 +1,35 @@
 <template>
-  <el-input
-    :model-value="categoryNameSelectedList"
-    @focus="emit('update:showFlag', true)"
-    @click.stop="emit('update:showFlag', true)"
-    :placeholder="loading ? '加载中' : '请选择'"
-  ></el-input>
-  <div
-    class="tree-container"
-    v-loading="categoryTreeLoading"
-    v-show="showFlag"
-    :tabindex="1"
-    @blur="emit('update:showFlag', false)"
-    @click.stop="emit('update:showFlag', true)"
-  >
-    <el-tree
-      v-if="categoryList.length > 0"
-      ref="categoryTreeRef"
-      :props="categoryTreeProps"
-      :filter-node-method="categoryFilterNode"
-      :load="loadCategoryNode"
-      lazy
-      show-checkbox
-      node-key="id"
-      @check-change="handleCheckChange"
-      @check="handleCheck"
-      default-expand-all
-      accordion
+  <div class="my-category-select">
+    <el-input
+      :model-value="categoryNameSelectedList"
+      @focus="emit('update:showFlag', true)"
+      @click.stop="emit('update:showFlag', true)"
+      :placeholder="loading ? '加载中' : '请点击选择'"
+    ></el-input>
+    <div
+      class="tree-container"
+      v-loading="categoryTreeLoading"
+      v-show="showFlag"
+      :tabindex="1"
+      @blur="emit('update:showFlag', false)"
+      @click.stop="emit('update:showFlag', true)"
     >
-    </el-tree>
+      <el-tree
+        v-if="categoryList.length > 0"
+        ref="categoryTreeRef"
+        :props="categoryTreeProps"
+        :filter-node-method="categoryFilterNode"
+        :load="loadCategoryNode"
+        lazy
+        show-checkbox
+        node-key="id"
+        @check-change="handleCheckChange"
+        @check="handleCheck"
+        default-expand-all
+        accordion
+      >
+      </el-tree>
+    </div>
   </div>
 </template>
 
@@ -56,21 +58,38 @@ export default {
       type: String,
       required: false,
       default: ''
+    },
+    leafValue: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    isThreeCategory: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   setup(props, { emit }) {
     const loading = ref(true)
     const categoryList = ref([])
+    let date = +new Date()
     const getAllCategoryList = async () => {
       const { data: res } = await service.get('getAllCategoryTree')
       console.log(res)
       categoryList.value = res.categoryList
+      console.log('请求所有分类项', +new Date() - date)
+      date = +new Date()
       await nextTick()
+      console.log('加载分类树', +new Date() - date)
+      date = +new Date()
       console.log(categoryTreeRef.value)
       const nodes = categoryTreeRef.value.store.nodesMap
       for (var i in nodes) {
         nodes[i].collapse()
       }
+      console.log('收起分类树', +new Date() - date)
+      date = +new Date()
       loading.value = false
       categoryTreeRef.value.setCheckedKeys(props.modelValue, false)
     }
@@ -90,7 +109,7 @@ export default {
       return flag
     }
     const loadCategoryNode = (node, resolve) => {
-      console.log(node)
+      // console.log(node)
       if (node.level === 0) {
         return resolve(
           categoryList.value
@@ -100,8 +119,9 @@ export default {
                 id: item.id,
                 name: item.name,
                 leaf: categoryList.value.every(
-                  (childItem) => childItem.pid !== item.id
-                )
+                  (childItem) => childItem.pid != item.id
+                ),
+                disabled: props.isThreeCategory
               }
             })
         )
@@ -114,7 +134,12 @@ export default {
             name: item.name,
             leaf: !categoryList.value.some(
               (childItem) => childItem.pid === item.id
-            )
+            ),
+            disabled: props.isThreeCategory
+              ? categoryList.value.some(
+                  (childItem) => childItem.pid == item.id
+                ) || node.level !== 2
+              : false
           }
         })
       resolve(data)
@@ -153,6 +178,7 @@ export default {
           return emit('update:singleValue', id)
         }
       })
+      emit('update:leafValue', categoryTreeRef.value.getCheckedKeys(true))
     }
     const handleCheck = (data, {}) => {
       console.log('handleCheck')
@@ -183,18 +209,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.tree-container {
-  position: absolute;
-  bottom: 0;
-  transform: translateY(100%);
-  width: 100%;
-  height: 600px;
-  z-index: 10;
-  overflow: auto;
-  .el-tree {
-    background-color: #eee;
+.my-category-select {
+  position: relative;
+  .tree-container {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(100%);
     width: 100%;
+    height: 600px;
+    z-index: 10;
     overflow: auto;
+    .el-tree {
+      background-color: #eee;
+      width: 100%;
+      overflow: auto;
+    }
   }
 }
 </style>

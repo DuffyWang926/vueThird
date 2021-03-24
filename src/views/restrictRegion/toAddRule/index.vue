@@ -9,6 +9,7 @@
       <div class="flex-col">
         <my-goods-select
           v-model="goodsIdSelectedList"
+          v-model:leaf-value="goodsIdLeafList"
           textareaShow
           is-restrict-region
         ></my-goods-select>
@@ -59,6 +60,7 @@ export default {
   setup() {
     // const goodsList = ref([])
     const goodsIdSelectedList = ref([])
+    const goodsIdLeafList = ref([])
     // const goodsNameSelectedList = computed(() => {
     //   return goodsList.value
     //     .filter((item) => goodsIdSelectedList.value.indexOf(item.id) !== -1)
@@ -218,6 +220,7 @@ export default {
     return {
       // goodsList,
       goodsIdSelectedList,
+      goodsIdLeafList,
       // goodsNameSelectedList,
       regionTreeRef,
       regionTreeProps,

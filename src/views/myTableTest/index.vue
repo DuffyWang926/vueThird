@@ -4,7 +4,7 @@
       :data="state.tableData"
       :columns="state.columns"
       :operation-width="350"
-	  preview-show
+      preview-show
       @preview="handlePreview"
       switch-show
       switch-prop="on"
@@ -20,6 +20,7 @@
       </template>
     </my-table>
   </div>
+  <!-- <quill-editor class="ql-editor"> </quill-editor> -->
 </template>
 
 <script>

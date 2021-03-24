@@ -50,11 +50,29 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    leafValue: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    isProduct: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isSubProduct: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   setup(props, { emit }) {
     const goodsList = ref([])
+    const goodsTreeLoading = ref(false)
     const getAllGoodsList = async () => {
+      let date = +new Date()
+      goodsTreeLoading.value = true
       const { data: res } = await service.get('getAllGoodsTree')
       console.log(res)
       goodsList.value = res.goodsList
@@ -64,12 +82,19 @@ export default {
         pid: null,
         leaf: false
       })
+      console.log('请求所有商品项', +new Date() - date)
+      date = +new Date()
       await nextTick()
+      console.log('加载商品项', +new Date() - date)
+      date = +new Date()
       const nodes = goodsTreeRef.value.store.nodesMap
       for (var i in nodes) {
         nodes[i].collapse()
       }
+      console.log('收起商品项', +new Date() - date)
+      date = +new Date()
       goodsTreeRef.value.setCheckedKeys(props.modelValue, false)
+      goodsTreeLoading.value = false
     }
     getAllGoodsList()
     console.log(goodsList.value)
@@ -80,7 +105,6 @@ export default {
       isLeaf: 'leaf'
     }
     const goodsFilterText = ref('')
-    const goodsTreeLoading = ref(false)
     const goodsFilterNode = (value, data) => {
       if (!value) return true
       const flag = data.name.indexOf(value) !== -1
@@ -92,20 +116,26 @@ export default {
           {
             id: '0',
             name: '全部商品',
-            leaf: false
+            leaf: false,
+            disabled: props.isProduct || props.isSubProduct
           }
         ])
       }
-      console.log(node)
+      // console.log(node)
       const data = goodsList.value
         .filter((item) => item.pid === node.data.id)
         .map((item) => {
+          let disabled = false
+          if (props.isProduct && node.level !== 4) {
+            disabled = true
+          } else if (props.isSubProduct && node.level !== 5) {
+            disabled = true
+          }
           return {
             id: item.id,
             name: item.name,
-            leaf: !goodsList.value.some(
-              (childItem) => childItem.pid === item.id
-            )
+            leaf: false,
+            disabled
           }
         })
       resolve(data)
@@ -123,11 +153,16 @@ export default {
       return filtered.map((item) => item.name).join(',')
     })
     let goodsFilterTimer = null
+    let emitTimer = null
     const handleGoodsCheckChange = () => {
-      emit('update:modelValue', goodsTreeRef.value.getCheckedKeys())
+      clearTimeout(emitTimer)
+      emitTimer = setTimeout(() => {
+        emit('update:modelValue', goodsTreeRef.value.getCheckedKeys())
+        emit('update:leafValue', goodsTreeRef.value.getCheckedKeys(true))
+      }, 100)
     }
     const handleCheck = (data, {}) => {
-      console.log(data)
+      // console.log(data)
       if (data.id === '0') {
         if (!props.isRestrictRegion) return
         ElMessageBox.confirm(
@@ -186,10 +221,10 @@ export default {
             nodesArr.push(current)
           }
           nodesArr.reverse()
-          console.log(nodesArr)
+          // console.log(nodesArr)
           nodesArr.forEach((item) => {
             const nodes = goodsTreeRef.value.store.nodesMap
-            console.log(goodsTreeRef.value.store.nodesMap)
+            // console.log(goodsTreeRef.value.store.nodesMap)
             for (var i in nodes) {
               if (nodes[i].data.id === item.id) {
                 // loadRegionNode(nodes[i], regionTreeResolve)

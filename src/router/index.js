@@ -12,6 +12,14 @@ const indexRouter = {
 const routes = [
   indexRouter,
   {
+    path: '/login',
+    name: 'login',
+    meta: {
+      index: 1
+    },
+    component: () => import('@/views/login/index')
+  },
+  {
     path: '/nopermission',
     name: 'nopermission',
     meta: {
@@ -34,15 +42,7 @@ const routes = [
       index: 1
     },
     component: () => import('@/views/error/404')
-  },
-  {
-    path: '/memberManagement',
-    name: 'memberManagement',
-    meta: {
-      index: 1
-    },
-    component: () => import('@/views/memberManagement/index')
-  },
+  }
 ]
 
 console.log(store);

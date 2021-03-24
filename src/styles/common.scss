@@ -18,6 +18,11 @@
   transform: translate(110px, 178px)!important;
 }
 
+.el-picker__popper.el-popper,
+.el-select__popper.el-popper {
+  transform: translate(0px, 0px)!important;
+}
+
 .el-menu--popup {
   border-radius: 10px;
   box-shadow: 0px 0px 10px 2px #ccc;
