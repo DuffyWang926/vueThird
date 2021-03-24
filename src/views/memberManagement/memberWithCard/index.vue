@@ -28,8 +28,8 @@
         :columns="columns"
         :operation-width="200"
         preview-show
-        @preview="(id) => {$router.push({ path: '/detail/' + id })}"
-        preiviewText = "详情"
+        @preview="detailChange"
+        preiview-text = "详情"
       ></my-table>
     <el-pagination
           @size-change= "handleSizeChange"
@@ -83,7 +83,8 @@ export default {
       },
       {
         title: '头像',
-        prop: 'membersImg'
+        prop: 'membersImg',
+        image:true
       },
       {
         title: '手机号',
@@ -111,16 +112,6 @@ export default {
       }
     ]
     const count = ref(0)
-   /* const showDetail = async (id) => {
-      console.log(id)
-      const res = await service.get('showMembersInfo', {
-        params: { id }
-      })
-      console.log(res)
-      if (res.status === 0) {
-        getMembersInfo()
-      }
-    } */
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
@@ -129,6 +120,11 @@ export default {
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
       getMembersInfo()
+    }
+    const detailChange = (id) => {
+        let path = '/detail/' + id//动态路由跳转的路径声明方式
+        $router.push({path})
+
     }
     const currentPage = ref(1)
     return {
@@ -139,7 +135,7 @@ export default {
       handleSizeChange,
       handleCurrentChange,
       currentPage,
-      $router
+      detailChange
     }
   }
 };

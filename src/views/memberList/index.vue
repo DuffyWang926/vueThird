@@ -83,26 +83,27 @@
         :operation-width="480"
         preview-show
         preiviewText = "详情"
+        @preview="detailChange"
         class="btn-group"
      >
         <template v-slot:userbtns="scope" >
-          <el-button plain size="mini" type="warning">手机号</el-button>
+          <el-button plain size="mini" type="warning" @click="handleChangeTel">手机号</el-button>
           <el-button plain size="mini" type="warning">身份证号</el-button>
           <el-button plain size="mini" type="warning">是否可提现</el-button>
           <el-button plain size="mini" type="warning">备注</el-button>
           <el-button size="mini" type="danger">拉黑</el-button>
         </template>
      </my-table>
-       <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="count"
-          background
-          ></el-pagination>
+     <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="10"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="count"
+        background
+        ></el-pagination>
   </el-card>
 </template>
 
@@ -135,27 +136,29 @@ export default {
     const handleNumChange = (val) => {
       console.log(val)
     }
-     const shortcuts = ref([{
-          text: '本月',
-          value: [new Date(), new Date()],
-        }, {
-          text: '今年至今',
-          value: (() => {
-            const end = new Date()
-            const start = new Date(new Date().getFullYear(), 0)
-            return [start, end]
-          })(),
-        }, {
-          text: '最近六个月',
-          value: (() => {
-            const end = new Date()
-            const start = new Date()
-            start.setMonth(start.getMonth() - 6)
-            return [start, end]
-          })(),
-        }])
-    const membersInfo = ref([])
+    const shortcuts = ref([{
+        text: '本月',
+        value: [new Date(), new Date()],
+      }, {
+        text: '今年至今',
+        value: (() => {
+          const end = new Date()
+          const start = new Date(new Date().getFullYear(), 0)
+          return [start, end]
+        })(),
+      }, {
+        text: '最近六个月',
+        value: (() => {
+          const end = new Date()
+          const start = new Date()
+          start.setMonth(start.getMonth() - 6)
+          return [start, end]
+        })(),
+      }])
 
+
+
+    const membersInfo = ref([])
     const getMembersInfo = async () => {
       try {
         const { data: res } = await service.get('getMembersInfo', {
@@ -172,11 +175,12 @@ export default {
     const columns = [
       {
         title: '编号',
-        prop: 'membersId'
+        prop: 'membersId'//prop仅是自定义的属性名称，与子父组件通信的props没有关系
       },
       {
         title: '头像',
-        prop: 'membersImg'
+        prop: 'membersImg',
+        image:true
       },
       {
         title: '手机号',
@@ -266,6 +270,14 @@ export default {
       getMembersInfo()
     }
     const currentPage = ref(1)
+    const detailChange = (id) => {
+       let path = '/detail/' + id//动态路由跳转的路径声明方式
+       $router.push({path})
+   }
+
+ /*  const handleChangeTel = (id) => {
+      membersInfo.membersCard(id) =
+   } */
     return {
       queryInfo,
       membersInfo,
@@ -277,7 +289,8 @@ export default {
       memberMessage,
       shortcuts,
       handleNumChange,
-      $router
+      detailChange,
+      //handleChangeTel
     }
   }
 };

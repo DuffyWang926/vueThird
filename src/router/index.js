@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// import { mapMutations, useStore } from 'vuex'
+import store from '../store/index'
 
 const indexRouter = {
   path: '/',
@@ -9,6 +11,14 @@ const indexRouter = {
 
 const routes = [
   indexRouter,
+  {
+    path: '/login',
+    name: 'login',
+    meta: {
+      index: 1
+    },
+    component: () => import('@/views/login/index')
+  },
   {
     path: '/nopermission',
     name: 'nopermission',
@@ -23,7 +33,7 @@ const routes = [
     meta: {
       index: 1
     },
-    component: () => import('@/views/error/NoPermission')
+    component: () => import('@/views/index'),
   },
   {
     path: '/*',
@@ -35,14 +45,48 @@ const routes = [
   }
 ]
 
+console.log(store);
+
+// const setActivePath = mapMutations(['menu/setActivePath'])['menu/setActivePath']
+// console.log(setActivePath);
+// debugger
 const routerContext = require.context('./modules', true, /\.js$/)
 routerContext.keys().forEach(route => {
   const routerModule = routerContext(route)
   indexRouter.children = [...indexRouter.children, ...(routerModule.default || routerModule)]
 })
 
-
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+
+router.afterEach((to, from) => {
+ /* console.log(to);
+  debugger */ //调试路由跳转间的bug出现在哪一步
+  to.matched.forEach(item => {
+    if (item.meta.index === 2) {
+      parent = item.path
+      console.log('setActivePath', item.path)
+      store.commit('menu/setActivePath', item.path)
+    }
+    if (item.meta.index === 3) {
+      console.log('pushLink', {
+        url: item.path,
+        title: item.meta.title,
+      })
+      store.commit('links/addLink', {
+        url: to.fullPath,
+        title: item.meta.title,
+      })
+    }
+  })
+})
+
+
+export default router
+
+export {
+  indexRouter
+}

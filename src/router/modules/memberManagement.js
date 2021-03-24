@@ -9,7 +9,7 @@ export default [
     component: () => import('@/views/memberManagement/index'),
     children: [
       {
-        path: '/detail/:id',
+        path: '/detail/:id',//动态路由
         name: 'detail',
         component: () => import('@/views/memberManagement/detail/index'),
       },

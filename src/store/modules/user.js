@@ -26,6 +26,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       loginApi(products).then(response => {
         const data = response;
+		
         commit('loginUser',products)
         resolve()
       }).catch(error => {

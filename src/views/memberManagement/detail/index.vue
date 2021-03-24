@@ -3,10 +3,16 @@
     <template #header>
       <div class="card-header">
         <span>基本信息</span>
-        <el-button class="button" type="text" @click="$router.push({ path: '/memberWithCard' })">返回</el-button>
+        <el-button class="button" type="text" @click="changeDetail">返回</el-button>
         </div>
     </template>
     <el-form :inline="true" :model="formInline">
+    <!--  <el-form-item>
+        <span>用户头像</span>
+      </el-form-item> -->
+      <el-form-item>
+        <el-avatar shape="square" :size="50" :src="info.membersImg"></el-avatar>
+      </el-form-item>
       <el-form-item v-for="item in detailList" :key="item.id" :label="item.title" :prop="item.prop" :width="item.width || ''">
         <el-input :model-value="info[item.prop]"></el-input>
       </el-form-item>
@@ -69,7 +75,7 @@
  import service from '@/utils/request'
  export default {
    name: "detail",
-   setup() {
+     setup() {
      const info = ref({
       membersImg: '',
       membersId: '',
@@ -87,14 +93,14 @@
          }
        })
        info.value = res.memberInfo
+       console.log(res, res.memberInfo);
      }
     getMemberInfo()
     const $router = useRouter()
+   /* console.log($router)
+    debugger */
+   /* const squareUrl = reactive['membemembersImg'] */
     const detailList = [
-      {
-        title: '头像',
-        prop: 'membersImg'
-      },
       {
         title: '昵称',
         prop: 'membersNickName'
@@ -265,6 +271,10 @@
          inputVisible.value = false;
          inputValue.value = '';
     }
+    const changeDetail = (e) => {
+    /*  $router.push({ path: '/memberWithCard' }) */
+      $router.go(-1)
+    }
     return {
      detailList,
      info,
@@ -276,7 +286,8 @@
      showInput,
      saveTagInput,
      handleInputConfirm,
-     handleClose
+     handleClose,
+     changeDetail
     }
    }
  }
