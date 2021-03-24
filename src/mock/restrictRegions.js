@@ -59,6 +59,14 @@ Mock.mock(RegExp('http://127.0.0.1:8079/addRestrictRegions'), options => {
   }
 })
 
-
+Mock.mock(RegExp('http://127.0.0.1:8079/deleteRestrictRegionGroup' + '.*'), options => {
+  console.log(options.body);
+  return {
+    status: 0,
+    data: {
+      message: '删除成功'
+    }
+  }
+})
 
 /* console.log(regions); */
