@@ -20,7 +20,7 @@
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
-        background-color="#5076dc"
+        background-color="#222834"
         text-color="#fff"
         active-text-color="#5076dc"
         router
@@ -49,16 +49,20 @@
     </el-aside>
     <el-container>
       <el-header>
-        <div class="links">
-          <el-tag
-            v-for="item in links"
-            :key="item.url"
-            :effect="item.url === currentLink ? 'dark' : 'light'"
-            @close="handleLinkClose(item)"
-            :closable="item.url !== currentLink"
-            @click="handleLinkClick(item)"
-            >{{ item.title }}</el-tag
-          >
+        <div class="links-wrapper">
+          <div class="left"><i class="el-icon-arrow-left"></i></div>
+          <div class="links">
+            <el-tag
+              v-for="item in links"
+              :key="item.url"
+              :effect="item.url === currentLink ? 'dark' : 'light'"
+              @close="handleLinkClose(item)"
+              :closable="item.url !== currentLink"
+              @click="handleLinkClick(item)"
+              >{{ item.title }}</el-tag
+            >
+          </div>
+          <div class="right"><i class="el-icon-arrow-right"></i></div>
         </div>
         <div class="user">
           <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
@@ -71,7 +75,7 @@
 </template>
 
 <script>
-import { computed, ref, reactive } from 'vue'
+import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue'
 import { useStore, mapGetters, mapState } from 'vuex'
 import { indexRouter } from '@/router/index'
 import rights from '@/mock/rights.js'
@@ -157,6 +161,66 @@ export default {
       router.push(item.url)
     }
     const isCollapse = ref(false)
+    onMounted(() => {
+      const linksDOM = document.querySelector('.links')
+      console.log(linksDOM)
+      const $ = window.$
+      console.log($)
+      $('.right').click(function () {
+        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth
+        const left = Math.min(
+          maxLeft,
+          linksDOM.scrollLeft + linksDOM.clientWidth
+        )
+        $('.links').animate({ scrollLeft: left + 'px' }, 300)
+      })
+      $('.left').click(function () {
+        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth)
+        $('.links').animate({ scrollLeft: left + 'px' }, 300)
+      })
+      watch(currentLink, async () => {
+        await nextTick()
+        const index = store.getters['links/links'].findIndex(
+          (item) => item.url === store.getters['links/currentLink']
+        )
+        console.log(index)
+        const offsetLeft = $('.links-wrapper .links .el-tag')[index].offsetLeft
+        const offsetWidth = $('.links-wrapper .links .el-tag')[index]
+          .offsetWidth
+        console.log(offsetLeft)
+        if (offsetLeft < linksDOM.scrollLeft) {
+          $('.links').animate({ scrollLeft: offsetLeft + 'px' }, 300)
+        } else if (
+          offsetLeft + offsetWidth - linksDOM.scrollLeft >
+          linksDOM.clientWidth
+        ) {
+          $('.links').animate(
+            {
+              scrollLeft: offsetLeft + offsetWidth - linksDOM.clientWidth + 'px'
+            },
+            300
+          )
+        }
+        // const maxLeft = links.scrollWidth - links.clientWidth
+        // $('.links').animate({ scrollLeft: maxLeft + 'px' }, 300)
+      })
+      // document.querySelector('.right').addEventListener('click', function () {
+      //   // links.scrollLeft += links.clientWidth
+      //   // links.scrollTo((links.scrollLeft += links.clientWidth), 0)
+
+      //   links.scrollTo(links.scrollLeft + links.clientWidth, 0)
+      //   console.log(links.scrollLeft)
+      //   console.log(links.clientWidth)
+      //   console.log('scroll')
+      // })
+
+      // document.querySelector('.left').addEventListener('click', function () {
+      //   links.scrollTo(links.scrollLeft - links.clientWidth, 0)
+      //   console.log(links.scrollLeft)
+      //   console.log(links.clientWidth)
+      //   console.log('scroll')
+      // })
+    })
     return {
       subMenus,
       currentActivePath,
@@ -180,7 +244,8 @@ export default {
 }
 
 .el-aside {
-  background-color: #5076dc;
+  // background-color: #5076dc;
+  background-color: #222834;
   min-height: 1000px;
   overflow-x: hidden;
 }
@@ -191,17 +256,55 @@ export default {
   justify-content: flex-start;
   align-items: center;
   height: 70px !important;
-  .links {
+  width: 100%;
+  .links-wrapper {
     display: flex;
-    width: 150px;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    flex: 1;
-    .el-tag {
-      margin-right: 10px;
+    flex: 1 1 0;
+    overflow: auto;
+    // &::-webkit-scrollbar {
+    //   width: 0;
+    //   height: 0;
+    // }
+    .left,
+    .right {
+      width: 30px;
+      height: 30px;
+      color: #999;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+      // box-shadow: 0px 0px 20px 1px #ccc;
+      &:hover {
+        color: skyblue;
+      }
+    }
+    .left {
+      margin: 10px;
+    }
+    .right {
+      margin: 10px;
+    }
+    .links {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      flex: 1 1 0;
+      overflow-x: auto;
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+      .el-tag {
+        margin-right: 10px;
+      }
     }
   }
+
   .user {
     display: flex;
     width: 150px;

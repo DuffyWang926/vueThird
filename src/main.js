@@ -8,6 +8,8 @@ import 'element-plus/lib/theme-chalk/index.css';
 
 import "@/styles/index.scss";
 
+// import "@/assets/css/global.scss"
+
 
 import components from '@/components'
 
