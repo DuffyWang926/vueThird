@@ -8,7 +8,7 @@ import 'element-plus/lib/theme-chalk/index.css';
 
 import "@/styles/index.scss";
 
-// import "@/assets/css/global.scss"
+// import "./assets/vue-element-admin-4.0.0-beta/index.scss"
 
 
 import components from '@/components'

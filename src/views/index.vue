@@ -75,13 +75,13 @@
 </template>
 
 <script>
-import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue'
-import { useStore, mapGetters, mapState } from 'vuex'
-import { indexRouter } from '@/router/index'
-import rights from '@/mock/rights.js'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, ref, reactive, onMounted, watch, nextTick } from "vue";
+import { useStore, mapGetters, mapState } from "vuex";
+import { indexRouter } from "@/router/index";
+import rights from "@/mock/rights.js";
+import { useRoute, useRouter } from "vue-router";
 export default {
-  name: 'index',
+  name: "index",
   setup() {
     // const store = useStore()
     // const subMenus = store.getters.getSubMenus
@@ -90,120 +90,121 @@ export default {
     // console.log(subMenus())
     const getSubMenus = () => {
       let subMenus = [
-        '系统配置',
-        '安全管理',
-        '会员管理',
-        '商城管理',
-        '订单管理',
-        '营销管理',
-        '报表',
-        '客服',
-        '仓库与运费',
-        '首页配置',
-        '返利管理',
-        '日志管理'
+        "系统配置",
+        "安全管理",
+        "会员管理",
+        "商城管理",
+        "订单管理",
+        "营销管理",
+        "报表",
+        "客服",
+        "仓库与运费",
+        "首页配置",
+        "返利管理",
+        "日志管理",
       ].map((item) => {
         return {
           title: item,
-          children: []
-        }
-      })
+          children: [],
+        };
+      });
       const activeRights = rights.filter(
         (item) => item.checked && item.pid !== 0
-      )
+      );
       indexRouter.children.forEach((item) => {
         if (activeRights.find((right) => item.meta.id === right.id)) {
           const subMenu = subMenus.find(
             (subMenu) => subMenu.title === item.meta.parent
-          )
+          );
           const menuItem = {
             index: item.path,
             title: item.meta.title,
-            sort: item.meta.sort
-          }
-          subMenu.children.push(menuItem)
+            sort: item.meta.sort,
+          };
+          subMenu.children.push(menuItem);
         }
-      })
-      subMenus = subMenus.filter((item) => item.children.length > 0)
+      });
+      subMenus = subMenus.filter((item) => item.children.length > 0);
       subMenus.forEach((subMenu) =>
         subMenu.children.sort((a, b) => a.sort - b.sort)
-      )
-      return subMenus
-    }
-    const subMenus = computed(getSubMenus)
-    console.log(getSubMenus())
+      );
+      return subMenus;
+    };
+    const subMenus = computed(getSubMenus);
+    console.log(getSubMenus());
     // const currentActivePath = ref('')
-    const store = useStore()
-    const router = useRouter()
-    console.log(store.getters['menu/currentActivePath'])
+    const store = useStore();
+    const router = useRouter();
+    console.log(store.getters["menu/currentActivePath"]);
     const currentActivePath = computed(() => {
-      const activePath = store.getters['menu/currentActivePath']
-      console.log(activePath)
-      return activePath
-    })
+      const activePath = store.getters["menu/currentActivePath"];
+      console.log(activePath);
+      return activePath;
+    });
     const getLinks = () => {
-      const links = store.getters['links/links']
-      console.log(links)
-      return links
-    }
-    const links = computed(getLinks)
+      const links = store.getters["links/links"];
+      console.log(links);
+      return links;
+    };
+    const links = computed(getLinks);
     // const route = useRoute()
     // const currentChildPath = computed(() => {
     //   return route.matched.find((item) => item.meta.index === 3).path
     // })
     const currentLink = computed(() => {
-      return store.getters['links/currentLink']
-    })
+      return store.getters["links/currentLink"];
+    });
     const handleLinkClose = (item) => {
-      store.commit('links/deleteLink', item)
-    }
+      store.commit("links/deleteLink", item);
+    };
     const handleLinkClick = (item) => {
-      router.push(item.url)
-    }
-    const isCollapse = ref(false)
+      router.push(item.url);
+    };
+    const isCollapse = ref(false);
     onMounted(() => {
-      const linksDOM = document.querySelector('.links')
-      console.log(linksDOM)
-      const $ = window.$
-      console.log($)
-      $('.right').click(function () {
-        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth
+      const linksDOM = document.querySelector(".links");
+      console.log(linksDOM);
+      const $ = window.$;
+      console.log($);
+      $(".right").click(function () {
+        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth;
         const left = Math.min(
           maxLeft,
           linksDOM.scrollLeft + linksDOM.clientWidth
-        )
-        $('.links').animate({ scrollLeft: left + 'px' }, 300)
-      })
-      $('.left').click(function () {
-        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth)
-        $('.links').animate({ scrollLeft: left + 'px' }, 300)
-      })
+        );
+        $(".links").animate({ scrollLeft: left + "px" }, 300);
+      });
+      $(".left").click(function () {
+        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth);
+        $(".links").animate({ scrollLeft: left + "px" }, 300);
+      });
       watch(currentLink, async () => {
-        await nextTick()
-        const index = store.getters['links/links'].findIndex(
-          (item) => item.url === store.getters['links/currentLink']
-        )
-        console.log(index)
-        const offsetLeft = $('.links-wrapper .links .el-tag')[index].offsetLeft
-        const offsetWidth = $('.links-wrapper .links .el-tag')[index]
-          .offsetWidth
-        console.log(offsetLeft)
+        await nextTick();
+        const index = store.getters["links/links"].findIndex(
+          (item) => item.url === store.getters["links/currentLink"]
+        );
+        console.log(index);
+        const offsetLeft = $(".links-wrapper .links .el-tag")[index].offsetLeft;
+        const offsetWidth = $(".links-wrapper .links .el-tag")[index]
+          .offsetWidth;
+        console.log(offsetLeft);
         if (offsetLeft < linksDOM.scrollLeft) {
-          $('.links').animate({ scrollLeft: offsetLeft + 'px' }, 300)
+          $(".links").animate({ scrollLeft: offsetLeft + "px" }, 300);
         } else if (
           offsetLeft + offsetWidth - linksDOM.scrollLeft >
           linksDOM.clientWidth
         ) {
-          $('.links').animate(
+          $(".links").animate(
             {
-              scrollLeft: offsetLeft + offsetWidth - linksDOM.clientWidth + 'px'
+              scrollLeft:
+                offsetLeft + offsetWidth - linksDOM.clientWidth + "px",
             },
             300
-          )
+          );
         }
         // const maxLeft = links.scrollWidth - links.clientWidth
         // $('.links').animate({ scrollLeft: maxLeft + 'px' }, 300)
-      })
+      });
       // document.querySelector('.right').addEventListener('click', function () {
       //   // links.scrollLeft += links.clientWidth
       //   // links.scrollTo((links.scrollLeft += links.clientWidth), 0)
@@ -220,7 +221,7 @@ export default {
       //   console.log(links.clientWidth)
       //   console.log('scroll')
       // })
-    })
+    });
     return {
       subMenus,
       currentActivePath,
@@ -229,10 +230,10 @@ export default {
       // currentChildPath,
       currentLink,
       handleLinkClose,
-      handleLinkClick
-    }
-  }
-}
+      handleLinkClick,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -420,21 +421,45 @@ export default {
   }
 }
 
-/deep/.el-menu--collapse {
-  margin: 0 auto !important;
-  .el-submenu {
-    /deep/.el-submenu__title {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto !important;
-      span {
-        width: auto !important;
-        margin-top: 2px;
-        height: 14px !important;
-        line-height: 14px !important;
-        visibility: visible;
+.el-aside {
+  /deep/.el-menu--collapse {
+    margin: 0 auto !important;
+    .el-submenu {
+      /deep/.el-submenu__title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto !important;
+        span {
+          width: auto !important;
+          margin-top: 2px;
+          height: 14px !important;
+          line-height: 14px !important;
+          visibility: visible !important;
+        }
+      }
+    }
+  }
+}
+
+.el-aside {
+  .el-menu--collapse {
+    margin: 0 auto !important;
+    .el-submenu {
+      .el-submenu__title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto !important;
+        span {
+          width: auto !important;
+          margin-top: 2px;
+          height: 14px !important;
+          line-height: 14px !important;
+          visibility: visible !important;
+        }
       }
     }
   }

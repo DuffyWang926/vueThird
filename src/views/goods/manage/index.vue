@@ -275,4 +275,7 @@ export default {
 /deep/.el-date-editor {
   width: 100%;
 }
+.el-date-editor {
+  width: 100%;
+}
 </style>
