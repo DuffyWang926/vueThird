@@ -4,7 +4,8 @@ export default [
     name: 'memberManagement',
     meta: {
       index: 2,
-      
+      title: "会员绑卡信息",
+      parent: "会员管理"
     },
     component: () => import('@/views/memberManagement/index'),
     children: [

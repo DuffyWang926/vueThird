@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { reactive, getCurrentInstance, ref} from "vue";
+import { reactive, getCurrentInstance, ref, onMounted} from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 export default {
@@ -73,18 +73,6 @@ export default {
         { validator: validateVerifycode,  trigger: 'blur' }
       ]
     })
-    const loginClick = (formName) => {
-        formRef.value.validate((valid) => {
-          if (valid) {
-            alert('您已成功登录!');
-           /* $store.dispatch('user/login',{name:name.value,password:password.value}) */
-           $store.dispatch('user/login',{name:loginForm.username, password:loginForm.password})
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      }
     const refreshCode = () => {//
             identifyCode.value = "";
             makeCode( identifyCodes.value, 4 );
@@ -100,6 +88,39 @@ export default {
      }}
     refreshCode()//加一次调用可以使刷新页面时也出现生成一个随机验证码，不至于页面刚加载出来的时候不显示任何数字
 
+
+    const loginClick = (formName) => {
+        formRef.value.validate((valid) => {
+          if (valid) {
+            alert('您已成功登录!');
+           /* $store.dispatch('user/login',{name:name.value,password:password.value}) */
+           $store.dispatch('user/login', {username:loginForm.username, password:loginForm.password})
+/*           window.localStorage.setItem('nowUserName', username)
+           window.localStorage.setItem('nowUserPassword', password) */
+           $router.push('./index');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      }
+
+
+   /*  onMounted(() => {
+             /* const loginInfo = window.localStorage.getItem('loginForm')
+               if (loginInfo){
+                 loginForm = JSON.parse(loginInfo);
+               }else {
+                 this.axios.post(loginApi).then((res) => {
+                   const is_succ = res.data.is_succ;
+                   if(is_succ === 1){
+                     window.localStorage.setItem('loginInfo', JSON.stringify(loginForm))
+                   }
+                 })
+               }
+     })
+
+ */
     return {
       name,
       password,
