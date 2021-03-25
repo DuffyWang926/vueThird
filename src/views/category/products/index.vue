@@ -311,4 +311,15 @@ export default {
     font-weight: normal !important;
   }
 }
+.el-breadcrumb {
+  font-size: 16px;
+  .el-breadcrumb__inner {
+    background-color: #f8f9fc;
+    color: #5076dc !important;
+  }
+  .el-breadcrumb__inner a,
+  .el-breadcrumb__inner.is-link {
+    font-weight: normal !important;
+  }
+}
 </style>
