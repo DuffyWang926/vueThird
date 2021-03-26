@@ -29,6 +29,7 @@
           v-for="subMenu in subMenus"
           :key="subMenu.title"
           :index="subMenu.title"
+          popper-class="menupopper"
         >
           <template #title>
             <i class="el-icon-setting"></i>

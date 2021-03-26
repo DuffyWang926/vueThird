@@ -33,8 +33,7 @@
             ref="regionTreeRef"
             :props="regionTreeProps"
             :filter-node-method="regionFilterNode"
-            :load="loadRegionNode"
-            lazy
+            :data="regionData"
             show-checkbox
             node-key="id"
             @check-change="handleRegionCheckChange"
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, nextTick } from 'vue'
 import service from '@/utils/request'
 import region from '@/mock/region'
 import { useRouter } from 'vue-router'
@@ -74,16 +73,48 @@ export default {
       children: 'children',
       isLeaf: 'leaf'
     }
+    const regionData = ref([])
+    const generateNodes = () => {
+      const root = {
+        id: 0,
+        name: '全部',
+        leaf: false,
+        parent: null
+        // children: []
+      }
+      getChildren(root)
+      function getChildren(data) {
+        data.children = []
+        region.forEach((item) => {
+          if (item.pid == data.id) {
+            data.children.push(item)
+            item.parent = data
+          }
+        })
+        if (data.children.length > 0) {
+          data.leaf = false
+          data.children.forEach((item) => {
+            getChildren(item)
+          })
+        } else {
+          data.leaf = true
+        }
+      }
+      return [root]
+    }
+    regionData.value = generateNodes()
     const regionFilterText = ref('')
     let regionFilterTimer = null
-    watch(regionFilterText, (newValue) => {
+    watch(regionFilterText, async (newValue) => {
       const nodes = regionTreeRef.value.store.nodesMap
       if (newValue === '') {
+        regionTreeRef.value.filter(newValue)
+        // await nextTick()
         for (var i in nodes) {
           nodes[i].collapse()
         }
-        regionTreeRef.value.filter(newValue)
         regionTreeLoading.value = false
+        clearTimeout(regionFilterTimer)
         return
       }
       clearTimeout(regionFilterTimer)
@@ -92,80 +123,85 @@ export default {
           nodes[i].collapse()
         }
         regionTreeLoading.value = true
-        const matchedRegion = region.filter(
-          (item) => item.name.indexOf(newValue) !== -1
-        )
-        for (let i = 0; i < matchedRegion.length; i++) {
-          const item = matchedRegion[i]
-          // console.log(item)
-          if (
-            regionTreeRef.value.store.nodesMap[item] &&
-            regionTreeRef.value.store.nodesMap[item].expanded === true
-          ) {
-            continue
-          }
-          const nodesArr = []
-          let current = item
-          nodesArr.push(item)
-          while (
-            (current = region.find((item) => item.id === current.pid)) != null
-          ) {
-            nodesArr.push(current)
-          }
-          nodesArr.reverse()
-          console.log(nodesArr)
-          nodesArr.forEach((item) => {
-            const nodes = regionTreeRef.value.store.nodesMap
-            console.log(regionTreeRef.value.store.nodesMap)
-            for (var i in nodes) {
-              if (nodes[i].data.id === item.id) {
-                // loadRegionNode(nodes[i], regionTreeResolve)
-                // nodes[i].expanded = true
-                nodes[i].expand()
-                break
-              }
-            }
-          })
-        }
+        // const matchedRegion = region.filter(
+        //   (item) => item.name.indexOf(newValue) !== -1
+        // )
+        // for (let i = 0; i < matchedRegion.length; i++) {
+        //   const item = matchedRegion[i]
+        //   // console.log(item)
+        //   if (
+        //     regionTreeRef.value.store.nodesMap[item] &&
+        //     regionTreeRef.value.store.nodesMap[item].expanded === true
+        //   ) {
+        //     continue
+        //   }
+        //   const nodesArr = []
+        //   let current = item
+        //   nodesArr.push(item)
+        //   while (
+        //     (current = region.find((item) => item.id === current.pid)) != null
+        //   ) {
+        //     nodesArr.push(current)
+        //   }
+        //   nodesArr.reverse()
+        //   console.log(nodesArr)
+        //   nodesArr.forEach((item) => {
+        //     const nodes = regionTreeRef.value.store.nodesMap
+        //     console.log(regionTreeRef.value.store.nodesMap)
+        //     for (var i in nodes) {
+        //       if (nodes[i].data.id === item.id) {
+        //         // loadRegionNode(nodes[i], regionTreeResolve)
+        //         // nodes[i].expanded = true
+        //         nodes[i].expand()
+        //         break
+        //       }
+        //     }
+        //   })
+        // }
         setTimeout(() => {
           regionTreeRef.value.filter(newValue)
           regionTreeLoading.value = false
-        }, 1000)
+        }, 500)
       }, 1500)
     })
     const regionFilterNode = (value, data) => {
       if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
+      }
+      return false
     }
     const loadRegionNode = (node, resolve) => {
       // if (!regionTreeResolve) {
       //   regionTreeResolve = resolve
       // }
-      if (node.level === 0) {
-        return resolve(
-          region
-            .filter((item) => item.pid == 0)
-            .map((item) => {
-              return {
-                id: item.id,
-                name: item.name,
-                leaf: region.every((childItem) => childItem.pid !== item.id)
-              }
-            })
-        )
-      }
-      console.log(node)
-      const data = region
-        .filter((item) => item.pid === node.data.id)
-        .map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            leaf: !region.some((childItem) => childItem.pid === item.id)
-          }
-        })
-      resolve(data)
+      // if (node.level === 0) {
+      //   return resolve(
+      //     region
+      //       .filter((item) => item.pid == 0)
+      //       .map((item) => {
+      //         return {
+      //           id: item.id,
+      //           name: item.name,
+      //           leaf: region.every((childItem) => childItem.pid !== item.id)
+      //         }
+      //       })
+      //   )
+      // }
+      // console.log(node)
+      // const data = region
+      //   .filter((item) => item.pid === node.data.id)
+      //   .map((item) => {
+      //     return {
+      //       id: item.id,
+      //       name: item.name,
+      //       leaf: !region.some((childItem) => childItem.pid === item.id)
+      //     }
+      //   })
+      // resolve(data)
     }
     const handleRegionCheckChange = () => {
       regionIdSelectedList.value = regionTreeRef.value.getCheckedKeys()
@@ -221,7 +257,8 @@ export default {
       // goodsList,
       goodsIdSelectedList,
       goodsIdLeafList,
-      // goodsNameSelectedList,
+      // goodsNameSelectedList,\
+      regionData,
       regionTreeRef,
       regionTreeProps,
       regionTreeLoading,

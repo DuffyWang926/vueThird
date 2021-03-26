@@ -15,7 +15,6 @@
     ></el-input>
     <el-tree
       :data="data"
-      v-if="!goodsTreeLoading"
       ref="goodsTreeRef"
       :props="goodsTreeProps"
       :filter-node-method="goodsFilterNode"
@@ -107,8 +106,13 @@ export default {
     const goodsFilterText = ref('')
     const goodsFilterNode = (value, data) => {
       if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
+      }
+      return false
     }
     const generateNodes = () => {
       const root = {
@@ -218,6 +222,7 @@ export default {
         for (var i in nodes) {
           nodes[i].collapse()
         }
+        clearTimeout(goodsFilterTimer)
         return
       }
       clearTimeout(goodsFilterTimer)
@@ -226,48 +231,51 @@ export default {
           nodes[i].collapse()
         }
         goodsTreeLoading.value = true
-        const matchedGoods = goodsList.value.filter(
-          (item) => item.name.indexOf(newValue) !== -1
-        )
-        for (let i = 0; i < matchedGoods.length; i++) {
-          const item = matchedGoods[i]
-          // console.log(item)
-          if (
-            goodsTreeRef.value.store.nodesMap[item] &&
-            goodsTreeRef.value.store.nodesMap[item].expanded === true
-          ) {
-            continue
-          }
-          const nodesArr = []
-          let current = item
-          nodesArr.push(item)
-          while (
-            (current = goodsList.value.find(
-              (item) => item.id === current.pid
-            )) != null
-          ) {
-            nodesArr.push(current)
-          }
-          nodesArr.reverse()
-          // console.log(nodesArr)
-          nodesArr.forEach((item) => {
-            const nodes = goodsTreeRef.value.store.nodesMap
-            // console.log(goodsTreeRef.value.store.nodesMap)
-            for (var i in nodes) {
-              if (nodes[i].data.id === item.id) {
-                // loadRegionNode(nodes[i], regionTreeResolve)
-                // nodes[i].expanded = true
-                nodes[i].expand()
-                break
-              }
-            }
-          })
-        }
+        // const matchedGoods = goodsList.value.filter(
+        //   (item) => item.name.indexOf(newValue) !== -1
+        // )
+        // for (let i = 0; i < matchedGoods.length; i++) {
+        //   const item = matchedGoods[i]
+        //   // console.log(item)
+        //   if (
+        //     goodsTreeRef.value.store.nodesMap[item] &&
+        //     goodsTreeRef.value.store.nodesMap[item].expanded === true
+        //   ) {
+        //     continue
+        //   }
+        //   const nodesArr = []
+        //   let current = item
+        //   nodesArr.push(item)
+        //   while (
+        //     (current = goodsList.value.find(
+        //       (item) => item.id === current.pid
+        //     )) != null
+        //   ) {
+        //     nodesArr.push(current)
+        //   }
+        //   nodesArr.reverse()
+        //   // console.log(nodesArr)
+        //   nodesArr.forEach((item) => {
+        //     const nodes = goodsTreeRef.value.store.nodesMap
+        //     // console.log(goodsTreeRef.value.store.nodesMap)
+        //     for (var i in nodes) {
+        //       if (nodes[i].data.id === item.id) {
+        //         // loadRegionNode(nodes[i], regionTreeResolve)
+        //         // nodes[i].expanded = true
+        //         nodes[i].expand()
+        //         break
+        //       }
+        //     }
+        //   })
+        // }
         setTimeout(() => {
           goodsTreeRef.value.filter(newValue)
           goodsTreeLoading.value = false
-        }, 1000)
+        }, 500)
       }, 1500)
+    })
+    watch(() => props.modelValue, () =>{
+      rightsTreeRef.value.setCheckedKeys(props.modelValue)
     })
     return {
       data,
