@@ -6,6 +6,7 @@ function resolve(dir) {
 
 module.exports = {
   lintOnSave: false,
+  runtimeCompiler: true,
   publicPath: './',
   chainWebpack: config => {
     const svgRule = config.module.rule("svg");

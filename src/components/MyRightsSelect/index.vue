@@ -14,7 +14,6 @@
       v-model="rightsFilterText"
     ></el-input>
     <el-tree
-      v-if="!rightsTreeLoading"
       :data="data"
       ref="rightsTreeRef"
       :props="rightsTreeProps"
@@ -31,6 +30,7 @@
 import service from '@/utils/request'
 import { ref, computed, watch, nextTick } from 'vue'
 import { ElMessageBox } from 'element-plus'
+import { createLogger } from 'vuex'
 export default {
   name: 'MyRightsSelect',
   props: {
@@ -134,7 +134,7 @@ export default {
     }
     getAllRightsList()
     // console.log(rightsList.value)
-    const rightsTreeRef = ref([])
+    const rightsTreeRef = ref(null)
     const rightsTreeProps = {
       label: 'name',
       children: 'children',
@@ -143,8 +143,13 @@ export default {
     const rightsFilterText = ref('')
     const rightsFilterNode = (value, data) => {
       if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
+      }
+      return false
     }
     const generateNodes = () => {
       const root = {
@@ -217,56 +222,60 @@ export default {
         for (var i in nodes) {
           nodes[i].collapse()
         }
+        clearTimeout(rightsFilterTimer)
         return
       }
       clearTimeout(rightsFilterTimer)
       rightsFilterTimer = setTimeout(() => {
-        for (var i in nodes) {
-          nodes[i].collapse()
-        }
+        // for (var i in nodes) {
+        //   nodes[i].collapse()
+        // }
         rightsTreeLoading.value = true
         const matchedRights = rightsList.value.filter(
           (item) => item.name.indexOf(newValue) !== -1
         )
-        for (let i = 0; i < matchedRights.length; i++) {
-          const item = matchedRights[i]
-          // console.log(item)
-          if (
-            rightsTreeRef.value.store.nodesMap[item] &&
-            rightsTreeRef.value.store.nodesMap[item].expanded === true
-          ) {
-            continue
-          }
-          const nodesArr = []
-          let current = item
-          nodesArr.push(item)
-          while (
-            (current = rightsList.value.find(
-              (item) => item.id === current.pid
-            )) != null
-          ) {
-            nodesArr.push(current)
-          }
-          nodesArr.reverse()
-          // console.log(nodesArr)
-          nodesArr.forEach((item) => {
-            const nodes = rightsTreeRef.value.store.nodesMap
-            // console.log(rightsTreeRef.value.store.nodesMap)
-            for (var i in nodes) {
-              if (nodes[i].data.id == item.id) {
-                // loadRegionNode(nodes[i], regionTreeResolve)
-                // nodes[i].expanded = true
-                nodes[i].expand()
-                break
-              }
-            }
-          })
-        }
+        // for (let i = 0; i < matchedRights.length; i++) {
+        //   const item = matchedRights[i]
+        //   // console.log(item)
+        //   if (
+        //     rightsTreeRef.value.store.nodesMap[item] &&
+        //     rightsTreeRef.value.store.nodesMap[item].expanded === true
+        //   ) {
+        //     continue
+        //   }
+        //   const nodesArr = []
+        //   let current = item
+        //   nodesArr.push(item)
+        //   while (
+        //     (current = rightsList.value.find(
+        //       (item) => item.id === current.pid
+        //     )) != null
+        //   ) {
+        //     nodesArr.push(current)
+        //   }
+        //   nodesArr.reverse()
+        //   // console.log(nodesArr)
+        //   nodesArr.forEach((item) => {
+        //     const nodes = rightsTreeRef.value.store.nodesMap
+        //     // console.log(rightsTreeRef.value.store.nodesMap)
+        //     for (var i in nodes) {
+        //       if (nodes[i].data.id == item.id) {
+        //         // loadRegionNode(nodes[i], regionTreeResolve)
+        //         // nodes[i].expanded = true
+        //         nodes[i].expand()
+        //         break
+        //       }
+        //     }
+        //   })
+        // }
         setTimeout(() => {
           rightsTreeRef.value.filter(newValue)
           rightsTreeLoading.value = false
-        }, 1000)
+        }, 500)
       }, 1500)
+    })
+    watch(() => props.modelValue, () =>{
+      rightsTreeRef.value.setCheckedKeys(props.modelValue)
     })
     return {
       data,
