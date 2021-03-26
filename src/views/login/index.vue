@@ -110,11 +110,11 @@
 
 
       const loginClick = (formName) => {
-        formRef.value.validate((valid) => {
+        formRef.value.validate(async (valid) => {
           if (valid) {
             alert('您已成功登录!');
             /* $store.dispatch('user/login',{name:name.value,password:password.value}) */
-            $store.dispatch('user/login', {
+            await $store.dispatch('user/login', {
               username: loginForm.username,
               password: loginForm.password
             })

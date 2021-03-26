@@ -79,7 +79,7 @@
 import { computed, ref, reactive, onMounted, watch, nextTick } from "vue";
 import { useStore, mapGetters, mapState } from "vuex";
 import { indexRouter } from "@/router/index";
-import rights from "@/mock/rights.js";
+// import rights from "@/mock/rights.js";
 import { useRoute, useRouter } from "vue-router";
 export default {
   name: "index",
@@ -89,6 +89,9 @@ export default {
     // const subMenus = mapGetters(['menu/getSubMenus'])[0]
     // console.log(subMenus)
     // console.log(subMenus())
+    const store = useStore();
+    const rights = store.getters["user/getRights"]
+    console.log('rights:', rights)
     const getSubMenus = () => {
       let subMenus = [
         "系统配置",
@@ -134,7 +137,6 @@ export default {
     const subMenus = computed(getSubMenus);
     console.log(getSubMenus());
     // const currentActivePath = ref('')
-    const store = useStore();
     const router = useRouter();
     console.log(store.getters["menu/currentActivePath"]);
     const currentActivePath = computed(() => {
