@@ -275,7 +275,7 @@ export default {
        let path = '/detail/' + id//动态路由跳转的路径声明方式
        $router.push({path})
    }
-   
+
    const store = useStore()
    console.log(store.getters['user/getRightById'](2));
 
