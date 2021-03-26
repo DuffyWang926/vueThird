@@ -61,8 +61,10 @@ const router = createRouter({
   routes
 })
 
+
 router.afterEach((to, from) => {
-  console.log(to);
+ /* console.log(to);
+  debugger */ //调试路由跳转间的bug出现在哪一步
   to.matched.forEach(item => {
     if (item.meta.index === 2) {
       parent = item.path

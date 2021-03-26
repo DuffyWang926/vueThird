@@ -1,16 +1,17 @@
 export default [
     {
-    path: '/memberManagement',
-    name: 'memberManagement',
+    path: '/memberList',
+    name: 'memberList',
     meta: {
       index: 2,
-      title: "会员绑卡信息",
-      parent: "会员管理"
+      title: '会员列表',
+      sort:1,
+      parent: '会员管理'
     },
-    component: () => import('@/views/memberManagement/index'),
-    children: [
+    component: () => import('@/views/memberList/index')
+   /* children: [
       {
-        path: '/detail/:id',//动态路由
+        path: '/detail/:id',
         name: 'detail',
         component: () => import('@/views/memberManagement/detail/index'),
       },
@@ -19,6 +20,6 @@ export default [
         name: 'memberWithCard',
         component: () => import('@/views/memberManagement/memberWithCard/index'),
       }
-    ]
+    ] */
   }
  ]
