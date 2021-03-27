@@ -31,26 +31,16 @@
 </template>
 
 <script>
-  import {
-    reactive,
-    getCurrentInstance,
-    ref,
-    onMounted
-  } from "vue";
-  import {
-    useRouter
-  } from "vue-router";
-  import {
-    useStore
-  } from "vuex";
+  import {reactive,getCurrentInstance,ref,onMounted} from "vue";
+  import {useRouter} from "vue-router";
+  import {useStore} from "vuex";
+  import { ElMessage } from 'element-plus';
   export default {
     name: "login",
     setup() {
       const $router = useRouter();
       const $store = useStore();
-      const {
-        ctx
-      } = getCurrentInstance();
+      const {ctx} = getCurrentInstance();
       const loginForm = reactive({
         username: '',
         password: '',
@@ -92,7 +82,7 @@
           trigger: 'blur'
         }]
       })
-      const refreshCode = () => { //
+      const refreshCode = () => { 
         identifyCode.value = "";
         makeCode(identifyCodes.value, 4);
       }
@@ -112,14 +102,15 @@
       const loginClick = (formName) => {
         formRef.value.validate((valid) => {
           if (valid) {
-            alert('您已成功登录!');
-            /* $store.dispatch('user/login',{name:name.value,password:password.value}) */
+            ElMessage.success({
+                        message: '您已成功登录',
+                        type: 'success',
+                        center: true
+                      });
             $store.dispatch('user/login', {
               username: loginForm.username,
               password: loginForm.password
             })
-            /*           window.localStorage.setItem('nowUserName', username)
-                       window.localStorage.setItem('nowUserPassword', password) */
             $router.push('./index');
           } else {
             console.log('error submit!!');
