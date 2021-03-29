@@ -362,4 +362,11 @@ export default {
     color: #5076dc !important;
   }
 }
+.el-breadcrumb {
+  font-size: 16px;
+  .el-breadcrumb__inner {
+    background-color: #f8f9fc;
+    color: #5076dc !important;
+  }
+}
 </style>

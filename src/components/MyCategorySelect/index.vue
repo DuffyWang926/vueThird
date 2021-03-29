@@ -16,11 +16,10 @@
     >
       <el-tree
         v-if="categoryList.length > 0"
+        :data="data"
         ref="categoryTreeRef"
         :props="categoryTreeProps"
         :filter-node-method="categoryFilterNode"
-        :load="loadCategoryNode"
-        lazy
         show-checkbox
         node-key="id"
         @check-change="handleCheckChange"
@@ -73,11 +72,13 @@ export default {
   setup(props, { emit }) {
     const loading = ref(true)
     const categoryList = ref([])
+    const data = ref([])
     let date = +new Date()
     const getAllCategoryList = async () => {
       const { data: res } = await service.get('getAllCategoryTree')
       console.log(res)
       categoryList.value = res.categoryList
+      data.value = generateNodes()
       console.log('请求所有分类项', +new Date() - date)
       date = +new Date()
       await nextTick()
@@ -108,41 +109,69 @@ export default {
       const flag = data.name.indexOf(value) !== -1
       return flag
     }
-    const loadCategoryNode = (node, resolve) => {
-      // console.log(node)
-      if (node.level === 0) {
-        return resolve(
-          categoryList.value
-            .filter((item) => item.pid == 0)
-            .map((item) => {
-              return {
-                id: item.id,
-                name: item.name,
-                leaf: categoryList.value.every(
-                  (childItem) => childItem.pid != item.id
-                ),
-                disabled: props.isThreeCategory
-              }
-            })
-        )
+    const generateNodes = () => {
+      const root = {
+        id: 0,
+        name: '全部商品',
+        leaf: false,
+        parent: null
+        // children: []
       }
-      const data = categoryList.value
-        .filter((item) => item.pid === node.data.id)
-        .map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            leaf: !categoryList.value.some(
-              (childItem) => childItem.pid === item.id
-            ),
-            disabled: props.isThreeCategory
-              ? categoryList.value.some(
-                  (childItem) => childItem.pid == item.id
-                ) || node.level !== 2
-              : false
+      getChildren(root)
+      function getChildren(data) {
+        data.children = []
+        categoryList.value.forEach((item) => {
+          if (item.pid == data.id) {
+            data.children.push(item)
+            item.parent = data
           }
         })
-      resolve(data)
+        if (data.children.length > 0) {
+          data.leaf = false
+          data.children.forEach((item) => {
+            getChildren(item)
+          })
+        } else {
+          data.leaf = true
+        }
+      }
+      return root.children
+    }
+    const loadCategoryNode = (node, resolve) => {
+      // console.log(node)
+      // if (node.level === 0) {
+      //   return resolve(
+      //     categoryList.value
+      //       .filter((item) => item.pid == 0)
+      //       .map((item) => {
+      //         return {
+      //           id: item.id,
+      //           name: item.name,
+      //           leaf: categoryList.value.every(
+      //             (childItem) => childItem.pid != item.id
+      //           ),
+      //           disabled: props.isThreeCategory
+      //         }
+      //       })
+      //   )
+      // }
+      // const data = categoryList.value
+      //   .filter((item) => item.pid === node.data.id)
+      //   .map((item) => {
+      //     return {
+      //       id: item.id,
+      //       name: item.name,
+      //       leaf: !categoryList.value.some(
+      //         (childItem) => childItem.pid === item.id
+      //       ),
+      //       disabled: props.isThreeCategory
+      //         ? categoryList.value.some(
+      //             (childItem) => childItem.pid == item.id
+      //           ) || node.level !== 2
+      //         : false
+      //     }
+      //   })
+      // resolve(data)
     }
     const categoryNameSelectedList = computed(() => {
       const filtered = []
@@ -190,6 +219,7 @@ export default {
       // emit('update:modelValue', getCategoryIdSelectedList())
     }
     return {
+      data,
       loading,
       categoryList,
       categoryTreeRef,

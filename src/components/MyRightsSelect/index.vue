@@ -14,18 +14,13 @@
       v-model="rightsFilterText"
     ></el-input>
     <el-tree
-      v-if="rightsList.length > 0"
-      v-show="!rightsTreeLoading"
+      :data="data"
       ref="rightsTreeRef"
       :props="rightsTreeProps"
       :filter-node-method="rightsFilterNode"
-      :load="loadRightsNode"
-      lazy
       show-checkbox
       node-key="id"
       @check-change="handleRightsCheckChange"
-      @check="handleCheck"
-      default-expand-all
     >
     </el-tree>
   </div>
@@ -35,6 +30,7 @@
 import service from '@/utils/request'
 import { ref, computed, watch, nextTick } from 'vue'
 import { ElMessageBox } from 'element-plus'
+import { createLogger } from 'vuex'
 export default {
   name: 'MyRightsSelect',
   props: {
@@ -61,6 +57,7 @@ export default {
   setup(props, { emit }) {
     const rightsList = ref([])
     const rightsTreeLoading = ref(false)
+    const data = ref([])
     const getAllRightsList = async () => {
       rightsTreeLoading.value = true
       let date = +new Date()
@@ -68,9 +65,8 @@ export default {
       console.log(res)
       console.log('请求所有菜单项', +new Date() - date)
       date = +new Date()
-
       rightsList.value = res.menus
-      await nextTick()
+      data.value = generateNodes()
       console.log('渲染列表', +new Date() - date)
       date = +new Date()
       // // 测试
@@ -95,24 +91,29 @@ export default {
           // if (item.checked && item.pid) {
           //   selectedArr.push(item.id)
           // }
-          if (rightsTreeRef.value.getNode(item.id).isLeaf && item.checked) {
+          if (
+            rightsList.value.find((rightItem) => rightItem.id == item.id)
+              .leaf &&
+            item.checked
+          ) {
             selectedArr.push(item.id)
           }
         })
         console.log(selectedArr)
         emit('update:modelValue', selectedArr)
       }
+      rightsTreeLoading.value = false
       await nextTick()
       console.log('选中对应菜单项', +new Date() - date)
       date = +new Date()
-      const nodes = rightsTreeRef.value.store.nodesMap
-      for (var i in nodes) {
-        nodes[i].collapse()
-      }
-      console.log('收起菜单项', +new Date() - date)
-      date = +new Date()
+      // const nodes = rightsTreeRef.value.store.nodesMap
+      // for (var i in nodes) {
+      //   nodes[i].collapse()
+      // }
+      // console.log('收起菜单项', +new Date() - date)
+      // date = +new Date()
       rightsTreeRef.value.setCheckedKeys(props.modelValue, false)
-      rightsTreeLoading.value = false
+      await nextTick()
       emit('update:modelValue', rightsTreeRef.value.getCheckedKeys())
       emit('update:leafValue', rightsTreeRef.value.getCheckedKeys(true))
       emit(
@@ -122,6 +123,7 @@ export default {
           ...rightsTreeRef.value.getHalfCheckedKeys()
         ].filter((item) => item != 0)
       )
+      await nextTick()
       const rootNode = rightsTreeRef.value.getNode(0)
       // console.log(rootNode)
       if (rootNode.checked) {
@@ -132,7 +134,7 @@ export default {
     }
     getAllRightsList()
     // console.log(rightsList.value)
-    const rightsTreeRef = ref([])
+    const rightsTreeRef = ref(null)
     const rightsTreeProps = {
       label: 'name',
       children: 'children',
@@ -141,33 +143,41 @@ export default {
     const rightsFilterText = ref('')
     const rightsFilterNode = (value, data) => {
       if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
-    }
-    const loadRightsNode = (node, resolve) => {
-      if (node.level === 0) {
-        return resolve([
-          {
-            id: 0,
-            name: '全部',
-            leaf: false
-          }
-        ])
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
       }
-      // console.log(node)
-      const data = rightsList.value
-        .filter((item) => item.pid == node.data.id)
-        .map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            // leaf: !rightsList.value.some(
-            //   (childItem) => childItem.pid == item.id
-            // )
-            leaf: false
+      return false
+    }
+    const generateNodes = () => {
+      const root = {
+        id: 0,
+        name: '全部',
+        leaf: false,
+        parent: null
+        // children: []
+      }
+      getChildren(root)
+      function getChildren(data) {
+        data.children = []
+        rightsList.value.forEach((item) => {
+          if (item.pid == data.id) {
+            data.children.push(item)
+            item.parent = data
           }
         })
-      resolve(data)
+        if (data.children.length > 0) {
+          data.leaf = false
+          data.children.forEach((item) => {
+            getChildren(item)
+          })
+        } else {
+          data.leaf = true
+        }
+      }
+      return [root]
     }
     const rightsNameSelectedList = computed(() => {
       const filtered = []
@@ -203,12 +213,6 @@ export default {
         }
       }, 100)
     }
-    const handleCheck = (data, {}) => {
-      // console.log(data)
-      if (data.id === '0') {
-        if (!props.isRestrictRegion) return
-      }
-    }
     let rightsFilterTimer = null
     watch(rightsFilterText, (newValue) => {
       const nodes = rightsTreeRef.value.store.nodesMap
@@ -218,58 +222,63 @@ export default {
         for (var i in nodes) {
           nodes[i].collapse()
         }
+        clearTimeout(rightsFilterTimer)
         return
       }
       clearTimeout(rightsFilterTimer)
       rightsFilterTimer = setTimeout(() => {
-        for (var i in nodes) {
-          nodes[i].collapse()
-        }
+        // for (var i in nodes) {
+        //   nodes[i].collapse()
+        // }
         rightsTreeLoading.value = true
         const matchedRights = rightsList.value.filter(
           (item) => item.name.indexOf(newValue) !== -1
         )
-        for (let i = 0; i < matchedRights.length; i++) {
-          const item = matchedRights[i]
-          // console.log(item)
-          if (
-            rightsTreeRef.value.store.nodesMap[item] &&
-            rightsTreeRef.value.store.nodesMap[item].expanded === true
-          ) {
-            continue
-          }
-          const nodesArr = []
-          let current = item
-          nodesArr.push(item)
-          while (
-            (current = rightsList.value.find(
-              (item) => item.id === current.pid
-            )) != null
-          ) {
-            nodesArr.push(current)
-          }
-          nodesArr.reverse()
-          // console.log(nodesArr)
-          nodesArr.forEach((item) => {
-            const nodes = rightsTreeRef.value.store.nodesMap
-            // console.log(rightsTreeRef.value.store.nodesMap)
-            for (var i in nodes) {
-              if (nodes[i].data.id == item.id) {
-                // loadRegionNode(nodes[i], regionTreeResolve)
-                // nodes[i].expanded = true
-                nodes[i].expand()
-                break
-              }
-            }
-          })
-        }
+        // for (let i = 0; i < matchedRights.length; i++) {
+        //   const item = matchedRights[i]
+        //   // console.log(item)
+        //   if (
+        //     rightsTreeRef.value.store.nodesMap[item] &&
+        //     rightsTreeRef.value.store.nodesMap[item].expanded === true
+        //   ) {
+        //     continue
+        //   }
+        //   const nodesArr = []
+        //   let current = item
+        //   nodesArr.push(item)
+        //   while (
+        //     (current = rightsList.value.find(
+        //       (item) => item.id === current.pid
+        //     )) != null
+        //   ) {
+        //     nodesArr.push(current)
+        //   }
+        //   nodesArr.reverse()
+        //   // console.log(nodesArr)
+        //   nodesArr.forEach((item) => {
+        //     const nodes = rightsTreeRef.value.store.nodesMap
+        //     // console.log(rightsTreeRef.value.store.nodesMap)
+        //     for (var i in nodes) {
+        //       if (nodes[i].data.id == item.id) {
+        //         // loadRegionNode(nodes[i], regionTreeResolve)
+        //         // nodes[i].expanded = true
+        //         nodes[i].expand()
+        //         break
+        //       }
+        //     }
+        //   })
+        // }
         setTimeout(() => {
           rightsTreeRef.value.filter(newValue)
           rightsTreeLoading.value = false
-        }, 1000)
+        }, 500)
       }, 1500)
     })
+    watch(() => props.modelValue, () =>{
+      rightsTreeRef.value.setCheckedKeys(props.modelValue)
+    })
     return {
+      data,
       rightsList,
       rightsTreeLoading,
       getAllRightsList,
@@ -277,10 +286,8 @@ export default {
       rightsTreeProps,
       rightsFilterText,
       rightsFilterNode,
-      loadRightsNode,
       rightsNameSelectedList,
-      handleRightsCheckChange,
-      handleCheck
+      handleRightsCheckChange
     }
   }
 }

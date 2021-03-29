@@ -32,7 +32,7 @@ const getters = { //是store的计算属性
    
    getRightById: (state) => (id) => {
      const right = state.rights.find(item => item.id == id)
-     if (right !== null) {
+     if (right != null) {
        return right.checked
      } else {
        return null

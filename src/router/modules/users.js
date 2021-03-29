@@ -18,7 +18,7 @@ export default [
         component: () => import('@/views/users/manage/index'),
         meta: {
           index: 3,
-          title: '权限管理'
+          title: '账户管理'
         }
       }
     ]

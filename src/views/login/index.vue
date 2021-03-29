@@ -46,8 +46,6 @@
         password: '',
         seccode: '',
       });
-      const name = ref('')
-      const password = ref('')
       const formRef = ref(null) //当用ref在html页面绑定元素时，记得要在js部分设置初始值，为空
       const identifyCode = ref('')
       const identifyCodes = ref("0123456789abcdwerwshdjeJKDHRJHKOOPLMKQ") //随便打的
@@ -64,7 +62,22 @@
         } else {
           callback()
         }
+      }        
+      const refreshCode = () => {
+        identifyCode.value = "";
+        makeCode(identifyCodes.value, 4);
       }
+      const randomNum = (min, max) => {
+        max = max + 1
+        return Math.floor(Math.random() * (max - min) + min)
+      }
+      // 随机生成验证码字符串
+      const makeCode = (data, len) => {
+        for (let i = 0; i < len; i++) {
+          identifyCode.value += data[randomNum(0, data.length - 1)]
+        }
+      }
+      refreshCode() //加一次调用可以使刷新页面时也出现生成一个随机验证码，不至于页面刚加载出来的时候不显示任何数字
       const loginRules = reactive({
         username: [{
           required: true,
@@ -82,32 +95,15 @@
           trigger: 'blur'
         }]
       })
-      const refreshCode = () => { 
-        identifyCode.value = "";
-        makeCode(identifyCodes.value, 4);
-      }
-      const randomNum = (min, max) => {
-        max = max + 1
-        return Math.floor(Math.random() * (max - min) + min)
-      }
-      // 随机生成验证码字符串
-      const makeCode = (data, len) => {
-        for (let i = 0; i < len; i++) {
-          identifyCode.value += data[randomNum(0, data.length - 1)]
-        }
-      }
-      refreshCode() //加一次调用可以使刷新页面时也出现生成一个随机验证码，不至于页面刚加载出来的时候不显示任何数字
-
-
       const loginClick = (formName) => {
-        formRef.value.validate((valid) => {
+        formRef.value.validate(async (valid) => {
           if (valid) {
             ElMessage.success({
                         message: '您已成功登录',
                         type: 'success',
                         center: true
                       });
-            $store.dispatch('user/login', {
+            await $store.dispatch('user/login', {
               username: loginForm.username,
               password: loginForm.password
             })
@@ -118,10 +114,12 @@
           }
         });
       }
+      
+
+
+     
 
       return {
-        name,
-        password,
         $router,
         loginForm,
         loginClick,

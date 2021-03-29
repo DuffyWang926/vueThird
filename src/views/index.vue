@@ -20,7 +20,7 @@
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
-        background-color="#5076dc"
+        background-color="#222834"
         text-color="#fff"
         active-text-color="#5076dc"
         router
@@ -29,6 +29,7 @@
           v-for="subMenu in subMenus"
           :key="subMenu.title"
           :index="subMenu.title"
+          popper-class="menupopper"
         >
           <template #title>
             <i class="el-icon-setting"></i>
@@ -49,16 +50,20 @@
     </el-aside>
     <el-container>
       <el-header>
-        <div class="links">
-          <el-tag
-            v-for="item in links"
-            :key="item.url"
-            :effect="item.url === currentLink ? 'dark' : 'light'"
-            @close="handleLinkClose(item)"
-            :closable="item.url !== currentLink"
-            @click="handleLinkClick(item)"
-            >{{ item.title }}</el-tag
-          >
+        <div class="links-wrapper">
+          <div class="left"><i class="el-icon-arrow-left"></i></div>
+          <div class="links">
+            <el-tag
+              v-for="item in links"
+              :key="item.url"
+              :effect="item.url === currentLink ? 'dark' : 'light'"
+              @close="handleLinkClose(item)"
+              :closable="item.url !== currentLink"
+              @click="handleLinkClick(item)"
+              >{{ item.title }}</el-tag
+            >
+          </div>
+          <div class="right"><i class="el-icon-arrow-right"></i></div>
         </div>
         <div class="user">
           <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
@@ -71,92 +76,155 @@
 </template>
 
 <script>
-import { computed, ref, reactive } from 'vue'
-import { useStore, mapGetters, mapState } from 'vuex'
-import { indexRouter } from '@/router/index'
-import rights from '@/mock/rights.js'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, ref, reactive, onMounted, watch, nextTick } from "vue";
+import { useStore, mapGetters, mapState } from "vuex";
+import { indexRouter } from "@/router/index";
+// import rights from "@/mock/rights.js";
+import { useRoute, useRouter } from "vue-router";
 export default {
-  name: 'index',
+  name: "index",
   setup() {
     // const store = useStore()
     // const subMenus = store.getters.getSubMenus
     // const subMenus = mapGetters(['menu/getSubMenus'])[0]
     // console.log(subMenus)
     // console.log(subMenus())
+    const store = useStore();
+    const rights = store.getters["user/getRights"]
+    console.log('rights:', rights)
     const getSubMenus = () => {
       let subMenus = [
-        '系统配置',
-        '安全管理',
-        '会员管理',
-        '商城管理',
-        '订单管理',
-        '营销管理',
-        '报表',
-        '客服',
-        '仓库与运费',
-        '首页配置',
-        '返利管理',
-        '日志管理'
+        "系统配置",
+        "安全管理",
+        "会员管理",
+        "商城管理",
+        "订单管理",
+        "营销管理",
+        "报表",
+        "客服",
+        "仓库与运费",
+        "首页配置",
+        "返利管理",
+        "日志管理",
       ].map((item) => {
         return {
           title: item,
-          children: []
-        }
-      })
+          children: [],
+        };
+      });
       const activeRights = rights.filter(
         (item) => item.checked && item.pid !== 0
-      )
+      );
       indexRouter.children.forEach((item) => {
         if (activeRights.find((right) => item.meta.id === right.id)) {
           const subMenu = subMenus.find(
             (subMenu) => subMenu.title === item.meta.parent
-          )
+          );
           const menuItem = {
             index: item.path,
             title: item.meta.title,
-            sort: item.meta.sort
-          }
-          subMenu.children.push(menuItem)
+            sort: item.meta.sort,
+          };
+          subMenu.children.push(menuItem);
         }
-      })
-      subMenus = subMenus.filter((item) => item.children.length > 0)
+      });
+      subMenus = subMenus.filter((item) => item.children.length > 0);
       subMenus.forEach((subMenu) =>
         subMenu.children.sort((a, b) => a.sort - b.sort)
-      )
-      return subMenus
-    }
-    const subMenus = computed(getSubMenus)
-    console.log(getSubMenus())
+      );
+      return subMenus;
+    };
+    const subMenus = computed(getSubMenus);
+    console.log(getSubMenus());
     // const currentActivePath = ref('')
-    const store = useStore()
-    const router = useRouter()
-    console.log(store.getters['menu/currentActivePath'])
+    const router = useRouter();
+    console.log(store.getters["menu/currentActivePath"]);
     const currentActivePath = computed(() => {
-      const activePath = store.getters['menu/currentActivePath']
-      console.log(activePath)
-      return activePath
-    })
+      const activePath = store.getters["menu/currentActivePath"];
+      console.log(activePath);
+      return activePath;
+    });
     const getLinks = () => {
-      const links = store.getters['links/links']
-      console.log(links)
-      return links
-    }
-    const links = computed(getLinks)
+      const links = store.getters["links/links"];
+      console.log(links);
+      return links;
+    };
+    const links = computed(getLinks);
     // const route = useRoute()
     // const currentChildPath = computed(() => {
     //   return route.matched.find((item) => item.meta.index === 3).path
     // })
     const currentLink = computed(() => {
-      return store.getters['links/currentLink']
-    })
+      return store.getters["links/currentLink"];
+    });
     const handleLinkClose = (item) => {
-      store.commit('links/deleteLink', item)
-    }
+      store.commit("links/deleteLink", item);
+    };
     const handleLinkClick = (item) => {
-      router.push(item.url)
-    }
-    const isCollapse = ref(false)
+      router.push(item.url);
+    };
+    const isCollapse = ref(false);
+    onMounted(() => {
+      const linksDOM = document.querySelector(".links");
+      console.log(linksDOM);
+      const $ = window.$;
+      console.log($);
+      $(".right").click(function () {
+        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth;
+        const left = Math.min(
+          maxLeft,
+          linksDOM.scrollLeft + linksDOM.clientWidth
+        );
+        $(".links").animate({ scrollLeft: left + "px" }, 300);
+      });
+      $(".left").click(function () {
+        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth);
+        $(".links").animate({ scrollLeft: left + "px" }, 300);
+      });
+      watch(currentLink, async () => {
+        await nextTick();
+        const index = store.getters["links/links"].findIndex(
+          (item) => item.url === store.getters["links/currentLink"]
+        );
+        console.log(index);
+        const offsetLeft = $(".links-wrapper .links .el-tag")[index].offsetLeft;
+        const offsetWidth = $(".links-wrapper .links .el-tag")[index]
+          .offsetWidth;
+        console.log(offsetLeft);
+        if (offsetLeft < linksDOM.scrollLeft) {
+          $(".links").animate({ scrollLeft: offsetLeft + "px" }, 300);
+        } else if (
+          offsetLeft + offsetWidth - linksDOM.scrollLeft >
+          linksDOM.clientWidth
+        ) {
+          $(".links").animate(
+            {
+              scrollLeft:
+                offsetLeft + offsetWidth - linksDOM.clientWidth + "px",
+            },
+            300
+          );
+        }
+        // const maxLeft = links.scrollWidth - links.clientWidth
+        // $('.links').animate({ scrollLeft: maxLeft + 'px' }, 300)
+      });
+      // document.querySelector('.right').addEventListener('click', function () {
+      //   // links.scrollLeft += links.clientWidth
+      //   // links.scrollTo((links.scrollLeft += links.clientWidth), 0)
+
+      //   links.scrollTo(links.scrollLeft + links.clientWidth, 0)
+      //   console.log(links.scrollLeft)
+      //   console.log(links.clientWidth)
+      //   console.log('scroll')
+      // })
+
+      // document.querySelector('.left').addEventListener('click', function () {
+      //   links.scrollTo(links.scrollLeft - links.clientWidth, 0)
+      //   console.log(links.scrollLeft)
+      //   console.log(links.clientWidth)
+      //   console.log('scroll')
+      // })
+    });
     return {
       subMenus,
       currentActivePath,
@@ -165,10 +233,10 @@ export default {
       // currentChildPath,
       currentLink,
       handleLinkClose,
-      handleLinkClick
-    }
-  }
-}
+      handleLinkClick,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -180,7 +248,8 @@ export default {
 }
 
 .el-aside {
-  background-color: #5076dc;
+  // background-color: #5076dc;
+  background-color: #222834;
   min-height: 1000px;
   overflow-x: hidden;
 }
@@ -191,17 +260,55 @@ export default {
   justify-content: flex-start;
   align-items: center;
   height: 70px !important;
-  .links {
+  width: 100%;
+  .links-wrapper {
     display: flex;
-    width: 150px;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    flex: 1;
-    .el-tag {
-      margin-right: 10px;
+    flex: 1 1 0;
+    overflow: auto;
+    // &::-webkit-scrollbar {
+    //   width: 0;
+    //   height: 0;
+    // }
+    .left,
+    .right {
+      width: 30px;
+      height: 30px;
+      color: #999;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+      // box-shadow: 0px 0px 20px 1px #ccc;
+      &:hover {
+        color: skyblue;
+      }
+    }
+    .left {
+      margin: 10px;
+    }
+    .right {
+      margin: 10px;
+    }
+    .links {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      flex: 1 1 0;
+      overflow-x: auto;
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+      .el-tag {
+        margin-right: 10px;
+      }
     }
   }
+
   .user {
     display: flex;
     width: 150px;
@@ -317,21 +424,45 @@ export default {
   }
 }
 
-/deep/.el-menu--collapse {
-  margin: 0 auto !important;
-  .el-submenu {
-    /deep/.el-submenu__title {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto !important;
-      span {
-        width: auto !important;
-        margin-top: 2px;
-        height: 14px !important;
-        line-height: 14px !important;
-        visibility: visible;
+.el-aside {
+  /deep/.el-menu--collapse {
+    margin: 0 auto !important;
+    .el-submenu {
+      /deep/.el-submenu__title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto !important;
+        span {
+          width: auto !important;
+          margin-top: 2px;
+          height: 14px !important;
+          line-height: 14px !important;
+          visibility: visible !important;
+        }
+      }
+    }
+  }
+}
+
+.el-aside {
+  .el-menu--collapse {
+    margin: 0 auto !important;
+    .el-submenu {
+      .el-submenu__title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto !important;
+        span {
+          width: auto !important;
+          margin-top: 2px;
+          height: 14px !important;
+          line-height: 14px !important;
+          visibility: visible !important;
+        }
       }
     }
   }

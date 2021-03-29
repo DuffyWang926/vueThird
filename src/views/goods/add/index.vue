@@ -1210,6 +1210,9 @@ export default {
 /deep/.el-date-editor {
   width: 400px !important;
 }
+.el-date-editor {
+  width: 400px !important;
+}
 
 .el-form {
   margin-left: 100px;
@@ -1253,8 +1256,40 @@ export default {
   }
 }
 
+.el-table {
+  .el-upload {
+    position: relative;
+    width: 100px;
+    height: 40px;
+    border: none;
+    // transform: translateY(12px);
+    // margin-bottom: 12px;
+    background-color: transparent;
+    .el-button {
+      position: absolute;
+      height: 40px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  .el-upload-list__item {
+    width: 100px;
+    height: 100px;
+  }
+  .el-input {
+    width: 90%;
+  }
+}
+
+
 .editor {
   /deep/ div {
+    z-index: 10 !important;
+  }
+}
+.editor {
+  div {
     z-index: 10 !important;
   }
 }

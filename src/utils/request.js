@@ -2,6 +2,8 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 
+import store from '../store/index'
+
 let service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL, // api 的 base_url
   timeout: 10000, // 请求超时时间
@@ -18,6 +20,8 @@ let lastUrl = '';
 let queryData = '';
 service.interceptors.request.use(
   config => {
+    console.log(store.getters['user/getToken']);
+    config.headers.Authorization = store.getters['user/getToken']
     console.log(config, 'config')
     let flag = false;
     let date = new Date();

@@ -14,17 +14,14 @@
       v-model="goodsFilterText"
     ></el-input>
     <el-tree
-      v-if="goodsList.length > 0"
+      :data="data"
       ref="goodsTreeRef"
       :props="goodsTreeProps"
       :filter-node-method="goodsFilterNode"
-      :load="loadGoodsNode"
-      lazy
       show-checkbox
       node-key="id"
       @check-change="handleGoodsCheckChange"
       @check="handleCheck"
-      default-expand-all
     >
     </el-tree>
   </div>
@@ -70,6 +67,7 @@ export default {
   setup(props, { emit }) {
     const goodsList = ref([])
     const goodsTreeLoading = ref(false)
+    const data = ref([])
     const getAllGoodsList = async () => {
       let date = +new Date()
       goodsTreeLoading.value = true
@@ -84,6 +82,8 @@ export default {
       })
       console.log('请求所有商品项', +new Date() - date)
       date = +new Date()
+      data.value = generateNodes()
+      goodsTreeLoading.value = false
       await nextTick()
       console.log('加载商品项', +new Date() - date)
       date = +new Date()
@@ -94,7 +94,6 @@ export default {
       console.log('收起商品项', +new Date() - date)
       date = +new Date()
       goodsTreeRef.value.setCheckedKeys(props.modelValue, false)
-      goodsTreeLoading.value = false
     }
     getAllGoodsList()
     console.log(goodsList.value)
@@ -107,38 +106,71 @@ export default {
     const goodsFilterText = ref('')
     const goodsFilterNode = (value, data) => {
       if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
-    }
-    const loadGoodsNode = (node, resolve) => {
-      if (node.level === 0) {
-        return resolve([
-          {
-            id: '0',
-            name: '全部商品',
-            leaf: false,
-            disabled: props.isProduct || props.isSubProduct
-          }
-        ])
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
       }
-      // console.log(node)
-      const data = goodsList.value
-        .filter((item) => item.pid === node.data.id)
-        .map((item) => {
-          let disabled = false
-          if (props.isProduct && node.level !== 4) {
-            disabled = true
-          } else if (props.isSubProduct && node.level !== 5) {
-            disabled = true
-          }
-          return {
-            id: item.id,
-            name: item.name,
-            leaf: false,
-            disabled
+      return false
+    }
+    const generateNodes = () => {
+      const root = {
+        id: 0,
+        name: '全部商品',
+        leaf: false,
+        parent: null
+        // children: []
+      }
+      getChildren(root)
+      function getChildren(data) {
+        data.children = []
+        goodsList.value.forEach((item) => {
+          if (item.pid == data.id) {
+            data.children.push(item)
+            item.parent = data
           }
         })
-      resolve(data)
+        if (data.children.length > 0) {
+          data.leaf = false
+          data.children.forEach((item) => {
+            getChildren(item)
+          })
+        } else {
+          data.leaf = true
+        }
+      }
+      return [root]
+    }
+    const loadGoodsNode = (node, resolve) => {
+      // if (node.level === 0) {
+      //   return resolve([
+      //     {
+      //       id: '0',
+      //       name: '全部商品',
+      //       leaf: false,
+      //       disabled: props.isProduct || props.isSubProduct
+      //     }
+      //   ])
+      // }
+      // // console.log(node)
+      // const data = goodsList.value
+      //   .filter((item) => item.pid === node.data.id)
+      //   .map((item) => {
+      //     let disabled = false
+      //     if (props.isProduct && node.level !== 4) {
+      //       disabled = true
+      //     } else if (props.isSubProduct && node.level !== 5) {
+      //       disabled = true
+      //     }
+      //     return {
+      //       id: item.id,
+      //       name: item.name,
+      //       leaf: false,
+      //       disabled
+      //     }
+      //   })
+      // resolve(data)
     }
     const goodsNameSelectedList = computed(() => {
       const filtered = []
@@ -190,6 +222,7 @@ export default {
         for (var i in nodes) {
           nodes[i].collapse()
         }
+        clearTimeout(goodsFilterTimer)
         return
       }
       clearTimeout(goodsFilterTimer)
@@ -198,50 +231,54 @@ export default {
           nodes[i].collapse()
         }
         goodsTreeLoading.value = true
-        const matchedGoods = goodsList.value.filter(
-          (item) => item.name.indexOf(newValue) !== -1
-        )
-        for (let i = 0; i < matchedGoods.length; i++) {
-          const item = matchedGoods[i]
-          // console.log(item)
-          if (
-            goodsTreeRef.value.store.nodesMap[item] &&
-            goodsTreeRef.value.store.nodesMap[item].expanded === true
-          ) {
-            continue
-          }
-          const nodesArr = []
-          let current = item
-          nodesArr.push(item)
-          while (
-            (current = goodsList.value.find(
-              (item) => item.id === current.pid
-            )) != null
-          ) {
-            nodesArr.push(current)
-          }
-          nodesArr.reverse()
-          // console.log(nodesArr)
-          nodesArr.forEach((item) => {
-            const nodes = goodsTreeRef.value.store.nodesMap
-            // console.log(goodsTreeRef.value.store.nodesMap)
-            for (var i in nodes) {
-              if (nodes[i].data.id === item.id) {
-                // loadRegionNode(nodes[i], regionTreeResolve)
-                // nodes[i].expanded = true
-                nodes[i].expand()
-                break
-              }
-            }
-          })
-        }
+        // const matchedGoods = goodsList.value.filter(
+        //   (item) => item.name.indexOf(newValue) !== -1
+        // )
+        // for (let i = 0; i < matchedGoods.length; i++) {
+        //   const item = matchedGoods[i]
+        //   // console.log(item)
+        //   if (
+        //     goodsTreeRef.value.store.nodesMap[item] &&
+        //     goodsTreeRef.value.store.nodesMap[item].expanded === true
+        //   ) {
+        //     continue
+        //   }
+        //   const nodesArr = []
+        //   let current = item
+        //   nodesArr.push(item)
+        //   while (
+        //     (current = goodsList.value.find(
+        //       (item) => item.id === current.pid
+        //     )) != null
+        //   ) {
+        //     nodesArr.push(current)
+        //   }
+        //   nodesArr.reverse()
+        //   // console.log(nodesArr)
+        //   nodesArr.forEach((item) => {
+        //     const nodes = goodsTreeRef.value.store.nodesMap
+        //     // console.log(goodsTreeRef.value.store.nodesMap)
+        //     for (var i in nodes) {
+        //       if (nodes[i].data.id === item.id) {
+        //         // loadRegionNode(nodes[i], regionTreeResolve)
+        //         // nodes[i].expanded = true
+        //         nodes[i].expand()
+        //         break
+        //       }
+        //     }
+        //   })
+        // }
         setTimeout(() => {
           goodsTreeRef.value.filter(newValue)
           goodsTreeLoading.value = false
-        }, 1000)
+        }, 500)
       }, 1500)
     })
+    watch(() => props.modelValue, () =>{
+      rightsTreeRef.value.setCheckedKeys(props.modelValue)
+    })
     return {
+      data,
       goodsList,
       goodsTreeRef,
       goodsTreeProps,

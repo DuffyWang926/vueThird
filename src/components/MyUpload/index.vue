@@ -70,7 +70,7 @@ export default {
     const qiniuData = reactive({
       key: '',
       token:
-        'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:P2UfIf6dxzrb1R13_bHYLECZTEk=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE2NDc4MzgzfQ=='
+        'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:R6gozWM7ovWwONqrggxfdtSYP-o=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE2NjczODkwfQ=='
     })
     const imageList = props.imageList
     const myFileList = ref(
@@ -240,6 +240,22 @@ export default {
   // /deep/.el-upload-list__item.el-list-enter-to,
   // /deep/.el-upload-list__item.el-list-leave-active,
   /deep/.el-upload-list__item.el-list-leave-to {
+    display: none;
+  }
+}
+.upload-demo {
+  .el-upload {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .el-upload-list__item.is-ready,
+  .el-upload-list__item.is-uploading,
+  // /deep/.el-upload-list__item.el-list-enter-active,
+  // /deep/.el-upload-list__item.el-list-enter-to,
+  // /deep/.el-upload-list__item.el-list-leave-active,
+  .el-upload-list__item.el-list-leave-to {
     display: none;
   }
 }
