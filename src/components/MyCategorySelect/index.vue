@@ -1,10 +1,19 @@
 <template>
   <div class="my-category-select">
     <el-input
+      v-show="!showFlag"
       :model-value="categoryNameSelectedList"
       @focus="emit('update:showFlag', true)"
       @click.stop="emit('update:showFlag', true)"
       :placeholder="loading ? '加载中' : '请点击选择'"
+      style="flex: 1"
+    ></el-input>
+    <el-input
+      v-show="showFlag"
+      :model-value="categoryNameFilterText"
+      @focus="emit('update:showFlag', true)"
+      @click.stop="emit('update:showFlag', true)"
+      style="flex: 1"
     ></el-input>
     <div
       class="tree-container"
@@ -104,11 +113,6 @@ export default {
     }
     const categoryFilterText = ref('')
     const categoryTreeLoading = ref(false)
-    const categoryFilterNode = (value, data) => {
-      if (!value) return true
-      const flag = data.name.indexOf(value) !== -1
-      return flag
-    }
     const generateNodes = () => {
       const root = {
         id: 0,
@@ -197,6 +201,38 @@ export default {
     //   })
     //   return filtered.map((item) => item.id)
     // }
+    const categoryNameFilterText = ref('')
+    const categoryFilterNode = (value, data) => {
+      if (!value) return true
+      for (let current = data; current !== null; current = current.parent) {
+        const flag = current.name.indexOf(value) !== -1
+        if (flag) {
+          return true
+        }
+      }
+      return false
+    }
+    const categoryFilterTimer = null
+    watch(categoryNameFilterText, (newValue) => {
+      const nodes = categoryTreeRef.value.store.nodesMap
+      if (newValue === '') {
+        categoryTreeRef.value.filter(newValue)
+        categoryTreeLoading.value = false
+        for (var i in nodes) {
+          nodes[i].collapse()
+        }
+        clearTimeout(categoryFilterTimer)
+        return
+      }
+      clearTimeout(categoryFilterTimer)
+      categoryFilterTimer = setTimeout(() => {
+        categoryTreeLoading.value = true
+        setTimeout(() => {
+          categoryTreeRef.value.filter(newValue)
+          categoryTreeLoading.value = false
+        }, 500)
+      }, 1500)
+    })
     const handleCheckChange = () => {
       console.log('handleCheckChange')
       const keys = categoryTreeRef.value.getCheckedKeys()
@@ -231,6 +267,8 @@ export default {
       categoryTreeLoading,
       categoryNameSelectedList,
       // categoryIdSelectedList,
+      categoryNameFilterText,
+      categoryFilterNode,
       handleCheck,
       emit
     }
@@ -241,6 +279,7 @@ export default {
 <style scoped lang="scss">
 .my-category-select {
   position: relative;
+  flex: 1;
   .tree-container {
     position: absolute;
     bottom: 0;

@@ -62,14 +62,12 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="2">
-          <el-button size="medium" type="primary" @click="handleSearch"
+        <el-col :span="4">
+          <el-button size="large" type="primary" @click="handleSearch"
             >查询</el-button
           >
-        </el-col>
-        <el-col :span="2">
           <el-button
-            size="medium"
+            size="large"
             type="success"
             @click="addDialogVisible = true"
             >新增</el-button

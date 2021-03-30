@@ -95,7 +95,7 @@
     <my-table
       :data="productList"
       :columns="columns"
-      :operation-width="200"
+      :operation-width="300"
       edit-show
       delete-show
       @delete="handleDelete"
@@ -107,7 +107,13 @@
       switch-closed-text="上架"
       switch-open-dialog-text="确认上架该商品？"
       switch-close-dialog-text="确认下架该商品？"
-    ></my-table>
+    >
+      <template v-slot:userbtns="scope">
+        <el-button size="mini" type="primary" @click="editStorage(scope.row)"
+          >修改库存</el-button
+        >
+      </template>
+    </my-table>
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -119,6 +125,31 @@
       background
     >
     </el-pagination>
+    <el-dialog
+      v-model="editStorageDialogVisible"
+      width="500px"
+      @close="handleClose"
+    >
+      <template #title>修改库存</template>
+      <el-form
+        :model="editStorageForm"
+        :rules="editStorageFormRules"
+        ref="editStorageFormRef"
+      >
+        <el-form-item label="剩余库存" label-position="top" prop="storage">
+          <el-input
+            v-model="editStorageForm.storage"
+            @blur="editStorageForm.storage = parseInt(editStorageForm.storage)"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="editStorageDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleEditStorage">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -220,14 +251,14 @@ export default {
         if (queryInfo.pagenum > 1) {
           queryInfo.pagenum--
         }
+        if (res.status === 0) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功！'
+          })
+        }
       }
-      if (res.status === 0) {
-        ElMessage({
-          type: 'success',
-          message: '删除成功！'
-        })
-        getProductList()
-      }
+      getProductList()
     }
     const handleSwitch = async (row) => {
       console.log(row.id)
@@ -239,8 +270,49 @@ export default {
           type: 'success',
           message: row.isOnSale ? '上架成功' : '下架成功'
         })
-        getProductList()
       }
+      getProductList()
+    }
+    const editStorageDialogVisible = ref(false)
+    const editStorageFormRef = ref(null)
+    const editStorageForm = reactive({
+      id: null,
+      storage: 0
+    })
+    const editStorageFormRules = {
+      storage: [
+        {
+          required: true,
+          validator: (rule, value, callback) => {
+            if (isNaN(value) || value < 0) {
+              callback(new Error('库存必须为大于等于0的整数！'))
+            } else {
+              callback()
+            }
+          },
+          message: '库存必须为大于等于0的整数！',
+          trigger: 'blur'
+        }
+      ]
+    }
+    const editStorage = (row) => {
+      editStorageForm.id = row.id
+      editStorageForm.storage = row.stock
+      editStorageDialogVisible.value = true
+    }
+    const handleClose = () => {
+      editStorageForm.id = null
+      editStorageForm.storage = 0
+    }
+    const handleEditStorage = () => {
+      // const res = await service.post('editStorage', editStorageForm)
+      editStorageFormRef.value.validate((valid) => {
+        if (valid) {
+          ElMessage.success('修改库存成功！')
+          editStorageDialogVisible.value = false
+          getProductList()
+        }
+      })
     }
     const count = ref(0)
     const handleSizeChange = (val) => {
@@ -262,6 +334,13 @@ export default {
       columns,
       handleDelete,
       handleSwitch,
+      editStorageDialogVisible,
+      editStorageFormRef,
+      editStorageForm,
+      editStorageFormRules,
+      editStorage,
+      handleClose,
+      handleEditStorage,
       count,
       handleSizeChange,
       handleCurrentChange

@@ -23,6 +23,14 @@
       @check-change="handleGoodsCheckChange"
       @check="handleCheck"
     >
+      <template #default="{ node, data }">
+        <span
+          class="custom-tree-node"
+          :class="[data.level < 4 ? 'no-checkbox' : '']"
+        >
+          <span>{{ data.name }}</span>
+        </span>
+      </template>
     </el-tree>
   </div>
 </template>
@@ -53,15 +61,20 @@ export default {
       required: false,
       default: () => []
     },
-    isProduct: {
+    onlyOneProduct: {
       type: Boolean,
       required: false,
       default: false
     },
-    isSubProduct: {
-      type: Boolean,
+    productId: {
+      type: [Number, String],
       required: false,
-      default: false
+      default: null
+    },
+    subProductIds: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   setup(props, { emit }) {
@@ -73,11 +86,11 @@ export default {
       goodsTreeLoading.value = true
       const { data: res } = await service.get('getAllGoodsTree')
       console.log(res)
-      goodsList.value = res.goodsList
+      goodsList.value = res.menus
       goodsList.value.push({
         id: '0',
         name: '选择全部商品',
-        pid: null,
+        subId: null,
         leaf: false
       })
       console.log('请求所有商品项', +new Date() - date)
@@ -119,16 +132,31 @@ export default {
         id: 0,
         name: '全部商品',
         leaf: false,
-        parent: null
+        parent: null,
+        level: 0
         // children: []
+      }
+      if (props.onlyOneProduct) {
+        root.disabled = true
       }
       getChildren(root)
       function getChildren(data) {
         data.children = []
         goodsList.value.forEach((item) => {
-          if (item.pid == data.id) {
+          if (item.subId == data.id) {
             data.children.push(item)
             item.parent = data
+            item.level = data.level + 1
+            if (item.level == 5) {
+              item.name = [item.colour, item.size].join(';')
+            }
+            let disabled = false
+            if (props.onlyOneProduct) {
+              if (item.level < 4) {
+                disabled = true
+              }
+            }
+            item.disabled = disabled
           }
         })
         if (data.children.length > 0) {
@@ -142,42 +170,12 @@ export default {
       }
       return [root]
     }
-    const loadGoodsNode = (node, resolve) => {
-      // if (node.level === 0) {
-      //   return resolve([
-      //     {
-      //       id: '0',
-      //       name: '全部商品',
-      //       leaf: false,
-      //       disabled: props.isProduct || props.isSubProduct
-      //     }
-      //   ])
-      // }
-      // // console.log(node)
-      // const data = goodsList.value
-      //   .filter((item) => item.pid === node.data.id)
-      //   .map((item) => {
-      //     let disabled = false
-      //     if (props.isProduct && node.level !== 4) {
-      //       disabled = true
-      //     } else if (props.isSubProduct && node.level !== 5) {
-      //       disabled = true
-      //     }
-      //     return {
-      //       id: item.id,
-      //       name: item.name,
-      //       leaf: false,
-      //       disabled
-      //     }
-      //   })
-      // resolve(data)
-    }
     const goodsNameSelectedList = computed(() => {
       const filtered = []
       props.modelValue.forEach((id) => {
         if (goodsList.value.length > 0) {
           const item = goodsList.value.find((item) => item.id == id + '')
-          if (props.modelValue.indexOf(item.pid) === -1) {
+          if (props.modelValue.indexOf(item.subId) === -1) {
             filtered.push(item)
           }
         }
@@ -191,6 +189,19 @@ export default {
       emitTimer = setTimeout(() => {
         emit('update:modelValue', goodsTreeRef.value.getCheckedKeys())
         emit('update:leafValue', goodsTreeRef.value.getCheckedKeys(true))
+        emit(
+          'update:productId',
+          goodsTreeRef.value
+            .getCheckedNodes(false, true)
+            .filter((item) => item.level == 4)[0].id
+        )
+        emit(
+          'update:subProductIds',
+          goodsTreeRef.value
+            .getCheckedNodes()
+            .filter((item) => item.level == 5)
+            .map((item) => item.id)
+        )
       }, 100)
     }
     const handleCheck = (data, {}) => {
@@ -213,6 +224,13 @@ export default {
             goodsTreeRef.value.setChecked(data.id, false)
           })
       }
+      if (props.onlyOneProduct) {
+        const checkedNodes = goodsTreeRef.value.getCheckedNodes(false, true)
+        console.log(checkedNodes)
+        if (checkedNodes.filter((item) => item.level == 4).length > 1) {
+          goodsTreeRef.value.setCheckedKeys([data.id])
+        }
+      }
     }
     watch(goodsFilterText, (newValue) => {
       const nodes = goodsTreeRef.value.store.nodesMap
@@ -231,52 +249,18 @@ export default {
           nodes[i].collapse()
         }
         goodsTreeLoading.value = true
-        // const matchedGoods = goodsList.value.filter(
-        //   (item) => item.name.indexOf(newValue) !== -1
-        // )
-        // for (let i = 0; i < matchedGoods.length; i++) {
-        //   const item = matchedGoods[i]
-        //   // console.log(item)
-        //   if (
-        //     goodsTreeRef.value.store.nodesMap[item] &&
-        //     goodsTreeRef.value.store.nodesMap[item].expanded === true
-        //   ) {
-        //     continue
-        //   }
-        //   const nodesArr = []
-        //   let current = item
-        //   nodesArr.push(item)
-        //   while (
-        //     (current = goodsList.value.find(
-        //       (item) => item.id === current.pid
-        //     )) != null
-        //   ) {
-        //     nodesArr.push(current)
-        //   }
-        //   nodesArr.reverse()
-        //   // console.log(nodesArr)
-        //   nodesArr.forEach((item) => {
-        //     const nodes = goodsTreeRef.value.store.nodesMap
-        //     // console.log(goodsTreeRef.value.store.nodesMap)
-        //     for (var i in nodes) {
-        //       if (nodes[i].data.id === item.id) {
-        //         // loadRegionNode(nodes[i], regionTreeResolve)
-        //         // nodes[i].expanded = true
-        //         nodes[i].expand()
-        //         break
-        //       }
-        //     }
-        //   })
-        // }
         setTimeout(() => {
           goodsTreeRef.value.filter(newValue)
           goodsTreeLoading.value = false
         }, 500)
       }, 1500)
     })
-    watch(() => props.modelValue, () =>{
-      rightsTreeRef.value.setCheckedKeys(props.modelValue)
-    })
+    watch(
+      () => props.modelValue,
+      () => {
+        goodsTreeRef.value.setCheckedKeys(props.modelValue)
+      }
+    )
     return {
       data,
       goodsList,
@@ -284,7 +268,6 @@ export default {
       goodsTreeProps,
       goodsFilterText,
       goodsFilterNode,
-      loadGoodsNode,
       handleGoodsCheckChange,
       goodsTreeLoading,
       goodsNameSelectedList,
@@ -306,4 +289,7 @@ export default {
     overflow: auto;
   }
 }
+// .custom-tree-node + .el-checkbox {
+//   display: none;
+// }
 </style>
