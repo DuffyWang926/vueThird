@@ -1,9 +1,9 @@
-import {loginApi} from '@/api/login'
+import { loginApi } from '@/api/login'
 const state = { //此时数据由接口文档给定
 
   token: window.localStorage.getItem('token') || '',
   username: window.localStorage.getItem('username') || '',
-  rights: JSON.parse(window.localStorage.getItem('rights')) || {}
+  rights: JSON.parse(window.localStorage.getItem('rights')) || []
 }
 
 const getters = { //是store的计算属性
@@ -19,32 +19,32 @@ const getters = { //是store的计算属性
         }
       })
     },*/
-   //  loginInfo: (state) => {
-   //    return state.rights.item.map(({id, checked}) => {
-   //      const checked = state.rights.all.find(checked => checked.value === true)
-   //      const unchecked = state.rights.all.find(checked => checked.value === false)
-   //      const nuchecked =
+  //  loginInfo: (state) => {
+  //    return state.rights.item.map(({id, checked}) => {
+  //      const checked = state.rights.all.find(checked => checked.value === true)
+  //      const unchecked = state.rights.all.find(checked => checked.value === false)
+  //      const nuchecked =
 
-   //  }
-   getToken(state) {
-     return state.token
-   },
-   
-   getRightById: (state) => (id) => {
-     const right = state.rights.find(item => item.id == id)
-     if (right != null) {
-       return right.checked
-     } else {
-       return null
-     }
+  //  }
+  getToken(state) {
+    return state.token
   },
-    getUsername(state) {
-      return state.username
-    },
-    
-    getRights(state) {
-      return state.rights
+
+  getRightById: (state) => (id) => {
+    const right = state.rights.find(item => item.id == id)
+    if (right != null) {
+      return right.checked
+    } else {
+      return null
     }
+  },
+  getUsername(state) {
+    return state.username
+  },
+
+  getRights(state) {
+    return state.rights
+  }
 }
 
 const actions = { //异步修改数据，axios请求之后对mutation调用

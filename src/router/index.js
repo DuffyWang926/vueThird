@@ -69,6 +69,11 @@ router.beforeEach((to, from, next) => {
   if (to.matched.length === 0) {
     return next(false);
   }
+  if (to.fullPath !== '/login') {
+    if (!store.getters['user/getToken']) {
+      return next('/login')
+    }
+  }
   let flag = true;
   to.matched.forEach(item => {
     if (item.meta.index === 2) {
@@ -78,7 +83,7 @@ router.beforeEach((to, from, next) => {
           store.getters["user/getRightById"](item.meta.id)
         );
         flag = false;
-        return next("/");
+        return next("/nopermission");
       }
     }
   });

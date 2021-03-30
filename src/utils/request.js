@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import router from '@/router'
+import router from '@/router/index'
 
 import store from '../store/index'
 
@@ -20,8 +20,16 @@ let lastUrl = '';
 let queryData = '';
 service.interceptors.request.use(
   config => {
-    console.log(store.getters['user/getToken']);
-    config.headers.Authorization = store.getters['user/getToken']
+    const token = store.getters['user/getToken']
+    console.log(token);
+    if (config.url !== 'login') {
+      if (token) {
+        config.headers.Authorization = token
+      } else {
+        router.push({ path: '/login' })
+        return config
+      }
+    }
     console.log(config, 'config')
     let flag = false;
     let date = new Date();
