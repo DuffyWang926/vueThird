@@ -3,12 +3,14 @@
     <template #header>
       <div class="card-header">团购管理</div>
     </template>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="活动名称" >
-        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"></el-input>
-      </el-form-item>
-      <el-form-item label="创建时间">
-          <el-date-picker
+    <el-form :model="formInline" class="demo-form-inline" label-position="left" label-width="70px">
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <el-form-item label="活动名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"> </el-input> </el-form-item>
+        </el-col>
+        <el-col :span="7">
+          <el-form-item label="创建时间">
+            <el-date-picker
               v-model="queryInfo.activityTime"
               type="daterange"
               align="center"
@@ -17,15 +19,21 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :shortcuts="shortcuts"
-          >
-          </el-date-picker>
-      </el-form-item>
-      <el-form-item label="商品名称">
-        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button size="medium" type="success" @click="getGroupsInfo">查询</el-button>
-      </el-form-item>
+              style="width: 100%"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="商品名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input> </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item label-width="0">
+            <el-button size="medium" type="primary" @click="getGroupsInfo">查询</el-button>
+            <el-button size="medium" type="success" @click="addGroupBuy">添加</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
   </el-card>
 
@@ -33,33 +41,22 @@
     <template #header>
       <div class="card-header">数据列表</div>
     </template>
-    <my-table
-        :data="groupsInfo"
-        :columns="columns"
-        :operation-width="260"
-        edit-show
-        @edit="editDetail"
-        edit-text = "编辑"
-        preview-show
-        @preview="groupList"
-        preiview-text = "拼团列表"
-      >
-        <template v-slot:userbtns="scope" >
-           <el-button size="mini"  type="danger"  @click="closeActivity">关闭</el-button>
-        </template>
-      </my-table>
+    <my-table :data="groupsInfo" :columns="columns" :operation-width="260" edit-show @edit="editDetail" edit-text="编辑" preview-show @preview="groupList" preiview-text="拼团列表">
+      <template v-slot:userbtns="scope">
+        <el-button size="mini" type="danger" @click="closeActivity(scope.row.id)" v-if="scope.row.state != 3">关闭</el-button>
+      </template>
+    </my-table>
     <el-pagination
-          @size-change= "handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="count"
-          background
-          >
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="10"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="count"
+      background
+    >
     </el-pagination>
-
   </el-card>
 </template>
 
@@ -67,8 +64,9 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import service from '@/utils/request'
+import { ElMessage, ElMessageBox } from 'element-plus'
 export default {
-  name: "groupBuyManage",
+  name: 'groupBuyManage',
   setup() {
     const $router = useRouter()
     const queryInfo = reactive({
@@ -89,6 +87,22 @@ export default {
         })
         console.log(res)
         groupsInfo.value = res.groupsInfo
+        groupsInfo.value.forEach((item) => {
+          switch (item.state) {
+            case 0:
+              item.stateStr = '未开始'
+              break
+            case 1:
+              item.stateStr = '进行中'
+              break
+            case 2:
+              item.stateStr = '已结束'
+              break
+            case 3:
+              item.stateStr = '已关闭'
+              break
+          }
+        })
         count.value = res.count
       } catch (err) {
         console.log(err)
@@ -111,14 +125,14 @@ export default {
       {
         title: '拼购积分',
         prop: 'point'
-       },
+      },
       {
         title: '活动时间',
         prop: 'date'
       },
       {
         title: '状态',
-        prop: 'state'
+        prop: 'stateStr'
       },
       {
         title: '开团数量',
@@ -140,18 +154,46 @@ export default {
       getGroupsInfo()
     }
     const groupList = (id) => {
-        let path = '/groupList/' + id//动态路由跳转的路径声明方式
-        $router.push({
-          path,
-          query: {
-            id: id
-          }
-         })
+      let path = '/groupList/' + id //动态路由跳转的路径声明方式
+      $router.push({
+        path,
+        query: {
+          id: id
+        }
+      })
     }
     const currentPage = ref(1)
     const editDetail = (id) => {
-       let path = '/groupList/' + id//动态路由跳转的路径声明方式
-       $router.push({path})
+      let path = '/groupBuyEdit'
+      $router.push({ path, query: { groupBuyId: id } })
+    }
+    const closeActivity = (id) => {
+      ElMessageBox.confirm('确定关闭活动吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await service.get('updatestate', {
+            params: {
+              groupId: id,
+              state: 2
+            }
+          })
+          if (res.status == 0) {
+            ElMessage.success('已成功关闭！')
+          }
+          getGroupsInfo()
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
+    const addGroupBuy = () => {
+      $router.push({ path: '/groupBuyAdd' })
     }
 
     return {
@@ -163,31 +205,33 @@ export default {
       handleCurrentChange,
       currentPage,
       groupList,
-      editDetail
+      editDetail,
+      closeActivity,
+      addGroupBuy
     }
   }
-};
+}
 </script>
 
 <style scoped>
-  .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color:#4e73df;
-      font-weight: bold;
-  }
-  .demo-form-inline {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color:#858796;
-      border-bottom: 1px solid #e3e6f0;
-  }
-  .el-pagination{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin:20px 0;
-  }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4e73df;
+  font-weight: bold;
+}
+/* .demo-form-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #858796;
+  border-bottom: 1px solid #e3e6f0;
+} */
+.el-pagination {
+  /* display: flex;
+  justify-content: space-around;
+  align-items: center; */
+  margin: 20px 0;
+}
 </style>

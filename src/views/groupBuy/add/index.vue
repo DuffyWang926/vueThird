@@ -687,10 +687,13 @@ export default {
           }
           data.groupBuyLevel = groupBuyLevel
           console.log(data)
-          if (id) {
-            ElMessage.success('修改成功！')
-          } else {
-            ElMessage.success('添加成功！')
+          const res = await service.post('addgroupbuy', data)
+          if (res.status == 0) {
+            if (id) {
+              ElMessage.success('修改成功！')
+            } else {
+              ElMessage.success('添加成功！')
+            }
           }
           router.push('/groupBuyManage')
         } else {
