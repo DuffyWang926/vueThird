@@ -271,6 +271,7 @@ export default {
   name: 'GroupBuyAdd',
   setup() {
     const route = useRoute()
+    const router = useRouter()
     const addForm = reactive({
       id: null,
       name: '',
@@ -686,6 +687,12 @@ export default {
           }
           data.groupBuyLevel = groupBuyLevel
           console.log(data)
+          if (id) {
+            ElMessage.success('修改成功！')
+          } else {
+            ElMessage.success('添加成功！')
+          }
+          router.push('/groupBuyManage')
         } else {
           ElMessage.error('保存失败！请检查标红的表单项！')
           return false
