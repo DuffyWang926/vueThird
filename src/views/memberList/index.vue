@@ -105,6 +105,26 @@
         background
         ></el-pagination>
   </el-card>
+
+  <el-dialog title="修改手机号" v-model="dialogFormVisible">
+    <el-form :model="form">
+      <el-form-item label="卡号" >
+        <el-input v-model="form.membersCard" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="手机号" >
+        <el-select v-model="form.membersCard" placeholder="请选择活动区域">
+        <el-input v-model="form.membersCard" autocomplete="off"></el-input>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -156,8 +176,6 @@ export default {
           return [start, end]
         })(),
       }])
-
-
 
     const membersInfo = ref([])
     const getMembersInfo = async () => {
@@ -279,9 +297,19 @@ export default {
    const store = useStore()
    console.log(store.getters['user/getRightById'](2));
 
- /*  const handleChangeTel = (id) => {
-      membersInfo.membersCard(id) =
-   } */
+  const dialogFormVisible = ref(false)
+/*  const formLabelWidth = ref("120px") */
+  const form = reactive({
+    membersCard:'',
+    membersTel: ''
+  })
+  const handleChangeTel = (id) => {
+
+      /*   membersInfo.membersCard(id) = */
+      dialogFormVisible.value = true;
+      console.log(id)
+   }
+
     return {
       queryInfo,
       membersInfo,
@@ -294,8 +322,10 @@ export default {
       shortcuts,
       handleNumChange,
       detailChange,
-      //handleChangeTel
-    }
+      handleChangeTel,
+      dialogFormVisible,
+      form
+ }
   }
 };
 </script>

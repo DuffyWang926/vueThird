@@ -8,4 +8,5 @@ import './warehouse'
 import './rightsReq'
 import './users'
 import './login'
+import './group'
 const Mock = require('mockjs')

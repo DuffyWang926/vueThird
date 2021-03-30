@@ -97,9 +97,6 @@
      }
     getMemberInfo()
     const $router = useRouter()
-   /* console.log($router)
-    debugger */
-   /* const squareUrl = reactive['membemembersImg'] */
     const detailList = [
       {
         title: '昵称',

@@ -25,6 +25,12 @@
           </el-form-item>
         </el-form>
       </el-card>
+
+      <el-card class="box-footer" label-width="320px" shadow="never">
+        <template #header>
+          <div class="card-footer">华尚荐康客商城综合管理平台</div>
+        </template>
+      </el-card>
     </div>
   </div>
 
@@ -62,7 +68,7 @@
         } else {
           callback()
         }
-      }        
+      }
       const refreshCode = () => {
         identifyCode.value = "";
         makeCode(identifyCodes.value, 4);
@@ -114,10 +120,10 @@
           }
         });
       }
-      
 
 
-     
+
+
 
       return {
         $router,
@@ -142,8 +148,8 @@
   }
 
   .loginBox {
-    background-image: url(../../../public/bj2.jpg);
-    background-size: cover;
+    background: url(../../../public/bj2.png) no-repeat;
+    background-size: contain;
     z-index: 123;
     background-position: center center;
     display: flex;
@@ -157,18 +163,36 @@
     transform: translate(-50%, -50%);
   }
 
-  .card-header {
+  .card-header{
     color: #FFFEFE;
     font-size: 43.2px;
     font-weight: bold;
     line-height: 70.4px;
     text-align: center;
   }
-  .box-card {
-    background: transparent !important;
+ .card-footer {
+    width: 327px;
+    height: 30px;
+    font-size: 24px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #FEFEFE;
+    line-height: 30px;
+   /* background-color: #FE7E01;
+    padding: 15px 70px 16px 71px; */
+    }
+  .box-footer{
     position: absolute;
-    left: 129px;
-    top: 45px;
+    right: 270px;
+    bottom: -18px;
+  }
+  .box-card {
+    position: absolute;
+    left: 300px;
+    top: 60px;
+  }
+  .box-card, .box-footer {
+    background: transparent !important;
     /deep/.el-card {
       background: transparent !important;
       border: none;
@@ -179,6 +203,7 @@
     }
     /deep/.el-card__body {
       background: transparent !important;
+      margin-top: -20px;
     }
   }
   .el-form-item {

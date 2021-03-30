@@ -1,0 +1,193 @@
+<template>
+  <el-card class="box-card">
+    <template #header>
+      <div class="card-header">团购管理</div>
+    </template>
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="活动名称" >
+        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"></el-input>
+      </el-form-item>
+      <el-form-item label="创建时间">
+          <el-date-picker
+              v-model="queryInfo.activityTime"
+              type="daterange"
+              align="center"
+              unlink-panels
+              range-separator="——"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :shortcuts="shortcuts"
+          >
+          </el-date-picker>
+      </el-form-item>
+      <el-form-item label="商品名称">
+        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="medium" type="success" @click="getGroupsInfo">查询</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
+
+  <el-card class="box-card">
+    <template #header>
+      <div class="card-header">数据列表</div>
+    </template>
+    <my-table
+        :data="groupsInfo"
+        :columns="columns"
+        :operation-width="260"
+        edit-show
+        @edit="editDetail"
+        edit-text = "编辑"
+        preview-show
+        @preview="groupList"
+        preiview-text = "拼团列表"
+      >
+        <template v-slot:userbtns="scope" >
+           <el-button size="mini"  type="danger"  @click="closeActivity">关闭</el-button>
+        </template>
+      </my-table>
+    <el-pagination
+          @size-change= "handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="10"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="count"
+          background
+          >
+    </el-pagination>
+
+  </el-card>
+</template>
+
+<script>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import service from '@/utils/request'
+export default {
+  name: "groupBuyManage",
+  setup() {
+    const $router = useRouter()
+    const queryInfo = reactive({
+      activityName: '',
+      activityTime: [],
+      name: '',
+      pagenum: 1,
+      pagesize: 10
+    })
+    const groupsInfo = ref([])
+    const getGroupsInfo = async () => {
+      try {
+        queryInfo.startDate = queryInfo.activityTime[0]
+        queryInfo.endDate = queryInfo.activityTime[1]
+        queryInfo.page = queryInfo.pagenum
+        const { data: res } = await service.get('getGroupsInfo', {
+          params: queryInfo
+        })
+        console.log(res)
+        groupsInfo.value = res.groupsInfo
+        count.value = res.count
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getGroupsInfo()
+    const columns = [
+      {
+        title: '活动名称',
+        prop: 'name'
+      },
+      {
+        title: '拼团商品',
+        prop: 'productName'
+      },
+      {
+        title: '团购价',
+        prop: 'price'
+      },
+      {
+        title: '拼购积分',
+        prop: 'point'
+       },
+      {
+        title: '活动时间',
+        prop: 'date'
+      },
+      {
+        title: '状态',
+        prop: 'state'
+      },
+      {
+        title: '开团数量',
+        prop: 'openNumber'
+      },
+      {
+        title: '成团数量',
+        prop: 'groupNumber'
+      }
+    ]
+    const count = ref(0)
+    const handleSizeChange = (val) => {
+      queryInfo.pagenum = 1
+      queryInfo.pagesize = val
+      getGroupsInfo()
+    }
+    const handleCurrentChange = (val) => {
+      queryInfo.pagenum = val
+      getGroupsInfo()
+    }
+    const groupList = (id) => {
+        let path = '/groupList/' + id//动态路由跳转的路径声明方式
+        $router.push({
+          path,
+          query: {
+            id: id
+          }
+         })
+    }
+    const currentPage = ref(1)
+    const editDetail = (id) => {
+       let path = '/groupList/' + id//动态路由跳转的路径声明方式
+       $router.push({path})
+    }
+
+    return {
+      queryInfo,
+      groupsInfo,
+      columns,
+      count,
+      handleSizeChange,
+      handleCurrentChange,
+      currentPage,
+      groupList,
+      editDetail
+    }
+  }
+};
+</script>
+
+<style scoped>
+  .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color:#4e73df;
+      font-weight: bold;
+  }
+  .demo-form-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color:#858796;
+      border-bottom: 1px solid #e3e6f0;
+  }
+  .el-pagination{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin:20px 0;
+  }
+</style>

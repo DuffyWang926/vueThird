@@ -6,6 +6,7 @@ export default [
       index: 2,
       title: '会员列表',
       sort:1,
+	  id: 41,
       parent: '会员管理'
     },
     component: () => import('@/views/memberList/index')
