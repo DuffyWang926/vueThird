@@ -18,7 +18,7 @@ for (let i = 1; i <= 3; i++) {
   goodsTree.push(Mock.mock({
     id: i,
     name: '@cname',
-    pid: '0'
+    subId: '0'
   }))
 }
 
@@ -26,7 +26,7 @@ for (let i = 4; i <= 12; i++) {
   goodsTree.push(Mock.mock({
     id: i,
     name: '@cname',
-    'pid|1-3': 1
+    'subId|1-3': 1
   }))
 }
 
@@ -34,7 +34,7 @@ for (let i = 13; i <= 36; i++) {
   goodsTree.push(Mock.mock({
     id: i,
     name: '@cname',
-    'pid|4-12': 1
+    'subId|4-12': 1
   }))
 }
 
@@ -42,25 +42,34 @@ for (let i = 37; i <= 100; i++) {
   goodsTree.push(Mock.mock({
     id: i,
     name: '@cname',
-    'pid|12-36': 1
+    'subId|12-36': 1
   }))
 }
+Mock.mock(('http://127.0.0.1:8079/product/getProductById'), options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo);
+  return {
+    status: 0,
+    data: {
+      product: goodsTree.find(item => item.id == queryInfo.productId)
+    }
+  }
+})
 
 for (let i = 101; i < 200; i++) {
-  const product = Mock.mock({
-    "level": 4,
+  const productItem = Mock.mock({
     "categoryName": "@cname",
     "colour|1-100": 1,
     "createTime": '@datetime("yyyy-MM-dd HH:mm:ss")',
     "extend1": "",
     "id": i,
-    "pid|37-100": 1,
+    "subId|37-100": 1,
     "img": "@image",
     "indexKey": 0,
     "isOnSale|1": [1, 2],
-    "item_nowPrice|1-100": 138,
-    "item_oldPrice|1-100": 0,
-    "item_points|1-100": 0,
+    "nowPrice|1-100": 138,
+    "oldPrice|1-100": 0,
+    "points|1-100": 0,
     "productId": 315,
     "productName": "@cname",
     "size|1-100": 1,
@@ -71,20 +80,21 @@ for (let i = 101; i < 200; i++) {
     "warehouseName": "自营",
     "weight|1-100": 1
   })
-  product.name = product.productName
-  goodsTree.push(product)
+  productItem.name = productItem.productName
+  goodsTree.push(productItem)
 }
 
-for (let i = 1; i <= 4; i++) {
-  goodsTree = goodsTree.filter(item => goodsTree.find(subItem => subItem.pid === item.id) || item.level === 4)
-}
+// for (let i = 1; i <= 4; i++) {
+//   goodsTree = goodsTree.filter(item => goodsTree.find(subItem => subItem.pid === item.id) || item.level === 4)
+// }
 
-Mock.mock(RegExp('http://127.0.0.1:8079/getProductItemById' + '.*'), options => {
-  const queryInfo = parseGetParams(options.url)
+Mock.mock('http://127.0.0.1:8079/getProductItemById', options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo);
   return {
     status: 0,
     data: {
-      productItem: goodsTree.find(item => item.id == queryInfo.id)
+      productItem: goodsTree.find(item => item.id == queryInfo.productItemId)
     }
   }
 })
@@ -106,7 +116,7 @@ Mock.mock('http://127.0.0.1:8079/getAllGoodsTree', options => {
   return {
     status: 0,
     data: {
-      goodsList: goodsTree,
+      menus: goodsTree,
       count: goodsTree.length
     }
   }

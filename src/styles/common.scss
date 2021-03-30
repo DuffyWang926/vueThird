@@ -1,7 +1,7 @@
 .el-card {
   .el-card__header {
     background-color: #f8f9fc;
-    color: #5076dc
+    color: #5076dc;
   }
 }
 
@@ -15,7 +15,7 @@
 
 .el-popper.menupopper {
   border-radius: 10px;
-  margin-left: 20px!important;
+  margin-left: 20px !important;
   // left: 20px !important;
   // transform: translate(110px, 178px)!important;
 }
@@ -63,6 +63,11 @@
     }
   }
 }
+
+// .el-form-item__content {
+//   display: flex;
+//   flex-direction: row;
+// }
 
 .el-table {
   .cell {

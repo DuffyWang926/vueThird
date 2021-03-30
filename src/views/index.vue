@@ -25,22 +25,12 @@
         active-text-color="#5076dc"
         router
       >
-        <el-submenu
-          v-for="subMenu in subMenus"
-          :key="subMenu.title"
-          :index="subMenu.title"
-          popper-class="menupopper"
-        >
+        <el-submenu v-for="subMenu in subMenus" :key="subMenu.title" :index="subMenu.title" popper-class="menupopper">
           <template #title>
             <i class="el-icon-setting"></i>
             <span>{{ subMenu.title }}</span>
           </template>
-          <el-menu-item
-            v-for="menuItem in subMenu.children"
-            :key="menuItem.index"
-            :index="menuItem.index"
-            >{{ menuItem.title }}</el-menu-item
-          >
+          <el-menu-item v-for="menuItem in subMenu.children" :key="menuItem.index" :index="menuItem.index">{{ menuItem.title }}</el-menu-item>
         </el-submenu>
       </el-menu>
       <div class="collapse-btn" @click="isCollapse = !isCollapse">
@@ -50,10 +40,23 @@
     </el-aside>
     <el-container>
       <el-header>
+        <div class="top">
+          <i class="el-icon-s-fold hamburger" v-if="!isCollapse" @click="isCollapse = true"></i>
+          <i class="el-icon-s-unfold hamburger" v-else @click="isCollapse = false"></i>
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item v-if="route.matched[1]">{{ route.matched[1].meta.parent }}</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route.matched[1]" :to="route.matched[1].path">{{ route.matched[1].meta.title }}</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="route.matched[2]" :to="route.fullPath" class="last">{{ route.matched[2].meta.title }}</el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="user">
+            <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
+            <span>zhaohanyu</span>
+          </div>
+        </div>
         <div class="links-wrapper">
           <div class="left"><i class="el-icon-arrow-left"></i></div>
           <div class="links">
-            <el-tag
+            <!-- <el-tag
               v-for="item in links"
               :key="item.url"
               :effect="item.url === currentLink ? 'dark' : 'light'"
@@ -61,13 +64,13 @@
               :closable="item.url !== currentLink"
               @click="handleLinkClick(item)"
               >{{ item.title }}</el-tag
-            >
+            > -->
+            <div class="link-tag" v-for="item in links" :key="item.url" :class="[item.url === currentLink ? 'dark' : 'light']" @click="handleLinkClick(item)">
+              <span>{{ item.title }}</span>
+              <i class="el-icon-close" @click.stop="handleLinkClose(item)"></i>
+            </div>
           </div>
           <div class="right"><i class="el-icon-arrow-right"></i></div>
-        </div>
-        <div class="user">
-          <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
-          <span>zhaohanyu</span>
         </div>
       </el-header>
       <el-main><router-view class="router-view" /></el-main>
@@ -76,138 +79,110 @@
 </template>
 
 <script>
-import { computed, ref, reactive, onMounted, watch, nextTick } from "vue";
-import { useStore, mapGetters, mapState } from "vuex";
-import { indexRouter } from "@/router/index";
+import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue'
+import { useStore, mapGetters, mapState } from 'vuex'
+import { indexRouter } from '@/router/index'
 // import rights from "@/mock/rights.js";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router'
 export default {
-  name: "index",
+  name: 'index',
   setup() {
     // const store = useStore()
     // const subMenus = store.getters.getSubMenus
     // const subMenus = mapGetters(['menu/getSubMenus'])[0]
     // console.log(subMenus)
     // console.log(subMenus())
-    const store = useStore();
-    const rights = store.getters["user/getRights"]
+    const store = useStore()
+    const route = useRoute()
+    const rights = store.getters['user/getRights']
     console.log('rights:', rights)
     const getSubMenus = () => {
-      let subMenus = [
-        "系统配置",
-        "安全管理",
-        "会员管理",
-        "商城管理",
-        "订单管理",
-        "营销管理",
-        "报表",
-        "客服",
-        "仓库与运费",
-        "首页配置",
-        "返利管理",
-        "日志管理",
-      ].map((item) => {
+      let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
         return {
           title: item,
-          children: [],
-        };
-      });
-      const activeRights = rights.filter(
-        (item) => item.checked && item.pid !== 0
-      );
+          children: []
+        }
+      })
+      const activeRights = rights.filter((item) => item.checked && item.pid !== 0)
       indexRouter.children.forEach((item) => {
         if (activeRights.find((right) => item.meta.id === right.id)) {
-          const subMenu = subMenus.find(
-            (subMenu) => subMenu.title === item.meta.parent
-          );
+          const subMenu = subMenus.find((subMenu) => subMenu.title === item.meta.parent)
           const menuItem = {
             index: item.path,
             title: item.meta.title,
-            sort: item.meta.sort,
-          };
-          subMenu.children.push(menuItem);
+            sort: item.meta.sort
+          }
+          subMenu.children.push(menuItem)
         }
-      });
-      subMenus = subMenus.filter((item) => item.children.length > 0);
-      subMenus.forEach((subMenu) =>
-        subMenu.children.sort((a, b) => a.sort - b.sort)
-      );
-      return subMenus;
-    };
-    const subMenus = computed(getSubMenus);
-    console.log(getSubMenus());
+      })
+      subMenus = subMenus.filter((item) => item.children.length > 0)
+      subMenus.forEach((subMenu) => subMenu.children.sort((a, b) => a.sort - b.sort))
+      return subMenus
+    }
+    const subMenus = computed(getSubMenus)
+    console.log(getSubMenus())
     // const currentActivePath = ref('')
-    const router = useRouter();
-    console.log(store.getters["menu/currentActivePath"]);
+    const router = useRouter()
+    console.log(store.getters['menu/currentActivePath'])
     const currentActivePath = computed(() => {
-      const activePath = store.getters["menu/currentActivePath"];
-      console.log(activePath);
-      return activePath;
-    });
+      const activePath = store.getters['menu/currentActivePath']
+      console.log(activePath)
+      return activePath
+    })
     const getLinks = () => {
-      const links = store.getters["links/links"];
-      console.log(links);
-      return links;
-    };
-    const links = computed(getLinks);
+      const links = store.getters['links/links']
+      console.log(links)
+      return links
+    }
+    const links = computed(getLinks)
     // const route = useRoute()
     // const currentChildPath = computed(() => {
     //   return route.matched.find((item) => item.meta.index === 3).path
     // })
     const currentLink = computed(() => {
-      return store.getters["links/currentLink"];
-    });
+      return store.getters['links/currentLink']
+    })
     const handleLinkClose = (item) => {
-      store.commit("links/deleteLink", item);
-    };
+      store.commit('links/deleteLink', item)
+    }
     const handleLinkClick = (item) => {
-      router.push(item.url);
-    };
-    const isCollapse = ref(false);
+      router.push(item.url)
+    }
+    const isCollapse = ref(false)
     onMounted(() => {
-      const linksDOM = document.querySelector(".links");
-      console.log(linksDOM);
-      const $ = window.$;
-      console.log($);
-      $(".right").click(function () {
-        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth;
-        const left = Math.min(
-          maxLeft,
-          linksDOM.scrollLeft + linksDOM.clientWidth
-        );
-        $(".links").animate({ scrollLeft: left + "px" }, 300);
-      });
-      $(".left").click(function () {
-        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth);
-        $(".links").animate({ scrollLeft: left + "px" }, 300);
-      });
+      const linksDOM = document.querySelector('.links')
+      console.log(linksDOM)
+      const $ = window.$
+      console.log($)
+      $('.right').click(function () {
+        const maxLeft = linksDOM.scrollWidth - linksDOM.clientWidth
+        const left = Math.min(maxLeft, linksDOM.scrollLeft + linksDOM.clientWidth)
+        $('.links').animate({ scrollLeft: left + 'px' }, 300)
+      })
+      $('.left').click(function () {
+        const left = Math.max(0, linksDOM.scrollLeft - linksDOM.clientWidth)
+        $('.links').animate({ scrollLeft: left + 'px' }, 300)
+      })
       watch(currentLink, async () => {
-        await nextTick();
-        const index = store.getters["links/links"].findIndex(
-          (item) => item.url === store.getters["links/currentLink"]
-        );
-        console.log(index);
-        const offsetLeft = $(".links-wrapper .links .el-tag")[index].offsetLeft;
-        const offsetWidth = $(".links-wrapper .links .el-tag")[index]
-          .offsetWidth;
-        console.log(offsetLeft);
+        await nextTick()
+        const index = store.getters['links/links'].findIndex((item) => item.url === store.getters['links/currentLink'])
+        console.log(index)
+        const offsetLeft = $('.links-wrapper .links .link-tag')[index].offsetLeft
+        const offsetWidth = $('.links-wrapper .links .link-tag')[index].offsetWidth
+        console.log(offsetLeft)
         if (offsetLeft < linksDOM.scrollLeft) {
-          $(".links").animate({ scrollLeft: offsetLeft + "px" }, 300);
-        } else if (
-          offsetLeft + offsetWidth - linksDOM.scrollLeft >
-          linksDOM.clientWidth
-        ) {
-          $(".links").animate(
+          $('.links').animate({ scrollLeft: offsetLeft + 'px' }, 300)
+        } else if (offsetLeft + offsetWidth - linksDOM.scrollLeft > linksDOM.clientWidth) {
+          $('.links').animate(
             {
-              scrollLeft:
-                offsetLeft + offsetWidth - linksDOM.clientWidth + "px",
+              scrollLeft: offsetLeft + offsetWidth - linksDOM.clientWidth + 'px'
             },
             300
-          );
+          )
         }
         // const maxLeft = links.scrollWidth - links.clientWidth
         // $('.links').animate({ scrollLeft: maxLeft + 'px' }, 300)
-      });
+      })
       // document.querySelector('.right').addEventListener('click', function () {
       //   // links.scrollLeft += links.clientWidth
       //   // links.scrollTo((links.scrollLeft += links.clientWidth), 0)
@@ -224,7 +199,7 @@ export default {
       //   console.log(links.clientWidth)
       //   console.log('scroll')
       // })
-    });
+    })
     return {
       subMenus,
       currentActivePath,
@@ -234,9 +209,10 @@ export default {
       currentLink,
       handleLinkClose,
       handleLinkClick,
-    };
-  },
-};
+      route
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -256,17 +232,74 @@ export default {
 
 .el-header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
-  height: 70px !important;
+  align-items: stretch;
+  height: 72px !important;
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+  .top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 40px;
+    .hamburger {
+      margin-left: 0;
+      margin-right: 10px;
+      font-size: 20px;
+    }
+    .el-breadcrumb {
+      flex: 1;
+      .last {
+        /deep/.el-breadcrumb__inner {
+          font-weight: bold;
+          color: #303133;
+          &:hover {
+            color: #409eff;
+          }
+        }
+        .el-breadcrumb__inner {
+          font-weight: bold;
+          color: #303133;
+          &:hover {
+            color: #409eff;
+          }
+        }
+      }
+    }
+    .user {
+      display: flex;
+      width: 150px;
+      height: 40px;
+      // border-left: 1px solid #ccc;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      img {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+      }
+      span {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
   .links-wrapper {
+    height: 32px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin-left: -10px;
+    margin-right: -10px;
+    padding-left: 10px;
+    padding-right: 10px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    flex: 1 1 0;
+    // flex: 1 1 0;
     overflow: auto;
     // &::-webkit-scrollbar {
     //   width: 0;
@@ -274,11 +307,11 @@ export default {
     // }
     .left,
     .right {
-      width: 30px;
+      width: 25px;
       height: 30px;
       color: #999;
       font-weight: bold;
-      text-align: center;
+      // text-align: center;
       line-height: 30px;
       // box-shadow: 0px 0px 20px 1px #ccc;
       &:hover {
@@ -286,10 +319,12 @@ export default {
       }
     }
     .left {
-      margin: 10px;
+      text-align: left;
+      // margin-right: 10px;
     }
     .right {
-      margin: 10px;
+      text-align: right;
+      // margin-left: 10px;
     }
     .links {
       position: relative;
@@ -303,28 +338,36 @@ export default {
         width: 0;
         height: 0;
       }
-      .el-tag {
-        margin-right: 10px;
+      .link-tag {
+        display: flex;
+        height: 30px;
+        padding: 0 10px;
+        border-top: none;
+        border-bottom: none;
+        border-right: 1px solid #ccc;
+        border-radius: 0;
+        flex-direction: row;
+        align-items: center;
+        background-color: #fff;
+        span {
+          font-size: 14px;
+          // font-weight: bold;
+          color: #666;
+          line-height: 14px;
+          margin-right: 5px;
+          white-space: nowrap;
+        }
+        i {
+          font-size: 12px;
+          transform: translateY(1px);
+        }
+        &.dark {
+          background-color: #eeeeee;
+        }
       }
-    }
-  }
-
-  .user {
-    display: flex;
-    width: 150px;
-    height: 40px;
-    border-left: 1px solid #ccc;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    img {
-      height: 30px;
-      width: 30px;
-      border-radius: 50%;
-    }
-    span {
-      font-size: 14px;
-      color: #666;
+      .link-tag:first-child {
+        border-left: 1px solid #ccc;
+      }
     }
   }
 }
