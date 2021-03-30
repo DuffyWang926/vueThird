@@ -38,16 +38,16 @@ export default [
           index: 3,
           title: '修改团购'
         }
+      },
+      {
+        path: '/groupList/:id',
+        name: 'groupList',
+        component: () => import('@/views/groupBuy/groupList/index'),
+        meta: {
+          index: 3,
+          title: '拼团列表'
+        }
       }
-      // {
-      //   path: '/groupList/:id',
-      //   name: 'groupList',
-      //   component: () => import('@/views/groupBuy/groupList/index'),
-      //   meta: {
-      //     index: 3,
-      //     title: '拼团列表'
-      //   }
-      // }
     ]
   }
 ]

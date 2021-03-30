@@ -9,4 +9,5 @@ import './rightsReq'
 import './users'
 import './login'
 import './groupAdd'
+import './group'
 const Mock = require('mockjs')

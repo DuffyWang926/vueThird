@@ -1,13 +1,13 @@
 <template>
   <el-card class="box-card">
     <template #header>
-      <div class="card-header">团购管理</div>
+      <div class="card-header">数据列表</div>
     </template>
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="活动名称" >
+      <el-form-item label="拼团活动" >
         <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"></el-input>
       </el-form-item>
-      <el-form-item label="创建时间">
+      <el-form-item label="拼团时间">
           <el-date-picker
               v-model="queryInfo.activityTime"
               type="daterange"
@@ -20,34 +20,22 @@
           >
           </el-date-picker>
       </el-form-item>
-      <el-form-item label="商品名称">
-        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input>
+      <el-form-item label="拼团状态">
+        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.groupStatus"></el-input>
+      </el-form-item>
+      <el-form-item label="开团人卡号">
+        <el-input size="medium" placeholder="单行输入" v-model="queryInfo.openerCard"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="success" @click="getGroupsInfo">查询</el-button>
+        <el-button size="medium" type="success" @click="getGroupInfo">查询</el-button>
       </el-form-item>
     </el-form>
-  </el-card>
-
-  <el-card class="box-card">
-    <template #header>
-      <div class="card-header">数据列表</div>
-    </template>
     <my-table
-        :data="groupsInfo"
+        :data="groupInfo"
         :columns="columns"
-        :operation-width="260"
-        edit-show
-        @edit="editDetail"
-        edit-text = "编辑"
-        preview-show
-        @preview="groupList"
-        preiview-text = "拼团列表"
-      >
-        <template v-slot:userbtns="scope" >
-           <el-button size="mini"  type="danger"  @click="closeActivity">关闭</el-button>
-        </template>
-      </my-table>
+        :operationShow = false
+      ></my-table>
+
     <el-pagination
           @size-change= "handleSizeChange"
           @current-change="handleCurrentChange"
@@ -59,111 +47,96 @@
           background
           >
     </el-pagination>
-
   </el-card>
 </template>
 
 <script>
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import service from '@/utils/request'
 export default {
   name: "groupBuyManage",
   setup() {
     const $router = useRouter()
+    const route = useRoute()//route是异步操作，需要将定义提前，不能写一句里，否则会出现报错
     const queryInfo = reactive({
-      activityName: '',
-      activityTime: [],
+      groupGoodId: route.query.groupGoodId,
       name: '',
+      activityTime: '',
+      groupStatus: '',
+      memberNum: '',
       pagenum: 1,
       pagesize: 10
     })
-    const groupsInfo = ref([])
-    const getGroupsInfo = async () => {
-      try {
+    const groupInfo = ref([])
+    const getGroupInfo = async () => {
         queryInfo.startDate = queryInfo.activityTime[0]
         queryInfo.endDate = queryInfo.activityTime[1]
         queryInfo.page = queryInfo.pagenum
-        const { data: res } = await service.get('getGroupsInfo', {
-          params: queryInfo
-        })
-        console.log(res)
-        groupsInfo.value = res.groupsInfo
+        const { data: res } = await service.post('getGroupInfo', queryInfo)
+        groupInfo.value = res.matchedgetGroupInfo
         count.value = res.count
-      } catch (err) {
-        console.log(err)
+        console.log(groupInfo.value);
       }
-    }
-    getGroupsInfo()
+    getGroupInfo()
+
     const columns = [
       {
-        title: '活动名称',
-        prop: 'name'
+        title: '开团人姓名/昵称',
+        prop: 'userName'
+      },
+      {
+        title: '开团人卡号',
+        prop: 'memberNum'
       },
       {
         title: '拼团商品',
         prop: 'productName'
       },
       {
-        title: '团购价',
-        prop: 'price'
+        title: '自购数量',
+        prop: 'number'
       },
       {
-        title: '拼购积分',
-        prop: 'point'
-       },
-      {
-        title: '活动时间',
-        prop: 'date'
+        title: '开团时间',
+        prop: 'time'
       },
       {
-        title: '状态',
+        title: '拼团状态',
         prop: 'state'
       },
       {
-        title: '开团数量',
-        prop: 'openNumber'
+        title: '参团新人数',
+        prop: 'newNumber'
       },
       {
-        title: '成团数量',
-        prop: 'groupNumber'
+        title: '参团总人数',
+        prop: 'totalNumber'
       }
     ]
     const count = ref(0)
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
-      getGroupsInfo()
+      getGroupInfo()
     }
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
-      getGroupsInfo()
+      getGroupInfo()
     }
-    const groupList = (id) => {
+   /* const groupList = (id) => {
         let path = '/groupList/' + id//动态路由跳转的路径声明方式
-        $router.push({
-          path,
-          query: {
-            id: id
-          }
-         })
-    }
+        $router.push({path})
+    } */
     const currentPage = ref(1)
-    const editDetail = (id) => {
-       let path = '/groupList/' + id//动态路由跳转的路径声明方式
-       $router.push({path})
-    }
-
     return {
       queryInfo,
-      groupsInfo,
+      groupInfo,
       columns,
       count,
       handleSizeChange,
       handleCurrentChange,
-      currentPage,
-      groupList,
-      editDetail
+      currentPage
     }
   }
 };
