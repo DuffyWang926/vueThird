@@ -51,7 +51,7 @@ import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import service from '@/utils/request'
 export default {
-  name: 'groupBuyManage',
+  name: 'GroupList',
   setup() {
     const $router = useRouter()
     const route = useRoute() //route是异步操作，需要将定义提前，不能写一句里，否则会出现报错

@@ -66,7 +66,7 @@ import { useRouter } from 'vue-router'
 import service from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 export default {
-  name: 'groupBuyManage',
+  name: 'GroupBuyManage',
   setup() {
     const $router = useRouter()
     const queryInfo = reactive({
@@ -165,7 +165,7 @@ export default {
     const currentPage = ref(1)
     const editDetail = (id) => {
       let path = '/groupBuyEdit'
-      $router.push({ path, query: { groupBuyId: id } })
+      $router.push('/groupBuyEdit/' + id)
     }
     const closeActivity = (id) => {
       ElMessageBox.confirm('确定关闭活动吗？', '提示', {
