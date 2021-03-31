@@ -49,9 +49,9 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
+      :current-page="queryInfo.pagenum"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
+      :page-size="queryInfo.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="count"
       background
@@ -82,11 +82,12 @@ export default {
         queryInfo.startDate = queryInfo.activityTime[0]
         queryInfo.endDate = queryInfo.activityTime[1]
         queryInfo.page = queryInfo.pagenum
+        queryInfo.limit = queryInfo.pagesize
         const { data: res } = await service.get('getgroupbuylist', {
           params: queryInfo
         })
         console.log(res)
-        groupsInfo.value = res.groupsInfo
+        groupsInfo.value = res
         groupsInfo.value.forEach((item) => {
           switch (item.state) {
             case 0:
@@ -103,7 +104,7 @@ export default {
               break
           }
         })
-        count.value = res.count
+        // count.value = res.count
       } catch (err) {
         console.log(err)
       }
@@ -155,12 +156,9 @@ export default {
     }
     const groupList = (id) => {
       let path = '/groupList/' + id //动态路由跳转的路径声明方式
-      $router.push({
-        path,
-        query: {
-          id: id
-        }
-      })
+      $router.push(
+        path
+      )
     }
     const currentPage = ref(1)
     const editDetail = (id) => {
@@ -177,11 +175,11 @@ export default {
           const res = await service.get('updatestate', {
             params: {
               groupId: id,
-              state: 2
+              state: 3
             }
           })
           if (res.status == 0) {
-            ElMessage.su-ccess('已成功关闭！')
+            ElMessage.success('已成功关闭！')
           }
           getgroupbuylist()
         })
@@ -198,6 +196,7 @@ export default {
 
     return {
       queryInfo,
+      getgroupbuylist,
       groupsInfo,
       columns,
       count,

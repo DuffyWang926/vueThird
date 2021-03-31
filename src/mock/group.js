@@ -40,7 +40,7 @@ for (let i = 1; i <= 1000; i++) {
   groupInfo.push(
     Mock.mock({
       id: i,
-      'id|1-100': 1,
+      'pid|1-100': 1,
       'productName|1': ['松花粉买五送一', '大麻叶洗护9.9', '烟酰胺精华买五送一'], //活动商品
       time: '@date("yyyy-MM-dd")', //开团时间
       'state|1': ['拼团成功', '拼团失败', '成团中'], //拼团状态
@@ -53,11 +53,25 @@ for (let i = 1; i <= 1000; i++) {
   )
 }
 
-Mock.mock('http://127.0.0.1:8079/appedgrouplist', options => {
+/* Mock.mock('http://127.0.0.1:8079/appedgrouplist', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   console.log(options)
   const matchedgetGroupInfo = groupInfo.filter(item => item.groupGoodId == queryInfo.groupGoodId)
+  return {
+    status: 0,
+    data: {
+      matchedgetGroupInfo: matchedgetGroupInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+      count: matchedgetGroupInfo.length
+    }
+  }
+}) */
+
+Mock.mock(RegExp('http://127.0.0.1:8079/appedgrouplist?' + '.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
+  console.log(options)
+  const matchedgetGroupInfo = groupInfo.filter(item => item.pid == queryInfo.id)
   return {
     status: 0,
     data: {
