@@ -29,7 +29,7 @@
         </el-col>
         <el-col :span="5">
           <el-form-item label-width="0">
-            <el-button size="medium" type="primary" @click="getGroupsInfo">查询</el-button>
+            <el-button size="medium" type="primary" @click="getgroupbuylist">查询</el-button>
             <el-button size="medium" type="success" @click="addGroupBuy">添加</el-button>
           </el-form-item>
         </el-col>
@@ -49,9 +49,9 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
+      :current-page="queryInfo.pagenum"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
+      :page-size="queryInfo.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="count"
       background
@@ -77,16 +77,17 @@ export default {
       pagesize: 10
     })
     const groupsInfo = ref([])
-    const getGroupsInfo = async () => {
+    const getgroupbuylist = async () => {
       try {
         queryInfo.startDate = queryInfo.activityTime[0]
         queryInfo.endDate = queryInfo.activityTime[1]
         queryInfo.page = queryInfo.pagenum
-        const { data: res } = await service.get('getGroupsInfo', {
+        queryInfo.limit = queryInfo.pagesize
+        const { data: res } = await service.get('getgroupbuylist', {
           params: queryInfo
         })
         console.log(res)
-        groupsInfo.value = res.groupsInfo
+        groupsInfo.value = res
         groupsInfo.value.forEach((item) => {
           switch (item.state) {
             case 0:
@@ -103,12 +104,12 @@ export default {
               break
           }
         })
-        count.value = res.count
+        // count.value = res.count
       } catch (err) {
         console.log(err)
       }
     }
-    getGroupsInfo()
+    getgroupbuylist()
     const columns = [
       {
         title: '活动名称',
@@ -147,20 +148,17 @@ export default {
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
-      getGroupsInfo()
+      getgroupbuylist()
     }
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
-      getGroupsInfo()
+      getgroupbuylist()
     }
     const groupList = (id) => {
       let path = '/groupList/' + id //动态路由跳转的路径声明方式
-      $router.push({
-        path,
-        query: {
-          id: id
-        }
-      })
+      $router.push(
+        path
+      )
     }
     const currentPage = ref(1)
     const editDetail = (id) => {
@@ -177,13 +175,13 @@ export default {
           const res = await service.get('updatestate', {
             params: {
               groupId: id,
-              state: 2
+              state: 3
             }
           })
           if (res.status == 0) {
             ElMessage.success('已成功关闭！')
           }
-          getGroupsInfo()
+          getgroupbuylist()
         })
         .catch(() => {
           ElMessage({
@@ -198,6 +196,7 @@ export default {
 
     return {
       queryInfo,
+      getgroupbuylist,
       groupsInfo,
       columns,
       count,

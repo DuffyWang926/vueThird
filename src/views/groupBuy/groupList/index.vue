@@ -27,7 +27,7 @@
         <el-input size="medium" placeholder="单行输入" v-model="queryInfo.openerCard"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="success" @click="getGroupInfo">查询</el-button>
+        <el-button size="medium" type="success" @click="appedgrouplist">查询</el-button>
       </el-form-item>
     </el-form>
     <my-table :data="groupInfo" :columns="columns" :operationShow="false"></my-table>
@@ -35,9 +35,9 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
+      :current-page="queryInfo.pagenum"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
+      :page-size="queryInfo.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="count"
       background
@@ -56,7 +56,7 @@ export default {
     const $router = useRouter()
     const route = useRoute() //route是异步操作，需要将定义提前，不能写一句里，否则会出现报错
     const queryInfo = reactive({
-      groupGoodId: route.query.groupGoodId,
+      id: route.params.id,
       name: '',
       activityTime: '',
       groupStatus: '',
@@ -65,16 +65,21 @@ export default {
       pagesize: 10
     })
     const groupInfo = ref([])
-    const getGroupInfo = async () => {
+    const appedgrouplist = async () => {
       queryInfo.startDate = queryInfo.activityTime[0]
       queryInfo.endDate = queryInfo.activityTime[1]
       queryInfo.page = queryInfo.pagenum
-      const { data: res } = await service.post('getGroupInfo', queryInfo)
-      groupInfo.value = res.matchedgetGroupInfo
-      count.value = res.count
+      queryInfo.limit = queryInfo.pagesize
+      console.log(queryInfo);
+      const { data: res } = await service.get('appedgrouplist', {
+        params: queryInfo
+      })
+       console.log(res)
+      groupInfo.value = res
+      // count.value = res.count
       console.log(groupInfo.value)
     }
-    getGroupInfo()
+    appedgrouplist()
 
     const columns = [
       {
@@ -114,16 +119,12 @@ export default {
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
-      getGroupInfo()
+      appedgrouplist()
     }
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
-      getGroupInfo()
+      appedgrouplist()
     }
-    /* const groupList = (id) => {
-        let path = '/groupList/' + id//动态路由跳转的路径声明方式
-        $router.push({path})
-    } */
     const currentPage = ref(1)
     return {
       queryInfo,
@@ -132,7 +133,8 @@ export default {
       count,
       handleSizeChange,
       handleCurrentChange,
-      currentPage
+      currentPage,
+      appedgrouplist
     }
   }
 }
