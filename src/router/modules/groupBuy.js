@@ -31,8 +31,9 @@ export default [
         }
       },
       {
-        path: '/groupBuyEdit',
+        path: '/groupBuyEdit/:id',
         name: 'groupBuyEdit',
+        props: true,
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,

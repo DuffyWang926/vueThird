@@ -262,14 +262,21 @@
 </template>
 
 <script>
-import { ref, reactive, watch, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, watch, computed, onMounted, nextTick, onBeforeUpdate } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import lodash from 'lodash'
 import service from '@/utils/request'
 export default {
+  props: {
+    id: {
+      type: Number,
+      required: false
+    }
+  },
   name: 'GroupBuyAdd',
-  setup() {
+  setup(props) {
+    console.log(props)
     const route = useRoute()
     const router = useRouter()
     const addForm = reactive({
@@ -638,7 +645,7 @@ export default {
               return num < 10 ? '0' + num : num
             }
           }
-          const id = route.query.groupBuyId
+          const id = props.id
           if (id) {
             groupBuy.id = id
           }
@@ -705,8 +712,10 @@ export default {
     // 编辑
     const loading = ref(false)
     const getCurrentGroupBuy = async () => {
+      // debugger
       loading.value = true
-      const id = route.query.groupBuyId
+      const id = props.id
+      console.log(id)
       if (!id) return
       const { data: res } = await service.get('groupbuydetail', {
         params: {
@@ -751,6 +760,11 @@ export default {
       loading.value = false
     }
     getCurrentGroupBuy()
+    onBeforeUpdate(() => {
+      console.log(product)
+      console.log(addForm)
+      // debugger
+    })
     return {
       addForm,
       addFormRef,
