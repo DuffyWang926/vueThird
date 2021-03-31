@@ -29,7 +29,7 @@
         </el-col>
         <el-col :span="5">
           <el-form-item label-width="0">
-            <el-button size="medium" type="primary" @click="getGroupsInfo">查询</el-button>
+            <el-button size="medium" type="primary" @click="getgroupbuylist">查询</el-button>
             <el-button size="medium" type="success" @click="addGroupBuy">添加</el-button>
           </el-form-item>
         </el-col>
@@ -77,12 +77,12 @@ export default {
       pagesize: 10
     })
     const groupsInfo = ref([])
-    const getGroupsInfo = async () => {
+    const getgroupbuylist = async () => {
       try {
         queryInfo.startDate = queryInfo.activityTime[0]
         queryInfo.endDate = queryInfo.activityTime[1]
         queryInfo.page = queryInfo.pagenum
-        const { data: res } = await service.get('getGroupsInfo', {
+        const { data: res } = await service.get('getgroupbuylist', {
           params: queryInfo
         })
         console.log(res)
@@ -108,7 +108,7 @@ export default {
         console.log(err)
       }
     }
-    getGroupsInfo()
+    getgroupbuylist()
     const columns = [
       {
         title: '活动名称',
@@ -147,11 +147,11 @@ export default {
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
-      getGroupsInfo()
+      getgroupbuylist()
     }
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
-      getGroupsInfo()
+      getgroupbuylist()
     }
     const groupList = (id) => {
       let path = '/groupList/' + id //动态路由跳转的路径声明方式
@@ -181,9 +181,9 @@ export default {
             }
           })
           if (res.status == 0) {
-            ElMessage.success('已成功关闭！')
+            ElMessage.su-ccess('已成功关闭！')
           }
-          getGroupsInfo()
+          getgroupbuylist()
         })
         .catch(() => {
           ElMessage({

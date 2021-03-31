@@ -21,7 +21,7 @@ for (let i = 1; i <= 100; i++) {
   )
 }
 
-Mock.mock(RegExp('http://127.0.0.1:8079/getGroupsInfo?' + '.*'), options => {
+Mock.mock(RegExp('http://127.0.0.1:8079/getgroupbuylist?' + '.*'), options => {
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
   console.log(options)
@@ -53,7 +53,7 @@ for (let i = 1; i <= 1000; i++) {
   )
 }
 
-Mock.mock('http://127.0.0.1:8079/getGroupInfo', options => {
+Mock.mock('http://127.0.0.1:8079/appedgrouplist', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   console.log(options)

@@ -27,7 +27,7 @@
         <el-input size="medium" placeholder="单行输入" v-model="queryInfo.openerCard"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="success" @click="getGroupInfo">查询</el-button>
+        <el-button size="medium" type="success" @click="appedgrouplist">查询</el-button>
       </el-form-item>
     </el-form>
     <my-table :data="groupInfo" :columns="columns" :operationShow="false"></my-table>
@@ -65,16 +65,16 @@ export default {
       pagesize: 10
     })
     const groupInfo = ref([])
-    const getGroupInfo = async () => {
+    const appedgrouplist = async () => {
       queryInfo.startDate = queryInfo.activityTime[0]
       queryInfo.endDate = queryInfo.activityTime[1]
       queryInfo.page = queryInfo.pagenum
-      const { data: res } = await service.post('getGroupInfo', queryInfo)
-      groupInfo.value = res.matchedgetGroupInfo
+      const { data: res } = await service.post('appedgrouplist', queryInfo)
+      groupInfo.value = res.matchedappedgrouplistgetGroupInfo
       count.value = res.count
       console.log(groupInfo.value)
     }
-    getGroupInfo()
+    appedgrouplist()
 
     const columns = [
       {
@@ -114,16 +114,12 @@ export default {
     const handleSizeChange = (val) => {
       queryInfo.pagenum = 1
       queryInfo.pagesize = val
-      getGroupInfo()
+      appedgrouplist()
     }
     const handleCurrentChange = (val) => {
       queryInfo.pagenum = val
-      getGroupInfo()
+      appedgrouplist()
     }
-    /* const groupList = (id) => {
-        let path = '/groupList/' + id//动态路由跳转的路径声明方式
-        $router.push({path})
-    } */
     const currentPage = ref(1)
     return {
       queryInfo,
