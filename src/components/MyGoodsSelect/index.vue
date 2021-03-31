@@ -1,33 +1,10 @@
 <template>
   <div class="tree-container" v-loading="goodsTreeLoading">
-    <el-input
-      type="textarea"
-      :rows="3"
-      placeholder="此处展示所选商品列表"
-      :model-value="goodsNameSelectedList"
-      disabled
-      resize="none"
-    >
-    </el-input>
-    <el-input
-      placeholder="输入关键字进行过滤"
-      v-model="goodsFilterText"
-    ></el-input>
-    <el-tree
-      :data="data"
-      ref="goodsTreeRef"
-      :props="goodsTreeProps"
-      :filter-node-method="goodsFilterNode"
-      show-checkbox
-      node-key="id"
-      @check-change="handleGoodsCheckChange"
-      @check="handleCheck"
-    >
+    <el-input type="textarea" :rows="3" placeholder="此处展示所选商品列表" :model-value="goodsNameSelectedList" disabled resize="none"> </el-input>
+    <el-input placeholder="输入关键字进行过滤" v-model="goodsFilterText"></el-input>
+    <el-tree :data="data" ref="goodsTreeRef" :props="goodsTreeProps" :filter-node-method="goodsFilterNode" show-checkbox node-key="id" @check-change="handleGoodsCheckChange" @check="handleCheck">
       <template #default="{ node, data }">
-        <span
-          class="custom-tree-node"
-          :class="[data.level < 4 ? 'no-checkbox' : '']"
-        >
+        <span class="custom-tree-node" :class="[data.level < 4 ? 'no-checkbox' : '']">
           <span>{{ data.name }}</span>
         </span>
       </template>
@@ -84,9 +61,9 @@ export default {
     const getAllGoodsList = async () => {
       let date = +new Date()
       goodsTreeLoading.value = true
-      const { data: res } = await service.get('getAllGoodsTree')
+      const { data: res } = await service.get('getAllCategory')
       console.log(res)
-      goodsList.value = res.menus
+      goodsList.value = res
       goodsList.value.push({
         id: '0',
         name: '选择全部商品',
@@ -189,12 +166,7 @@ export default {
       emitTimer = setTimeout(() => {
         emit('update:modelValue', goodsTreeRef.value.getCheckedKeys())
         emit('update:leafValue', goodsTreeRef.value.getCheckedKeys(true))
-        emit(
-          'update:productId',
-          goodsTreeRef.value
-            .getCheckedNodes(false, true)
-            .filter((item) => item.level == 4)[0].id
-        )
+        emit('update:productId', goodsTreeRef.value.getCheckedNodes(false, true).filter((item) => item.level == 4)[0].id)
         emit(
           'update:subProductIds',
           goodsTreeRef.value
@@ -208,15 +180,11 @@ export default {
       // console.log(data)
       if (data.id === '0') {
         if (!props.isRestrictRegion) return
-        ElMessageBox.confirm(
-          '是否限售所有商品？添加该规则后，后续上架的产品也将延续该规则！',
-          '提示',
-          {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }
-        )
+        ElMessageBox.confirm('是否限售所有商品？添加该规则后，后续上架的产品也将延续该规则！', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
           .then(() => {
             goodsTreeRef.value.setChecked(data.id, true)
           })

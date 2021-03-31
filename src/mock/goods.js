@@ -15,70 +15,78 @@ let goodsTree = [
 ]
 
 for (let i = 1; i <= 3; i++) {
-  goodsTree.push(Mock.mock({
-    id: i,
-    name: '@cname',
-    subId: '0'
-  }))
+  goodsTree.push(
+    Mock.mock({
+      id: i,
+      name: '@cname',
+      subId: '0'
+    })
+  )
 }
 
 for (let i = 4; i <= 12; i++) {
-  goodsTree.push(Mock.mock({
-    id: i,
-    name: '@cname',
-    'subId|1-3': 1
-  }))
+  goodsTree.push(
+    Mock.mock({
+      id: i,
+      name: '@cname',
+      'subId|1-3': 1
+    })
+  )
 }
 
 for (let i = 13; i <= 36; i++) {
-  goodsTree.push(Mock.mock({
-    id: i,
-    name: '@cname',
-    'subId|4-12': 1
-  }))
+  goodsTree.push(
+    Mock.mock({
+      id: i,
+      name: '@cname',
+      'subId|4-12': 1
+    })
+  )
 }
 
 for (let i = 37; i <= 100; i++) {
-  goodsTree.push(Mock.mock({
-    id: i,
-    name: '@cname',
-    'subId|12-36': 1
-  }))
+  goodsTree.push(
+    Mock.mock({
+      id: i,
+      name: '@cname',
+      'subId|12-36': 1
+    })
+  )
 }
-Mock.mock(('http://127.0.0.1:8079/product/getProductById'), options => {
-  const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo);
+Mock.mock('http://127.0.0.1:8079/getproductbyid', options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
   return {
     status: 0,
     data: {
-      product: goodsTree.find(item => item.id == queryInfo.productId)
+      product: goodsTree.find(item => item.id == queryInfo.id)
     }
   }
 })
 
 for (let i = 101; i < 200; i++) {
   const productItem = Mock.mock({
-    "categoryName": "@cname",
-    "colour|1-100": 1,
-    "createTime": '@datetime("yyyy-MM-dd HH:mm:ss")',
-    "extend1": "",
-    "id": i,
-    "subId|37-100": 1,
-    "img": "@image",
-    "indexKey": 0,
-    "isOnSale|1": [1, 2],
-    "nowPrice|1-100": 138,
-    "oldPrice|1-100": 0,
-    "points|1-100": 0,
-    "productId": 315,
-    "productName": "@cname",
-    "size|1-100": 1,
-    "skuCode": "cs2021022601C",
-    "state|1": 0,
-    "stock": 0,
-    "type|1": [1, 2],
-    "warehouseName": "自营",
-    "weight|1-100": 1
+    categoryName: '@cname',
+    'colour|1-100': 1,
+    createTime: '@datetime("yyyy-MM-dd HH:mm:ss")',
+    extend1: '',
+    id: i,
+    'subId|37-100': 1,
+    img: '@image',
+    indexKey: 0,
+    'isOnSale|1': [1, 2],
+    'nowPrice|1-100': 138,
+    'oldPrice|1-100': 0,
+    'points|1-100': 0,
+    productId: 315,
+    productName: '@cname',
+    'size|1-100': 1,
+    skuCode: 'cs2021022601C',
+    'state|1': 0,
+    stock: 0,
+    'type|1': [1, 2],
+    warehouseName: '自营',
+    'weight|1-100': 1
   })
   productItem.name = productItem.productName
   goodsTree.push(productItem)
@@ -88,13 +96,13 @@ for (let i = 101; i < 200; i++) {
 //   goodsTree = goodsTree.filter(item => goodsTree.find(subItem => subItem.pid === item.id) || item.level === 4)
 // }
 
-Mock.mock('http://127.0.0.1:8079/getProductItemById', options => {
-  const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo);
+Mock.mock(RegExp('http://127.0.0.1:8079/getproductitembyid' + '?.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
   return {
     status: 0,
     data: {
-      productItem: goodsTree.find(item => item.id == queryInfo.productItemId)
+      productItem: goodsTree.find(item => item.id == queryInfo.id)
     }
   }
 })
@@ -112,13 +120,10 @@ Mock.mock('http://127.0.0.1:8079/getProductItemById', options => {
 //   }
 // })
 
-Mock.mock('http://127.0.0.1:8079/getAllGoodsTree', options => {
+Mock.mock('http://127.0.0.1:8079/getAllCategory', options => {
   return {
     status: 0,
-    data: {
-      menus: goodsTree,
-      count: goodsTree.length
-    }
+    data: goodsTree
   }
 })
 
@@ -131,7 +136,7 @@ Mock.mock('http://127.0.0.1:8079/getAllGoodsList', options => {
         { id: '2', name: '哈哈哈' },
         { id: '3', name: '糖果' },
         { id: '4', name: '药' },
-        { id: '5', name: '泻药' },
+        { id: '5', name: '泻药' }
       ]
     }
   }
@@ -141,26 +146,26 @@ const productList = []
 
 for (let i = 1; i < 101; i++) {
   const product = Mock.mock({
-    "categoryName": "@cname",
-    "colour|1-100": 1,
-    "createTime": '@datetime("yyyy-MM-dd HH:mm:ss")',
-    "extend1": "",
-    "id": i,
-    "img": "@image",
-    "indexKey": 0,
-    "isOnSale|1": [1, 2],
-    "nowPrice": 138,
-    "oldPrice": 0,
-    "points|1-100": 0,
-    "productId": 315,
-    "productName": "@cname",
-    "size|1-100": 1,
-    "skuCode": "cs2021022601C",
-    "state|1": 0,
-    "stock": 0,
-    "type|1": [1, 2],
-    "warehouseName": "自营",
-    "weight|1-100": 1
+    categoryName: '@cname',
+    'colour|1-100': 1,
+    createTime: '@datetime("yyyy-MM-dd HH:mm:ss")',
+    extend1: '',
+    id: i,
+    img: '@image',
+    indexKey: 0,
+    'isOnSale|1': [1, 2],
+    nowPrice: 138,
+    oldPrice: 0,
+    'points|1-100': 0,
+    productId: 315,
+    productName: '@cname',
+    'size|1-100': 1,
+    skuCode: 'cs2021022601C',
+    'state|1': 0,
+    stock: 0,
+    'type|1': [1, 2],
+    warehouseName: '自营',
+    'weight|1-100': 1
   })
   productList.push(product)
 }
@@ -201,7 +206,3 @@ Mock.mock(RegExp('http://127.0.0.1:8079/setProductIsOnSale?' + '.*'), options =>
     }
   }
 })
-
-
-
-
