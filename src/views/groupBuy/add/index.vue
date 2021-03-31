@@ -567,16 +567,20 @@ export default {
       dialogVisible.value = false
     }
     const getProducts = async () => {
-      const { data: productRes } = await service.post('product/getProductById', {
-        productId: parseInt(productId.value)
+      const { data: productRes } = await service.get('getproductbyid', {
+        params: {
+          id: parseInt(productId.value)
+        }
       })
-      product.name = productRes.product.name
+      product.name = productRes.name
       for (let index = 0; index < subProductIds.value.length; index++) {
         const item = subProductIds.value[index]
-        const { data: productItemRes } = await service.post('getProductItemById', {
-          productItemId: item
+        const { data: productItemRes } = await service.get('getproductitembyid', {
+          params: {
+            id: item
+          }
         })
-        product.subProducts.push(productItemRes.productItem)
+        product.subProducts.push(productItemRes)
       }
       product.groupPrice = product.subProducts[0].nowPrice
       product.groupPoints = product.subProducts[0].points
@@ -722,33 +726,33 @@ export default {
           id
         }
       })
-      const groupBuyEntity = res.groupBuyEntity
-      addForm.id = groupBuyEntity.id
-      addForm.name = groupBuyEntity.name
-      addForm.startDate = groupBuyEntity.startDate
-      addForm.endDate = groupBuyEntity.endDate
-      addForm.activityRules = groupBuyEntity.groupDesc
-      addForm.startGroupBuyRules = groupBuyEntity.beginDesc
-      addForm.finishGroupByRules = groupBuyEntity.joinDesc
-      addForm.shareText = groupBuyEntity.shareDesc
-      addForm.startGroupBuyRequirement = groupBuyEntity.leaderRequire
-      addForm.totalMinNum = groupBuyEntity.groupMinNum
-      addForm.duration = groupBuyEntity.expiryDate
-      addForm.v0MinNum = groupBuyEntity.newMemberMin
+      const groupBuy = res.groupBuy
+      addForm.id = groupBuy.id
+      addForm.name = groupBuy.name
+      addForm.startDate = groupBuy.startDate
+      addForm.endDate = groupBuy.endDate
+      addForm.activityRules = groupBuy.groupDesc
+      addForm.startGroupBuyRules = groupBuy.beginDesc
+      addForm.finishGroupByRules = groupBuy.joinDesc
+      addForm.shareText = groupBuy.shareDesc
+      addForm.startGroupBuyRequirement = groupBuy.leaderRequire
+      addForm.totalMinNum = groupBuy.groupMinNum
+      addForm.duration = groupBuy.expiryDate
+      addForm.v0MinNum = groupBuy.newMemberMin
 
-      const groupBuyProductEntity = res.groupBuyProductEntity
-      groupBuyProductEntity.forEach((item) => {
+      const groupBuyProduct = res.groupBuyProduct
+      groupBuyProduct.forEach((item) => {
         subProductIds.value.push(item.productItemId)
       })
-      productId.value = groupBuyProductEntity[0].productId
+      productId.value = groupBuyProduct[0].productId
       await getProducts()
-      product.groupPrice = groupBuyProductEntity[0].productSalePrice
-      product.groupPoints = groupBuyProductEntity[0].productSalePoint
-      product.eachNum = groupBuyProductEntity[0].productNum
-      addForm.canSingleBuy = groupBuyProductEntity[0].buyType
+      product.groupPrice = groupBuyProduct[0].productSalePrice
+      product.groupPoints = groupBuyProduct[0].productSalePoint
+      product.eachNum = groupBuyProduct[0].productNum
+      addForm.canSingleBuy = groupBuyProduct[0].buyType
 
-      const groupBuyLevelEntities = res.groupBuyLevelEntities
-      groupBuyLevelEntities.forEach(async (item) => {
+      const groupBuyLevel = res.groupBuyLevel
+      groupBuyLevel.forEach(async (item) => {
         if (item.type == 0) {
           addForm.startGroupBuyLevels.push('v' + item.memberLevel)
           await nextTick()
