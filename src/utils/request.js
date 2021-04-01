@@ -11,7 +11,8 @@ let service = axios.create({
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
     // "authKey" :store.getters.authkey,
-    authKey: localStorage.getItem('authkey'),
+    //authKey: localStorage.getItem('authkey'),
+    'Authorization': 'Bearer' + localStorage.getItem('access_token'),
     appType: 5,
     version: '1.0.01'
   }
@@ -21,10 +22,12 @@ let queryData = ''
 service.interceptors.request.use(
   config => {
     const token = store.getters['user/getToken']
+    const tokenType = store.getters['user/getTokenType']
     console.log(token)
-    if (config.url !== 'login') {
+    //判断token是否过期，如果过期则请求刷新token.判断之前需要判断url
+    if (config.url !== 'loginregis/oauth/token') {
       if (token) {
-        // config.headers.Authorization = token
+        config.headers.Authorization = tokenType + ' ' + token
       } else {
         router.push({ path: '/login' })
         return config
