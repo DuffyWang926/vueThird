@@ -5,10 +5,10 @@
     </template>
     <el-form :model="formInline" class="demo-form-inline" label-position="left" label-width="70px">
       <el-row :gutter="20">
-        <el-col :span="6">
+        <el-col :span="7">
           <el-form-item label="活动名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"> </el-input> </el-form-item>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="10">
           <el-form-item label="创建时间">
             <el-date-picker
               v-model="queryInfo.activityTime"
@@ -24,12 +24,14 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="7">
           <el-form-item label="商品名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input> </el-form-item>
         </el-col>
-        <el-col :span="5">
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6">
           <el-form-item label-width="0">
-            <el-button size="medium" type="primary" @click="getgroupbuylist">查询</el-button>
+            <el-button size="medium" type="primary" @click="handleSubmit">查询</el-button>
             <el-button size="medium" type="success" @click="addGroupBuy">添加</el-button>
           </el-form-item>
         </el-col>
@@ -79,15 +81,28 @@ export default {
     const groupsInfo = ref([])
     const getgroupbuylist = async () => {
       try {
-        queryInfo.startDate = queryInfo.activityTime[0]
-        queryInfo.endDate = queryInfo.activityTime[1]
-        queryInfo.page = queryInfo.pagenum
-        queryInfo.limit = queryInfo.pagesize
+        // queryInfo.startDate = queryInfo.activityTime[0] || ''
+        // queryInfo.endDate = queryInfo.activityTime[1] || ''
+        // queryInfo.page = queryInfo.pagenum
+        // queryInfo.limit = queryInfo.pagesize
+        const queryInfoCopy = {}
+        queryInfoCopy.activityName = queryInfo.activityName
+        queryInfoCopy.name = queryInfo.name
+        queryInfoCopy.page = queryInfo.pagenum
+        queryInfoCopy.limit = queryInfo.pagesize
+        if (queryInfo.activityTime) {
+          queryInfoCopy.startDate = queryInfo.activityTime[0] || ''
+          queryInfoCopy.endDate = queryInfo.activityTime[1] || ''
+        } else {
+          queryInfoCopy.startDate = ''
+          queryInfoCopy.endDate = ''
+        }
         const { data: res } = await service.get('getgroupbuylist', {
-          params: queryInfo
+          params: queryInfoCopy
         })
         console.log(res)
-        groupsInfo.value = res
+        groupsInfo.value = res.groupBuyListVos
+        count.value = res.total
         groupsInfo.value.forEach((item) => {
           switch (item.state) {
             case 0:
@@ -110,6 +125,10 @@ export default {
       }
     }
     getgroupbuylist()
+    const handleSubmit = () => {
+      queryInfo.pagenum = 1
+      getgroupbuylist()
+    }
     const columns = [
       {
         title: '活动名称',
@@ -156,9 +175,7 @@ export default {
     }
     const groupList = (id) => {
       let path = '/groupList/' + id //动态路由跳转的路径声明方式
-      $router.push(
-        path
-      )
+      $router.push(path)
     }
     const currentPage = ref(1)
     const editDetail = (id) => {
@@ -197,6 +214,7 @@ export default {
     return {
       queryInfo,
       getgroupbuylist,
+      handleSubmit,
       groupsInfo,
       columns,
       count,

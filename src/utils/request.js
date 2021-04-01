@@ -63,7 +63,7 @@ service.interceptors.response.use(
     }
     if (Number(res.status) !== 0) {
       ElMessage({
-        message: res.data.message || res.message,
+        message: res.message || res.msg || res.data.message,
         type: 'error',
         duration: 2 * 1000
       })

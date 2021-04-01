@@ -567,6 +567,7 @@ export default {
       dialogVisible.value = false
     }
     const getProducts = async () => {
+      product.subProducts = []
       const { data: productRes } = await service.get('getproductbyid', {
         params: {
           id: parseInt(productId.value)
@@ -741,6 +742,8 @@ export default {
       addForm.v0MinNum = groupBuy.newMemberMin
 
       const groupBuyProduct = res.groupBuyProduct
+      productId.value = null
+      subProductIds.value = []
       groupBuyProduct.forEach((item) => {
         subProductIds.value.push(item.productItemId)
       })
@@ -776,6 +779,7 @@ export default {
       dialogVisible,
       handleClose,
       handleAdd,
+      handleCancel,
       treeValue,
       productId,
       subProductIds,
