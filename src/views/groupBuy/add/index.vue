@@ -567,6 +567,7 @@ export default {
       dialogVisible.value = false
     }
     const getProducts = async () => {
+      productFlag.value = false
       product.subProducts = []
       const { data: productRes } = await service.get('getproductbyid', {
         params: {
