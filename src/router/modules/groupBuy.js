@@ -8,7 +8,7 @@ export default [
       id: 52,
       title: '团购管理',
       parent: '营销管理',
-      sort: 2
+      sort: 1
     },
     component: () => import('@/views/groupBuy/index'),
     children: [
@@ -38,15 +38,6 @@ export default [
         meta: {
           index: 3,
           title: '修改团购'
-        }
-      },
-      {
-        path: '/groupList/:id',
-        name: 'groupList',
-        component: () => import('@/views/groupBuy/groupList/index'),
-        meta: {
-          index: 3,
-          title: '拼团列表'
         }
       }
     ]

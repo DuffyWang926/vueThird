@@ -11,14 +11,7 @@
       <el-step title="产品规格及子产品"></el-step>
       <el-step title="产品描述及详情"></el-step>
     </el-steps>
-    <el-form
-      ref="step1FormRef"
-      v-show="activeIndex === 0"
-      :model="step1Form"
-      :rules="step1FormRules"
-      label-width="120px"
-      label-position="left"
-    >
+    <el-form ref="step1FormRef" v-show="activeIndex === 0" :model="step1Form" :rules="step1FormRules" label-width="120px" label-position="left">
       <el-form-item label="分类" prop="categoryId">
         <div style="width: 400px">
           <my-category-select
@@ -31,57 +24,21 @@
         </div>
       </el-form-item>
       <el-form-item label="产品名称" prop="name">
-        <el-input
-          placeholder="产品名称"
-          size="large"
-          v-model="step1Form.name"
-        ></el-input>
+        <el-input placeholder="产品名称" size="large" v-model="step1Form.name"></el-input>
       </el-form-item>
       <el-form-item label="产品编码" prop="skuCode">
-        <el-input
-          placeholder="产品编码"
-          size="large"
-          v-model="step1Form.skuCode"
-        ></el-input>
+        <el-input placeholder="产品编码" size="large" v-model="step1Form.skuCode"></el-input>
       </el-form-item>
       <el-form-item label="仓库" prop="warehouse">
-        <el-select
-          placeholder="----请选择----"
-          v-model="step1Form.warehouse"
-          @click="step1FormRef.validateField('warehouse')"
-        >
-          <el-option
-            label="----请选择----"
-            value=""
-            disabled
-            v-show="false"
-          ></el-option>
-          <el-option
-            v-for="item in warehouses"
-            :key="item.id"
-            :value="item.id"
-            :label="item.name"
-          ></el-option>
+        <el-select placeholder="----请选择----" v-model="step1Form.warehouse" @click="step1FormRef.validateField('warehouse')">
+          <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
+          <el-option v-for="item in warehouses" :key="item.id" :value="item.id" :label="item.name"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="税率种类" prop="taxe">
-        <el-select
-          placeholder="----请选择----"
-          v-model="step1Form.taxe"
-          @click="step1FormRef.validateField('taxe')"
-        >
-          <el-option
-            label="----请选择----"
-            value=""
-            disabled
-            v-show="false"
-          ></el-option>
-          <el-option
-            v-for="item in taxes"
-            :key="item.id"
-            :value="item.id"
-            :label="item.name"
-          ></el-option>
+        <el-select placeholder="----请选择----" v-model="step1Form.taxe" @click="step1FormRef.validateField('taxe')">
+          <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
+          <el-option v-for="item in taxes" :key="item.id" :value="item.id" :label="item.name"></el-option>
         </el-select>
       </el-form-item>
       <el-row :gutter="20">
@@ -103,67 +60,31 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item
-            label="是否支持七天无理由退换"
-            label-width="218px"
-            prop="is7dReturn"
-          >
+          <el-form-item label="是否支持七天无理由退换" label-width="218px" prop="is7dReturn">
             <el-switch v-model="step1Form.is7dReturn"> </el-switch>
           </el-form-item>
         </el-col>
       </el-row>
       <div v-if="step1Form.isAdvSale">
         <el-form-item label="预售开始时间" prop="advStartTime">
-          <el-date-picker
-            v-model="step1Form.advStartTime"
-            align="right"
-            type="date"
-            placeholder="选择日期"
-          >
-          </el-date-picker>
+          <el-date-picker v-model="step1Form.advStartTime" align="right" type="date" placeholder="选择日期"> </el-date-picker>
         </el-form-item>
         <el-form-item label="预售结束时间" prop="advEndTime">
-          <el-date-picker
-            v-model="step1Form.advEndTime"
-            align="right"
-            type="date"
-            placeholder="选择日期"
-          >
-          </el-date-picker>
+          <el-date-picker v-model="step1Form.advEndTime" align="right" type="date" placeholder="选择日期"> </el-date-picker>
         </el-form-item>
         <el-form-item label="预售描述" prop="advSaleDes">
-          <el-input
-            type="textarea"
-            :rows="4"
-            placeholder="请输入内容"
-            v-model="step1Form.advSaleDes"
-            resize="none"
-          >
-          </el-input>
+          <el-input type="textarea" :rows="4" placeholder="请输入内容" v-model="step1Form.advSaleDes" resize="none"> </el-input>
         </el-form-item>
       </div>
     </el-form>
-    <el-form
-      ref="step2FormRef"
-      v-show="activeIndex === 1"
-      :model="step2Form"
-      :rules="step2FormRules"
-      label-width="120px"
-      label-position="left"
-    >
+    <el-form ref="step2FormRef" v-show="activeIndex === 1" :model="step2Form" :rules="step2FormRules" label-width="120px" label-position="left">
       <el-form-item label="产品主图" prop="masterImgList">
         <my-upload v-model:image-list="step2Form.masterImgList">
-          <div style="font-size: 16px; color: red">
-            注：图片上传不得超过10M。
-          </div>
+          <div style="font-size: 16px; color: red">注：图片上传不得超过10M。</div>
         </my-upload>
       </el-form-item>
       <el-form-item label="九宫图" prop="nineImgList">
-        <my-upload
-          v-model:image-list="step2Form.nineImgList"
-          multiple
-          :limit="9"
-        >
+        <my-upload v-model:image-list="step2Form.nineImgList" multiple :limit="9">
           <div style="font-size: 16px">
             <span>按住Ctrl键可以多选，九宫图最多只能添加9张。</span>
             <span style="color: red">图片上传不得超过10M。</span>
@@ -171,11 +92,7 @@
         >
       </el-form-item>
       <el-form-item label="分享图片" prop="shareImgList">
-        <my-upload
-          v-model:image-list="step2Form.shareImgList"
-          multiple
-          :limit="9"
-        >
+        <my-upload v-model:image-list="step2Form.shareImgList" multiple :limit="9">
           <div style="font-size: 16px">
             <span>按住Ctrl键可以多选，分享图片最多只能添加9张。</span>
             <span style="color: red">图片上传不得超过10M。</span>
@@ -184,80 +101,37 @@
       </el-form-item>
       <el-form-item label="产品视频" prop="videoList">
         <div style="width: 400px">
-          <my-upload v-model:image-list="step2Form.videoList" isVideo>
-            <div style="font-size: 16px; color: red">
-              注：视频上传不得超过30M。
-            </div></my-upload
-          >
+          <my-upload v-model:image-list="step2Form.videoList" isVideo> <div style="font-size: 16px; color: red">注：视频上传不得超过30M。</div></my-upload>
         </div>
       </el-form-item>
     </el-form>
-    <el-form
-      ref="step3FormRef"
-      v-show="activeIndex === 2"
-      :model="step3Form"
-      label-width="80px"
-      label-position="left"
-    >
+    <el-form ref="step3FormRef" v-show="activeIndex === 2" :model="step3Form" label-width="80px" label-position="left">
       <el-form-item label="是否组合" prop="isCombination">
         <el-switch v-model="step3Form.isCombination"> </el-switch>
       </el-form-item>
       <el-form-item label="商品规格">
         <div style="margin-bottom: 20px">
           <el-form-item label="颜色" prop="colour" label-width="40px">
-            <el-input
-              placeholder="规格值"
-              size="large"
-              v-model.trim="step3Form.colour"
-              style="width: 200px; margin-right: 20px"
-            ></el-input>
-            <el-button type="primary" size="large" @click="addColour"
-              >添加</el-button
-            >
+            <el-input placeholder="规格值" size="large" v-model.trim="step3Form.colour" style="width: 200px; margin-right: 20px"></el-input>
+            <el-button type="primary" size="large" @click="addColour">添加</el-button>
           </el-form-item>
           <div class="tags">
-            <el-tag
-              v-for="item in step3Form.colours"
-              :key="item"
-              closable
-              @close="removeColour(item)"
-              >{{ item }}</el-tag
-            >
+            <el-tag v-for="item in step3Form.colours" :key="item" closable @close="removeColour(item)">{{ item }}</el-tag>
           </div>
         </div>
         <div>
           <el-form-item label="尺寸" prop="size" label-width="40px">
-            <el-input
-              placeholder="规格值"
-              size="large"
-              v-model.trim="step3Form.size"
-              style="width: 200px; margin-right: 20px"
-            ></el-input>
-            <el-button type="primary" size="large" @click="addSize"
-              >添加</el-button
-            >
+            <el-input placeholder="规格值" size="large" v-model.trim="step3Form.size" style="width: 200px; margin-right: 20px"></el-input>
+            <el-button type="primary" size="large" @click="addSize">添加</el-button>
           </el-form-item>
           <div class="tags">
-            <el-tag
-              v-for="item in step3Form.sizes"
-              :key="item"
-              closable
-              @close="removeSize(item)"
-              >{{ item }}</el-tag
-            >
+            <el-tag v-for="item in step3Form.sizes" :key="item" closable @close="removeSize(item)">{{ item }}</el-tag>
           </div>
         </div>
       </el-form-item>
-      <div
-        v-if="step3Form.colours.length > 0 && step3Form.sizes.length > 0"
-        style="margin-left: -100px"
-      >
+      <div v-if="step3Form.colours.length > 0 && step3Form.sizes.length > 0" style="margin-left: -100px">
         <el-row>子产品列表</el-row>
-        <el-table
-          v-show="!step3Form.isCombination"
-          :data="table"
-          style="width: 100%"
-        >
+        <el-table v-show="!step3Form.isCombination" :data="table" style="width: 100%">
           <el-table-column label="颜色" prop="colour"></el-table-column>
           <el-table-column label="尺寸" prop="size"></el-table-column>
           <el-table-column label="产品编码" width="100">
@@ -272,111 +146,61 @@
           </el-table-column>
           <el-table-column label="产品原价（￥）" width="100">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_oldPrice"
-                @blur="changeOldPrice(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_oldPrice" @blur="changeOldPrice(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="产品现价（￥）" width="100">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_nowPrice"
-                @blur="changeNowPrice(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_nowPrice" @blur="changeNowPrice(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="产品重量（kg）" width="100">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_weight"
-                @blur="changeWeight(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_weight" @blur="changeWeight(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="产品积分" width="80">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_points"
-                @blur="changePoints(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_points" @blur="changePoints(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="显示顺序（倒序）" width="80">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_indexkey"
-                @blur="changeIndexKey(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_indexkey" @blur="changeIndexKey(scope)"></el-input>
             </template>
           </el-table-column>
         </el-table>
-        <el-table
-          v-show="step3Form.isCombination"
-          :data="combinedTable"
-          style="width: 100%"
-          @row-click="expandChange"
-          ref="combinedTableRef"
-          row-key="key"
-          :expand-row-keys="expandRowKeys"
-        >
+        <el-table v-show="step3Form.isCombination" :data="combinedTable" style="width: 100%" @row-click="expandChange" ref="combinedTableRef" row-key="key" :expand-row-keys="expandRowKeys">
           <el-table-column type="expand" label="展开">
             <template #default="props">
-              <el-table
-                :data="props.row.productsInfos"
-                style="width: 90%; margin: 0 auto"
-                class="product-infos"
-              >
+              <el-table :data="props.row.productsInfos" style="width: 90%; margin: 0 auto" class="product-infos">
                 <el-table-column label="商品图片">
                   <template #default="scope">
-                    <el-image
-                      style="width: 100px; height: 100px"
-                      :src="scope.row.img"
-                      fit="cover"
-                    ></el-image>
+                    <el-image style="width: 100px; height: 100px" :src="scope.row.img" fit="cover"></el-image>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="SKUCODE"
-                  prop="skuCode"
-                ></el-table-column>
+                <el-table-column label="SKUCODE" prop="skuCode"></el-table-column>
                 <el-table-column label="商品名称">
-                  <template #default="scope">
-                    {{ scope.row.productName }} [{{ scope.row.colour }}
-                    {{ scope.row.size }}]
-                  </template>
+                  <template #default="scope"> {{ scope.row.productName }} [{{ scope.row.colour }} {{ scope.row.size }}] </template>
                 </el-table-column>
                 <el-table-column label="现价" width="120">
                   <template #default="scope">
-                    <el-input
-                      v-model="scope.row.item_nowPrice"
-                      @blur="changeNowPrice(scope)"
-                    ></el-input>
+                    <el-input v-model="scope.row.item_nowPrice" @blur="changeNowPrice(scope)"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column label="积分" width="120">
                   <template #default="scope">
-                    <el-input
-                      v-model="scope.row.item_points"
-                      @blur="changePoints(scope)"
-                    ></el-input>
+                    <el-input v-model="scope.row.item_points" @blur="changePoints(scope)"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column label="数量" width="120">
                   <template #default="scope">
-                    <el-input
-                      v-model="scope.row.item_nums"
-                      @blur="changeNums(scope)"
-                    ></el-input>
+                    <el-input v-model="scope.row.item_nums" @blur="changeNums(scope)"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
                   <template #default="scope">
-                    <el-button
-                      type="danger"
-                      @click="deleteCombinedItem(props, scope)"
-                      >删除</el-button
-                    >
+                    <el-button type="danger" @click="deleteCombinedItem(props, scope)">删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -406,10 +230,7 @@
           </el-table-column>
           <el-table-column label="产品重量（kg）" width="100">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_weight"
-                @blur="changeWeight(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_weight" @blur="changeWeight(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="产品积分" width="80">
@@ -419,50 +240,23 @@
           </el-table-column>
           <el-table-column label="显示顺序（倒序）" width="80">
             <template #default="scope">
-              <el-input
-                v-model="scope.row.item_indexkey"
-                @blur="changeIndexKey(scope)"
-              ></el-input>
+              <el-input v-model="scope.row.item_indexkey" @blur="changeIndexKey(scope)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="组合产品规格" fixed="right" width="100">
             <template #default="scope">
-              <el-button
-                @click.stop="selectCombinedProduct(scope.row)"
-                type="success"
-                >选择组合<br />产品规格</el-button
-              >
+              <el-button @click.stop="selectCombinedProduct(scope.row)" type="success">选择组合<br />产品规格</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </el-form>
-    <el-form
-      ref="step4FormRef"
-      v-show="activeIndex === 3"
-      :model="step4Form"
-      :rules="step4FormRules"
-      label-width="120px"
-      label-position="left"
-    >
+    <el-form ref="step4FormRef" v-show="activeIndex === 3" :model="step4Form" :rules="step4FormRules" label-width="120px" label-position="left">
       <el-form-item label="商品描述" prop="description">
-        <el-input
-          type="textarea"
-          :rows="3"
-          placeholder="请输入内容"
-          v-model="step4Form.description"
-          resize="none"
-          class="w600"
-        >
-        </el-input>
+        <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="step4Form.description" resize="none" class="w600"> </el-input>
       </el-form-item>
       <el-form-item label="商品详情" prop="specification">
-        <div
-          ref="editor"
-          style="width: 600px"
-          class="editor"
-          @click="step4FormRef.validateField('specification')"
-        ></div>
+        <div ref="editor" style="width: 600px" class="editor" @click="step4FormRef.validateField('specification')"></div>
         <!-- <quill-editor
           v-model="step4Form.specification"
           ref="myQuillEditor"
@@ -473,33 +267,13 @@
       </el-form-item>
     </el-form>
     <div style="display: flex; justify-content: center">
-      <el-button
-        type="primary"
-        @click="prevStep"
-        size="large"
-        v-if="activeIndex > 0"
-        >上一步</el-button
-      >
-      <el-button
-        :type="activeIndex === 3 ? 'success' : 'primary'"
-        @click="nextStep"
-        size="large"
-        >{{ activeIndex === 3 ? '提交' : '下一步' }}</el-button
-      >
+      <el-button type="primary" @click="prevStep" size="large" v-if="activeIndex > 0">上一步</el-button>
+      <el-button :type="activeIndex === 3 ? 'success' : 'primary'" @click="nextStep" size="large">{{ activeIndex === 3 ? '提交' : '下一步' }}</el-button>
     </div>
   </el-card>
-  <el-dialog
-    v-model="dialogVisible"
-    width="500px"
-    @close="handleClose"
-    destroy-on-close
-  >
+  <el-dialog v-model="dialogVisible" width="500px" @close="handleClose" destroy-on-close>
     <div v-loading="dialogLoading">
-      <my-goods-select
-        textareaShow
-        v-model:leaf-value="currentRow.products"
-        v-model="currentRow.allSelection"
-      ></my-goods-select>
+      <my-goods-select textareaShow v-model:leaf-value="currentRow.products" v-model="currentRow.allSelection"></my-goods-select>
     </div>
     <template #footer>
       <span class="dialog-footer">
@@ -553,9 +327,7 @@ export default {
         }
       ],
       name: [{ required: true, message: '请输入产品名称！', trigger: 'blur' }],
-      skuCode: [
-        { required: true, message: '请输入产品编码！', trigger: 'blur' }
-      ],
+      skuCode: [{ required: true, message: '请输入产品编码！', trigger: 'blur' }],
       warehouse: [
         {
           required: true,
@@ -636,10 +408,7 @@ export default {
     watch(
       () => step1Form.advEndTime,
       (newValue) => {
-        if (
-          newValue !== '' &&
-          +new Date(step1Form.advEndTime) <= +new Date(step1Form.advStartTime)
-        ) {
+        if (newValue !== '' && +new Date(step1Form.advEndTime) <= +new Date(step1Form.advStartTime)) {
           step1Form.advStartTime = ''
         }
       }
@@ -647,10 +416,7 @@ export default {
     watch(
       () => step1Form.advStartTime,
       (newValue) => {
-        if (
-          newValue !== '' &&
-          +new Date(step1Form.advEndTime) <= +new Date(step1Form.advStartTime)
-        ) {
+        if (newValue !== '' && +new Date(step1Form.advEndTime) <= +new Date(step1Form.advStartTime)) {
           step1Form.advEndTime = ''
         }
       }
@@ -735,21 +501,11 @@ export default {
     )
     const table = ref([])
     const refreshTable = () => {
-      for (
-        let colourIndex = 0;
-        colourIndex < step3Form.colours.length;
-        colourIndex++
-      ) {
+      for (let colourIndex = 0; colourIndex < step3Form.colours.length; colourIndex++) {
         const colour = step3Form.colours[colourIndex]
-        for (
-          let sizeIndex = 0;
-          sizeIndex < step3Form.sizes.length;
-          sizeIndex++
-        ) {
+        for (let sizeIndex = 0; sizeIndex < step3Form.sizes.length; sizeIndex++) {
           const size = step3Form.sizes[sizeIndex]
-          const item = table.value.find(
-            (item) => item.size == size && item.colour == colour
-          )
+          const item = table.value.find((item) => item.size == size && item.colour == colour)
           console.log(item)
           if (item) {
             item.colourIndex = colourIndex
@@ -771,11 +527,7 @@ export default {
           })
         }
       }
-      table.value = table.value.filter(
-        (item) =>
-          step3Form.colours.indexOf(item.colour) !== -1 &&
-          step3Form.sizes.indexOf(item.size) !== -1
-      )
+      table.value = table.value.filter((item) => step3Form.colours.indexOf(item.colour) !== -1 && step3Form.sizes.indexOf(item.size) !== -1)
       table.value.sort((a, b) => {
         if (a.colourIndex === b.colourIndex) {
           return a.sizeIndex - b.sizeIndex
@@ -787,21 +539,11 @@ export default {
     const combinedTable = ref([])
     const combinedTableRef = ref(null)
     const refreshCombinedTable = () => {
-      for (
-        let colourIndex = 0;
-        colourIndex < step3Form.colours.length;
-        colourIndex++
-      ) {
+      for (let colourIndex = 0; colourIndex < step3Form.colours.length; colourIndex++) {
         const colour = step3Form.colours[colourIndex]
-        for (
-          let sizeIndex = 0;
-          sizeIndex < step3Form.sizes.length;
-          sizeIndex++
-        ) {
+        for (let sizeIndex = 0; sizeIndex < step3Form.sizes.length; sizeIndex++) {
           const size = step3Form.sizes[sizeIndex]
-          const item = combinedTable.value.find(
-            (item) => item.size == size && item.colour == colour
-          )
+          const item = combinedTable.value.find((item) => item.size == size && item.colour == colour)
           console.log(item)
           if (item) {
             item.colourIndex = colourIndex
@@ -825,11 +567,7 @@ export default {
           })
         }
       }
-      combinedTable.value = combinedTable.value.filter(
-        (item) =>
-          step3Form.colours.indexOf(item.colour) !== -1 &&
-          step3Form.sizes.indexOf(item.size) !== -1
-      )
+      combinedTable.value = combinedTable.value.filter((item) => step3Form.colours.indexOf(item.colour) !== -1 && step3Form.sizes.indexOf(item.size) !== -1)
       combinedTable.value.sort((a, b) => {
         if (a.colourIndex === b.colourIndex) {
           return a.sizeIndex - b.sizeIndex
@@ -883,15 +621,11 @@ export default {
 
     const changeOldPrice = (scope) => {
       // console.log(scope)
-      scope.row.item_oldPrice = parseFloat(
-        (+scope.row.item_oldPrice).toFixed(2)
-      )
+      scope.row.item_oldPrice = parseFloat((+scope.row.item_oldPrice).toFixed(2))
     }
     const changeNowPrice = (scope) => {
       // console.log(scope)
-      scope.row.item_nowPrice = parseFloat(
-        (+scope.row.item_nowPrice).toFixed(2)
-      )
+      scope.row.item_nowPrice = parseFloat((+scope.row.item_nowPrice).toFixed(2))
     }
     const changeWeight = (scope) => {
       // console.log(scope)
@@ -912,30 +646,21 @@ export default {
     const calculateOldPrice = computed(() => {
       return (scope) => {
         const productsInfos = scope.row.productsInfos
-        return productsInfos.reduce(
-          (total, item) => total + item.item_oldPrice * item.item_nums,
-          0
-        )
+        return productsInfos.reduce((total, item) => total + item.item_oldPrice * item.item_nums, 0)
       }
     })
 
     const calculatenNowPrice = computed(() => {
       return (scope) => {
         const productsInfos = scope.row.productsInfos
-        return productsInfos.reduce(
-          (total, item) => total + item.item_nowPrice * item.item_nums,
-          0
-        )
+        return productsInfos.reduce((total, item) => total + item.item_nowPrice * item.item_nums, 0)
       }
     })
 
     const calculatePoints = computed(() => {
       return (scope) => {
         const productsInfos = scope.row.productsInfos
-        return productsInfos.reduce(
-          (total, item) => total + item.item_points * item.item_nums,
-          0
-        )
+        return productsInfos.reduce((total, item) => total + item.item_points * item.item_nums, 0)
       }
     })
 
@@ -961,9 +686,7 @@ export default {
       specification: ''
     })
     const step4FormRules = {
-      description: [
-        { required: true, message: '请填写商品描述', trigger: 'blur' }
-      ],
+      description: [{ required: true, message: '请填写商品描述', trigger: 'blur' }],
       specification: [
         {
           required: true,
@@ -1013,10 +736,7 @@ export default {
               if (!step3Form.isCombination) {
                 for (let index = 0; index < table.value.length; index++) {
                   const item = table.value[index]
-                  if (
-                    item.item_sku_code.length == 0 ||
-                    !/^\w+$/.test(item.item_sku_code)
-                  ) {
+                  if (item.item_sku_code.length == 0 || !/^\w+$/.test(item.item_sku_code)) {
                     ElMessage.error('商品子项编码不合法！')
                     return false
                   }
@@ -1047,16 +767,9 @@ export default {
                   }
                 }
               } else {
-                for (
-                  let index = 0;
-                  index < combinedTable.value.length;
-                  index++
-                ) {
+                for (let index = 0; index < combinedTable.value.length; index++) {
                   const item = combinedTable.value[index]
-                  if (
-                    item.item_sku_code.length == 0 ||
-                    !/^\w+$/.test(item.item_sku_code)
-                  ) {
+                  if (item.item_sku_code.length == 0 || !/^\w+$/.test(item.item_sku_code)) {
                     ElMessage.error('商品子项编码不合法！')
                     return false
                   }
@@ -1076,16 +789,9 @@ export default {
                     ElMessage.error('未添加组合商品项！')
                     return false
                   }
-                  for (
-                    let subIndex = 0;
-                    subIndex < item.productsInfos.length;
-                    subIndex++
-                  ) {
+                  for (let subIndex = 0; subIndex < item.productsInfos.length; subIndex++) {
                     const subItem = item.productsInfos[subIndex]
-                    if (
-                      isNaN(subItem.item_nowPrice) ||
-                      subItem.item_nowPrice < 0
-                    ) {
+                    if (isNaN(subItem.item_nowPrice) || subItem.item_nowPrice < 0) {
                       ElMessage.error('商品组合子项现价不合法！')
                       return false
                     }
@@ -1239,7 +945,7 @@ export default {
     // transform: translateY(12px);
     // margin-bottom: 12px;
     background-color: transparent;
-    /deep/.el-button {
+    .el-button {
       position: absolute;
       height: 40px;
       left: 50%;
@@ -1281,7 +987,6 @@ export default {
     width: 90%;
   }
 }
-
 
 .editor {
   /deep/ div {

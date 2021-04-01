@@ -64,12 +64,14 @@ export default {
       const { data: res } = await service.get('getAllCategory')
       console.log(res)
       goodsList.value = res
-      goodsList.value.push({
-        id: '0',
-        name: '选择全部商品',
-        subId: null,
-        leaf: false
-      })
+      if (!goodsList.value.find((item) => item.id == 0)) {
+        goodsList.value.push({
+          id: '0',
+          name: '选择全部商品',
+          subId: null,
+          leaf: false
+        })
+      }
       console.log('请求所有商品项', +new Date() - date)
       date = +new Date()
       data.value = generateNodes()
@@ -125,7 +127,9 @@ export default {
             item.parent = data
             item.level = data.level + 1
             if (item.level == 5) {
-              item.name = [item.colour, item.size].join(';')
+              if (item.colour && item.size) {
+                item.name = [item.colour, item.size].join(';')
+              }
             }
             let disabled = false
             if (props.onlyOneProduct) {
