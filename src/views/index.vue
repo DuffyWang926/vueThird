@@ -96,6 +96,7 @@ export default {
     const route = useRoute()
     const rights = store.getters['user/getRights']
     console.log('rights:', rights)
+   
     const getSubMenus = () => {
       let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
         return {

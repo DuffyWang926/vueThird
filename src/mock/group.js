@@ -65,7 +65,7 @@ for (let i = 1; i <= 1000; i++) {
       count: matchedgetGroupInfo.length
     }
   }
-}) */
+}) *///post请求
 
 Mock.mock(RegExp('http://127.0.0.1:8079/appedgrouplist?' + '.*'), options => {
   const queryInfo = parseGetParams(options.url)

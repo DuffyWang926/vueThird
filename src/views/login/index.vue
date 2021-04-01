@@ -1,7 +1,8 @@
 <template>
   <div class="bg">
+   <!-- <img src="../../../public/bj1.jpg" /> -->
     <div class="loginBox">
-      <el-card class="box-card" label-width="320px" shadow="never">
+      <el-card class="box-card" shadow="never">
         <template #header>
           <div class="card-header">管理员登录</div>
         </template>
@@ -25,12 +26,7 @@
           </el-form-item>
         </el-form>
       </el-card>
-
-      <el-card class="box-footer" label-width="320px" shadow="never">
-        <template #header>
-          <div class="card-footer">华尚荐康客商城综合管理平台</div>
-        </template>
-      </el-card>
+      <div class="box-footer">华尚荐康客商城综合管理平台</div>
     </div>
   </div>
 
@@ -110,9 +106,9 @@
                         center: true
                       });
             await $store.dispatch('user/login', {
-              username: loginForm.username,
+              card: loginForm.username,
               password: loginForm.password
-            })
+            });
             $router.push('./index');
           } else {
             console.log('error submit!!');
@@ -121,7 +117,16 @@
         });
       }
 
-
+   /*   window.onresize = function(){
+           changeDivHeight();
+       }
+       function changeDivHeight(){
+         var h = document.documentElement.clientWidth;
+         if(h < 1200){
+            document.getElementsByClassName("loginBox").style.left = 0;
+         }
+       }
+ */
 
 
 
@@ -136,62 +141,64 @@
       };
     }
   };
+
 </script>
 
 <style scoped lang="scss">
+  *{ margin:0;padding: 0; }
+  img{ display: block; }
+  html, body{ height: 100%; }
+
   .bg {
     width: 100%;
     height: 100%;
-    background: url(../../../public/bj1.jpg) no-repeat;
-    background-size: cover;
-    background-position: center center;
-  }
+   /* height: 937px;
+    width: 1900px; */
+   background: url(../../../public/bj1.jpg) no-repeat;
+   background-size: cover;
+   background-position: center center;
 
+  min-width: 400px;
+  }
   .loginBox {
     background: url(../../../public/bj2.png) no-repeat;
     background-size: contain;
     z-index: 123;
     background-position: center center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 83%;
-    height: 75%;
-    position: absolute;
+    /* width: 83%;
+    height: 75%; */
+    width: 1200px;
+    height: 680px;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
   }
-
-  .card-header{
-    color: #FFFEFE;
-    font-size: 43.2px;
-    font-weight: bold;
-    line-height: 70.4px;
-    text-align: center;
-  }
- .card-footer {
-    width: 327px;
-    height: 30px;
+.box-card{
+  position: absolute;
+  left: 9%;
+  top: 11%;
+}
+    .card-header{
+      color: #FFFEFE;
+     font-size: 43.2px;
+      font-weight: bold;
+      line-height: 70.4px;
+      text-align: center;
+    }
+ .box-footer {
     font-size: 24px;
     font-family: Microsoft YaHei;
     font-weight: bold;
     color: #FEFEFE;
-    line-height: 30px;
-   /* background-color: #FE7E01;
-    padding: 15px 70px 16px 71px; */
+   line-height: 30px;
+    position: absolute;
+    right: 5%;
+    bottom: 2%;
+
     }
-  .box-footer{
-    position: absolute;
-    right: 270px;
-    bottom: -18px;
-  }
+
   .box-card {
-    position: absolute;
-    left: 300px;
-    top: 60px;
-  }
-  .box-card, .box-footer {
     background: transparent !important;
     /deep/.el-card {
       background: transparent !important;
@@ -203,36 +210,37 @@
     }
     /deep/.el-card__body {
       background: transparent !important;
-      margin-top: -20px;
+     margin-top: -20px;
     }
   }
   .el-form-item {
     /deep/.el-form-item__label{
 /*      padding-left: 20px; */
-      margin-bottom: -10px;
+     margin-bottom: -10px;
       font-size: 16px;
       color: #FFFEFE;
     }
     /deep/.el-form-item__content{
-      width: 320px;
+     width: 320px;
       height: 41.6px;
     }
   }
 
   .el-input{
     color: #000000;
+    /* font-size: 19px; */
     font-size: 19px;
     font-weight: 400;
     color: #000000;
   }
   .el-input {
     #verifyInput{
-      width: 190px;
+     width: 190px;
     }
   }
   .el-input {
     /deep/#verifyInput{
-      width: 190px;
+     width: 190px;
     }
   }
   .seccode {
@@ -250,9 +258,9 @@
     background: linear-gradient(90deg, #FF6900, #FE7E01, #FFD203);
     width: 320px;
     height: 41.6px;
-    margin-top: 30px;
-    color: #ffffff;
+    margin-top: 20px;
     font-size: 18px;
+    color: #ffffff;
     font-weight: bold;
     border: none;
   }
