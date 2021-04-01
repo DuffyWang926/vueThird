@@ -1,28 +1,8 @@
 <template>
   <div class="tree-container" v-loading="rightsTreeLoading">
-    <el-input
-      type="textarea"
-      :rows="3"
-      placeholder="此处展示所选权限列表"
-      :model-value="rightsNameSelectedList"
-      disabled
-      resize="none"
-    >
-    </el-input>
-    <el-input
-      placeholder="输入关键字进行过滤"
-      v-model="rightsFilterText"
-    ></el-input>
-    <el-tree
-      :data="data"
-      ref="rightsTreeRef"
-      :props="rightsTreeProps"
-      :filter-node-method="rightsFilterNode"
-      show-checkbox
-      node-key="id"
-      @check-change="handleRightsCheckChange"
-    >
-    </el-tree>
+    <el-input type="textarea" :rows="3" placeholder="此处展示所选权限列表" :model-value="rightsNameSelectedList" disabled resize="none" style="display: none"> </el-input>
+    <el-input placeholder="输入关键字进行过滤" v-model="rightsFilterText"></el-input>
+    <el-tree :data="data" ref="rightsTreeRef" :props="rightsTreeProps" :filter-node-method="rightsFilterNode" show-checkbox node-key="id" @check-change="handleRightsCheckChange"> </el-tree>
   </div>
 </template>
 
@@ -87,18 +67,18 @@ export default {
         console.log(res)
         const selectedArr = []
         // console.log(rightsTreeRef.value.getNode(0))
-        res.menus.forEach((item) => {
-          // if (item.checked && item.pid) {
-          //   selectedArr.push(item.id)
-          // }
-          if (
-            rightsList.value.find((rightItem) => rightItem.id == item.id)
-              .leaf &&
-            item.checked
-          ) {
-            selectedArr.push(item.id)
-          }
-        })
+        res.menus
+          .split(',')
+          .map((item) => parseInt(item))
+          .forEach((item) => {
+            // if (item.checked && item.pid) {
+            //   selectedArr.push(item.id)
+            // }
+            console.log(item)
+            if (rightsList.value.find((rightItem) => rightItem.id == item).leaf) {
+              selectedArr.push(item)
+            }
+          })
         console.log(selectedArr)
         emit('update:modelValue', selectedArr)
       }
@@ -118,10 +98,7 @@ export default {
       emit('update:leafValue', rightsTreeRef.value.getCheckedKeys(true))
       emit(
         'update:halfCheckedValue',
-        [
-          ...rightsTreeRef.value.getCheckedKeys(),
-          ...rightsTreeRef.value.getHalfCheckedKeys()
-        ].filter((item) => item != 0)
+        [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0)
       )
       await nextTick()
       const rootNode = rightsTreeRef.value.getNode(0)
@@ -201,10 +178,7 @@ export default {
         // console.log(rightsTreeRef.value.getCheckedKeys(true))
         emit(
           'update:halfCheckedValue',
-          [
-            ...rightsTreeRef.value.getCheckedKeys(),
-            ...rightsTreeRef.value.getHalfCheckedKeys()
-          ].filter((item) => item != 0)
+          [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0)
         )
         const rootNode = rightsTreeRef.value.getNode(0)
         // console.log(rootNode)
@@ -231,9 +205,7 @@ export default {
         //   nodes[i].collapse()
         // }
         rightsTreeLoading.value = true
-        const matchedRights = rightsList.value.filter(
-          (item) => item.name.indexOf(newValue) !== -1
-        )
+        const matchedRights = rightsList.value.filter((item) => item.name.indexOf(newValue) !== -1)
         // for (let i = 0; i < matchedRights.length; i++) {
         //   const item = matchedRights[i]
         //   // console.log(item)
@@ -274,9 +246,14 @@ export default {
         }, 500)
       }, 1500)
     })
-    watch(() => props.modelValue, () =>{
-      rightsTreeRef.value.setCheckedKeys(props.modelValue)
-    })
+    watch(
+      () => props.modelValue,
+      () => {
+        rightsTreeRef.value.setCheckedKeys(props.modelValue)
+        // const leafCheckedIds = rightsList.value.filter((item) => item.leaf && props.modelValue.indexOf(item.id) !== -1).map((item) => item.id)
+        // rightsTreeRef.value.setCheckedKeys(leafCheckedIds)
+      }
+    )
     return {
       data,
       rightsList,

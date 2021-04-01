@@ -9,50 +9,22 @@
       <el-row :gutter="20">
         <el-col :span="10">
           <el-form-item label="角色">
-            <el-select
-              v-model="queryInfo.roleId"
-              placeholder="请选择"
-              filterable
-            >
+            <el-select v-model="queryInfo.roleId" placeholder="请选择" filterable>
               <el-option :label="请选择" value="" v-show="false"></el-option>
-              <el-option
-                v-for="item in allRoles"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
-              ></el-option>
+              <el-option v-for="item in allRoles" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="4">
-          <el-button size="large" type="primary" @click="handleSearch"
-            >查询</el-button
-          >
-          <el-button
-            size="large"
-            type="success"
-            @click="addDialogVisible = true"
-            >新增</el-button
-          >
+          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
     <my-table :data="roles" :columns="columns" :operation-width="200">
       <template v-slot:userbtns="scope">
-        <el-button
-          size="mini"
-          type="warning"
-          @click="editRole(scope.row.id)"
-          :disabled="scope.row.id === 1"
-          >修改</el-button
-        >
-        <el-button
-          size="mini"
-          type="danger"
-          @click="deleteRole(scope.row.id)"
-          :disabled="scope.row.id === 1"
-          >删除</el-button
-        >
+        <el-button size="mini" type="warning" @click="editRole(scope.row.id)" :disabled="scope.row.id === 1">修改</el-button>
+        <el-button size="mini" type="danger" @click="deleteRole(scope.row.id)" :disabled="scope.row.id === 1">删除</el-button>
       </template>
     </my-table>
     <el-pagination
@@ -67,23 +39,14 @@
     >
     </el-pagination>
   </el-card>
-  <el-dialog
-    v-model="addDialogVisible"
-    width="500px"
-    @close="handleClose"
-    destroy-on-close
-  >
+  <el-dialog v-model="addDialogVisible" width="500px" @close="handleClose" destroy-on-close>
     <template #title>新增角色</template>
     <el-form :model="addForm">
-      <el-form-item label="角色名称">
+      <el-form-item label="角色名称" label-position="top" prop="roleName" :rules="[{ required: true, message: '角色名称不能为空！', trigger: 'blur' }]">
         <el-input v-model="addForm.roleName"></el-input>
       </el-form-item>
       <el-form-item label="权限列表" label-position="top">
-        <my-rights-select
-          v-model="addForm.rights"
-          v-model:leaf-value="addForm.leafRights"
-          v-model:half-checked-value="addForm.halfCheckedRights"
-        ></my-rights-select>
+        <my-rights-select v-model="addForm.rights" v-model:leaf-value="addForm.leafRights" v-model:half-checked-value="addForm.halfCheckedRights"></my-rights-select>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -93,24 +56,14 @@
       </span>
     </template>
   </el-dialog>
-  <el-dialog
-    v-model="editDialogVisible"
-    width="500px"
-    @close="handleClose"
-    destroy-on-close
-  >
-    <template #title>新增角色</template>
+  <el-dialog v-model="editDialogVisible" width="500px" @close="handleClose" destroy-on-close>
+    <template #title>修改角色</template>
     <el-form :model="editForm">
-      <el-form-item label="角色名称" label-position="top" prop="roleName">
+      <el-form-item label="角色名称" label-position="top" prop="roleName" :rules="[{ required: true, message: '角色名称不能为空！', trigger: 'blur' }]">
         <el-input v-model="editForm.roleName"></el-input>
       </el-form-item>
       <el-form-item label="权限列表" label-position="top">
-        <my-rights-select
-          v-model="editForm.rights"
-          v-model:leaf-value="editForm.leafRights"
-          v-model:half-checked-value="editForm.halfCheckedRights"
-          :current-role-id="editForm.id"
-        ></my-rights-select>
+        <my-rights-select v-model="editForm.rights" v-model:leaf-value="editForm.leafRights" v-model:half-checked-value="editForm.halfCheckedRights" :current-role-id="editForm.id"></my-rights-select>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -165,9 +118,11 @@ export default {
       },
       { title: '角色', prop: 'roleName' }
     ]
-    const editRole = (id) => {
+    const editRole = async (id) => {
       editForm.id = id
       editForm.roleName = roles.value.find((item) => item.id == id).roleName
+      const { data: res } = await service.post('getRoleById', { id })
+      editForm.rights = res.menus.split(',').map((item) => parseInt(item))
       editDialogVisible.value = true
     }
     const deleteRole = (id) => {
@@ -240,7 +195,7 @@ export default {
         .then(async () => {
           const addFormCopy = {}
           addFormCopy.roleName = addForm.roleName
-          addFormCopy.rightIds = addForm.halfCheckedRights
+          addFormCopy.rightIds = addForm.halfCheckedRights.join(',')
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
           const res = await service.post('addRole', addFormCopy)
@@ -280,7 +235,7 @@ export default {
         .then(async () => {
           const editFormCopy = {}
           editFormCopy.roleName = editForm.roleName
-          editFormCopy.rightIds = editForm.halfCheckedRights
+          editFormCopy.rightIds = editForm.halfCheckedRights.join(',')
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
           const res = await service.post('editRole', editFormCopy)

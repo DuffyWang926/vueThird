@@ -9,9 +9,9 @@
         <i class="el-icon-setting"></i>
         <span>仪表盘</span>
       </div>
-      <div class="menu-title" :class="[isCollapse ? 'collapse' : '']">
+      <!-- <div class="menu-title" :class="[isCollapse ? 'collapse' : '']">
         <span>基础设置</span>
-      </div>
+      </div> -->
       <el-menu
         :uniqueOpened="true"
         :collapse="isCollapse"
@@ -48,10 +48,21 @@
             <el-breadcrumb-item v-if="route.matched[1]" :to="route.matched[1].path">{{ route.matched[1].meta.title }}</el-breadcrumb-item>
             <el-breadcrumb-item v-if="route.matched[2]" :to="route.fullPath" class="last">{{ route.matched[2].meta.title }}</el-breadcrumb-item>
           </el-breadcrumb>
-          <div class="user">
-            <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
-            <span>zhaohanyu</span>
-          </div>
+          <el-dropdown>
+            <template #default>
+              <div class="user">
+                <img src="https://source.unsplash.com/QAB-WJcbgJk/60x60" />
+                <span>{{ store.getters['user/getUsername'] }}</span>
+                <span class="el-dropdown-link"><i class="el-icon-caret-bottom"></i> </span>
+              </div>
+            </template>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="passwordDialogVisible = true">修改密码</el-dropdown-item>
+                <el-dropdown-item>退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="links-wrapper">
           <div class="left"><i class="el-icon-arrow-left"></i></div>
@@ -67,7 +78,7 @@
             > -->
             <div class="link-tag" v-for="item in links" :key="item.url" :class="[item.url === currentLink ? 'dark' : 'light']" @click="handleLinkClick(item)">
               <span>{{ item.title }}</span>
-              <i class="el-icon-close" @click.stop="handleLinkClose(item)"></i>
+              <i class="el-icon-close" @click.stop="handleLinkClose(item)" v-show="item.url !== currentLink"></i>
             </div>
           </div>
           <div class="right"><i class="el-icon-arrow-right"></i></div>
@@ -76,6 +87,26 @@
       <el-main><router-view class="router-view" /></el-main>
     </el-container>
   </el-container>
+  <el-dialog v-model="passwordDialogVisible" width="500px" @close="handlePasswordClose" destroy-on-close>
+    <template #title>修改密码</template>
+    <el-form :model="passwordForm" ref="passwordFormRef" label-width="80px">
+      <el-form-item label="旧的密码" prop="oldPassword" :rules="passwordRules">
+        <el-input v-model="passwordForm.oldPassword" placeholder="请输入旧密码" type="password"></el-input>
+      </el-form-item>
+      <el-form-item label="新的密码" prop="newPassword" :rules="passwordRules">
+        <el-input v-model="passwordForm.newPassword" placeholder="请输入新密码" type="password"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" prop="confirmPassword" :rules="confirmPasswordRules">
+        <el-input v-model="passwordForm.confirmPassword" placeholder="请输入确认密码" type="password"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="passwordDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handlePasswordChange">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -84,6 +115,8 @@ import { useStore, mapGetters, mapState } from 'vuex'
 import { indexRouter } from '@/router/index'
 // import rights from "@/mock/rights.js";
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import service from '@/utils/request'
 export default {
   name: 'index',
   setup() {
@@ -200,7 +233,87 @@ export default {
       //   console.log('scroll')
       // })
     })
+    const passwordDialogVisible = ref(false)
+    const passwordForm = reactive({
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    })
+    const handlePasswordClose = () => {
+      passwordForm.oldPassword = ''
+      passwordForm.newPassword = ''
+      passwordForm.confirmPassword = ''
+    }
+    const passwordFormRef = ref(null)
+    const handlePasswordChange = () => {
+      passwordFormRef.value.validate((valid) => {
+        if (valid) {
+          ElMessageBox.confirm('确定修改密码吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(async () => {
+              const passwordFormCopy = {}
+              // passwordFormCopy.id = passwordForm.id
+              passwordFormCopy.username = store.getters['user/getUsername']
+              passwordFormCopy.newPassword = passwordForm.newPassword
+              const res = await service.post('editSelfPassword', passwordFormCopy)
+              if (res.status === 0) {
+                ElMessage.success('密码修改成功')
+              }
+              passwordDialogVisible.value = false
+            })
+            .catch(() => {
+              ElMessage({
+                type: 'info',
+                message: '已取消修改'
+              })
+            })
+        } else {
+          console.log('invalid')
+          return false
+        }
+      })
+    }
+    const passwordRules = [
+      {
+        required: true,
+        validator: (rule, value, callback) => {
+          if (value.length < 6) {
+            callback(new Error('密码长度至少6位！'))
+          } else if (!/[a-z]/.test(value) || !/[A-Z]/.test(value) || !/[1-9]/.test(value)) {
+            callback(new Error('密码必须包含大写字母小写字母和数字！'))
+          } else if (!/^\w*$/.test(value)) {
+            callback(new Error('密码只能包含数字字母下划线！'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur'
+      }
+    ]
+    const confirmPasswordRules = [
+      {
+        required: true,
+        validator: (rule, value, callback) => {
+          if (value.length < 6) {
+            callback(new Error('密码长度至少6位！'))
+          } else if (!/[a-z]/.test(value) || !/[A-Z]/.test(value) || !/[1-9]/.test(value)) {
+            callback(new Error('密码必须包含大写字母小写字母和数字！'))
+          } else if (!/^\w*$/.test(value)) {
+            callback(new Error('密码只能包含数字字母下划线！'))
+          } else if (value !== passwordForm.newPassword) {
+            callback('两次输入密码不一致！')
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur'
+      }
+    ]
     return {
+      store,
       subMenus,
       currentActivePath,
       isCollapse,
@@ -209,7 +322,14 @@ export default {
       currentLink,
       handleLinkClose,
       handleLinkClick,
-      route
+      route,
+      passwordDialogVisible,
+      passwordForm,
+      handlePasswordClose,
+      passwordFormRef,
+      handlePasswordChange,
+      passwordRules,
+      confirmPasswordRules
     }
   }
 }
@@ -354,10 +474,10 @@ export default {
           // font-weight: bold;
           color: #666;
           line-height: 14px;
-          margin-right: 5px;
           white-space: nowrap;
         }
         i {
+          margin-left: 5px;
           font-size: 12px;
           transform: translateY(1px);
         }

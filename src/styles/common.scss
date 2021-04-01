@@ -75,3 +75,18 @@
     padding-right: 5px;
   }
 }
+
+.el-dialog__body {
+  padding-bottom: 20px;
+}
+
+.el-dialog__footer {
+  padding-top: 0;
+}
+
+.el-tree {
+  // min-height: 30px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

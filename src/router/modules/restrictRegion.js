@@ -4,7 +4,7 @@ export default [
     name: 'restrictRegion',
     meta: {
       index: 2,
-      id: 53,
+      // id: 53,
       title: '限售区域管理',
       parent: '商城管理',
       sort: 3
@@ -32,5 +32,4 @@ export default [
       }
     ]
   }
-
 ]

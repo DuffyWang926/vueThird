@@ -119,6 +119,16 @@ export default {
               break
           }
         })
+        for (let index = 0; index < groupsInfo.value.length; index++) {
+          const item = groupsInfo.value[index]
+          const { data: res } = await service.get('getgroupNumber', {
+            params: {
+              groupId: item.id
+            }
+          })
+          item.openNumber = res.openNumber
+          item.groupNumber = res.groupNumber
+        }
         // count.value = res.count
       } catch (err) {
         console.log(err)
