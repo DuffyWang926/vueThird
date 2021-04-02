@@ -196,6 +196,7 @@ export default {
           const addFormCopy = {}
           addFormCopy.roleName = addForm.roleName
           addFormCopy.rightIds = addForm.halfCheckedRights.join(',')
+          console.log(addFormCopy.rightIds)
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
           const res = await service.post('addRole', addFormCopy)
@@ -236,6 +237,7 @@ export default {
           const editFormCopy = {}
           editFormCopy.roleName = editForm.roleName
           editFormCopy.rightIds = editForm.halfCheckedRights.join(',')
+          console.log(editFormCopy.rightIds)
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
           const res = await service.post('editRole', editFormCopy)

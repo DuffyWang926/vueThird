@@ -28,8 +28,21 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getgroupbuylist?' + '.*'), options => {
   return {
     status: 0,
     data: {
-      groupsInfo: groupsInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
-      count: groupsInfo.length
+      groupBuyListVos: groupsInfo.slice((queryInfo.page - 1) * queryInfo.limit, queryInfo.page * queryInfo.limit),
+      total: groupsInfo.length
+    }
+  }
+})
+
+Mock.mock(RegExp('http://127.0.0.1:8079/getgroupNumber?' + '.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
+  console.log(options)
+  return {
+    status: 0,
+    data: {
+      openNumber: 1,
+      groupNumber: 2
     }
   }
 })
@@ -51,7 +64,7 @@ for (let i = 1; i <= 1000; i++) {
       'totalNumber|0-99': 100 //参团总人数
     })
   )
-}
+} //post请求
 
 /* Mock.mock('http://127.0.0.1:8079/appedgrouplist', options => {
   const queryInfo = JSON.parse(options.body)
@@ -65,7 +78,22 @@ for (let i = 1; i <= 1000; i++) {
       count: matchedgetGroupInfo.length
     }
   }
-}) *///post请求
+}) */
+
+Mock.mock(RegExp('http://127.0.0.1:8079/getgroupbuyname'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
+  console.log(options)
+  return {
+    status: 0,
+    data: groupsInfo.map(item => {
+      return {
+        id: item.id,
+        name: item.name
+      }
+    })
+  }
+})
 
 Mock.mock(RegExp('http://127.0.0.1:8079/appedgrouplist?' + '.*'), options => {
   const queryInfo = parseGetParams(options.url)
@@ -75,8 +103,8 @@ Mock.mock(RegExp('http://127.0.0.1:8079/appedgrouplist?' + '.*'), options => {
   return {
     status: 0,
     data: {
-      matchedgetGroupInfo: matchedgetGroupInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
-      count: matchedgetGroupInfo.length
+      groupBuySponsorLists: matchedgetGroupInfo.slice((queryInfo.page - 1) * queryInfo.limit, queryInfo.page * queryInfo.limit),
+      total: matchedgetGroupInfo.length
     }
   }
 })
@@ -88,5 +116,66 @@ Mock.mock(RegExp('http://127.0.0.1:8079/updatestate' + '?.*'), options => {
     is_succ: 1,
     msg: '',
     data: []
+  }
+})
+
+Mock.mock('http://127.0.0.1:8079/addgroupbuy', options => {
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo)
+  return {
+    status: 0,
+    msg: '',
+    data: {}
+  }
+})
+
+Mock.mock(RegExp('http://127.0.0.1:8079/groupbuydetail' + '?.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo.id)
+  return {
+    is_succ: 1,
+    msg: '',
+    data: {
+      groupBuy: {
+        id: 1,
+        name: '测试团购',
+        startDate: '2021-03-22T16:20:55.000+00:00',
+        endDate: '2021-03-22T16:21:01.000+00:00',
+        groupDesc: '活动规则概述',
+        beginDesc: '开团描述',
+        joinDesc: '参与描述',
+        shareDesc: '分享文字',
+        leaderRequire: 1,
+        groupMinNum: 3,
+        expiryDate: 1,
+        newMemberMin: 10,
+        status: 1
+      },
+      groupBuyProduct: [
+        {
+          id: 1,
+          groupBuyId: 1,
+          productName: '苏芙水盈滋养面膜',
+          productSku: '6973011680032',
+          productId: 87,
+          productItemId: 110,
+          productSalePrice: 50.0,
+          productSalePoint: 50,
+          createTime: '2021-03-22T16:32:08.000+00:00',
+          productNum: 5,
+          buyType: 1
+        }
+      ],
+      groupBuyLevel: [
+        {
+          id: 1,
+          groupBuyId: 1,
+          memberLevel: 1,
+          type: 0,
+          rebateMoney: 100.0,
+          createTime: '2021-03-22T16:28:09.000+00:00'
+        }
+      ]
+    }
   }
 })

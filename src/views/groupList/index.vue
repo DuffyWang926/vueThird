@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'GroupList'
+  name: 'GroupListWrap'
 }
 </script>
 

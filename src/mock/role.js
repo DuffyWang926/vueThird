@@ -5,10 +5,12 @@ const Mock = require('mockjs')
 const roles = []
 
 for (let i = 1; i <= 100; i++) {
-  roles.push(Mock.mock({
-    id: i,
-    roleName: Mock.Random.cname()
-  }))
+  roles.push(
+    Mock.mock({
+      id: i,
+      roleName: Mock.Random.cname()
+    })
+  )
 }
 
 Mock.mock('http://127.0.0.1:8079/roles', options => {
@@ -44,34 +46,27 @@ Mock.mock('http://127.0.0.1:8079/getAllRoles', options => {
 
 Mock.mock('http://127.0.0.1:8079/deleteRole', options => {
   const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo);
+  console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '删除成功'
-    }
+    message: '删除成功'
   }
 })
 
 Mock.mock('http://127.0.0.1:8079/addRole', options => {
   const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo);
+  console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '添加成功'
-    }
+    message: '添加成功'
   }
 })
 
 Mock.mock('http://127.0.0.1:8079/editRole', options => {
   const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo);
+  console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '修改成功'
-    }
+    message: '修改成功'
   }
 })
-

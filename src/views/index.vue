@@ -59,7 +59,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="passwordDialogVisible = true">修改密码</el-dropdown-item>
-                <el-dropdown-item>退出登录</el-dropdown-item>
+                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -78,13 +78,21 @@
             > -->
             <div class="link-tag" v-for="item in links" :key="item.url" :class="[item.url === currentLink ? 'dark' : 'light']" @click="handleLinkClick(item)">
               <span>{{ item.title }}</span>
-              <i class="el-icon-close" @click.stop="handleLinkClose(item)" v-show="item.url !== currentLink"></i>
+              <i class="el-icon-close" @click.stop="handleLinkClose(item)"></i>
             </div>
           </div>
           <div class="right"><i class="el-icon-arrow-right"></i></div>
         </div>
       </el-header>
-      <el-main><router-view class="router-view" /></el-main>
+      <el-main>
+        <!-- <keep-alive :include="include"><router-view :key="key" /></keep-alive> -->
+        <keep-alive><router-view :key="key" /></keep-alive>
+        <!-- <router-view v-slot="{ Component }" :key="key">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view> -->
+      </el-main>
     </el-container>
   </el-container>
   <el-dialog v-model="passwordDialogVisible" width="500px" @close="handlePasswordClose" destroy-on-close>
@@ -118,7 +126,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import service from '@/utils/request'
 export default {
-  name: 'index',
+  name: 'Index',
   setup() {
     // const store = useStore()
     // const subMenus = store.getters.getSubMenus
@@ -129,7 +137,7 @@ export default {
     const route = useRoute()
     const rights = store.getters['user/getRights']
     console.log('rights:', rights)
-   
+
     const getSubMenus = () => {
       let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
         return {
@@ -177,6 +185,10 @@ export default {
       return store.getters['links/currentLink']
     })
     const handleLinkClose = (item) => {
+      console.log(item)
+      if (item.url == store.getters['links/currentLink']) {
+        router.push('/')
+      }
       store.commit('links/deleteLink', item)
     }
     const handleLinkClick = (item) => {
@@ -259,7 +271,7 @@ export default {
               // passwordFormCopy.id = passwordForm.id
               passwordFormCopy.username = store.getters['user/getUsername']
               passwordFormCopy.newPassword = passwordForm.newPassword
-              const res = await service.post('editSelfPassword', passwordFormCopy)
+              const res = await service.post('modifySelfPwd', passwordFormCopy)
               if (res.status === 0) {
                 ElMessage.success('密码修改成功')
               }
@@ -313,6 +325,14 @@ export default {
         trigger: 'blur'
       }
     ]
+    const logout = () => {
+      store.commit('user/logoutMutation')
+      ElMessage.success('已退出登录')
+      router.push('/login')
+    }
+    const key = computed(() => {
+      return route.fullPath
+    })
     return {
       store,
       subMenus,
@@ -330,7 +350,9 @@ export default {
       passwordFormRef,
       handlePasswordChange,
       passwordRules,
-      confirmPasswordRules
+      confirmPasswordRules,
+      logout,
+      key
     }
   }
 }

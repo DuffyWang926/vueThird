@@ -92,11 +92,14 @@ export default {
       const { data: res } = await service.get('getgroupbuyname')
       groupBuyList.value = res
       await nextTick()
+      // debugger
+      // console.log(queryInfo)
       if (route.params.id) {
         queryInfo.id = parseInt(route.params.id)
       } else {
         queryInfo.id = groupBuyList.value[0].id
       }
+      // console.log(queryInfo)
       appedgrouplist()
     }
     getAllGroupBuy()
@@ -106,6 +109,7 @@ export default {
       // queryInfo.endDate = queryInfo.activityTime[1]
       // queryInfo.page = queryInfo.pagenum
       // queryInfo.limit = queryInfo.pagesize
+      // debugger
       const queryInfoCopy = {}
       queryInfoCopy.id = queryInfo.id
       queryInfoCopy.name = queryInfo.name
@@ -121,6 +125,7 @@ export default {
         queryInfoCopy.endDate = ''
       }
       console.log(queryInfo)
+      console.log(queryInfoCopy)
       const { data: res } = await service.get('appedgrouplist', {
         params: queryInfoCopy
       })
@@ -187,6 +192,7 @@ export default {
       appedgrouplist()
     }
     const handleCurrentChange = (val) => {
+      // debugger
       queryInfo.pagenum = val
       appedgrouplist()
     }

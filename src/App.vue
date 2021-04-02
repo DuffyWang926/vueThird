@@ -1,7 +1,7 @@
 <template>
-  <!-- <keep-alive :exclude="exclude"> -->
-  <router-view :key="key" />
-  <!-- </keep-alive> -->
+  <keep-alive :include="include">
+    <router-view :key="key"></router-view>
+  </keep-alive>
 </template>
 
 <script>
@@ -15,11 +15,16 @@ export default {
     // exclude.push('GroupBuyAdd')
     const route = useRoute()
     const key = computed(() => {
-      return route.fullPath + Math.random()
+      // debugger
+      console.log(route.fullPath)
+      return route.fullPath
     })
+    // const include = ['RouterView', 'Index', 'groupBuyEdit/1', 'GroupBuy', 'GroupBuyAdd', 'GroupBuyManage', 'GroupListWrap', 'GroupList']
+    const include = ['RouterView', 'Index', 'groupBuyEdit/1', 'GroupBuy', 'groupBuyAdd', 'GroupBuyManage', 'GroupListWrap', 'GroupList']
     return {
       // exclude
-      key
+      key,
+      include
     }
   }
 }

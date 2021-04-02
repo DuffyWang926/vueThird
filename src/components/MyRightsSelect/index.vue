@@ -98,14 +98,14 @@ export default {
       emit('update:leafValue', rightsTreeRef.value.getCheckedKeys(true))
       emit(
         'update:halfCheckedValue',
-        [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0)
+        [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0).sort((a, b) => a - b)
       )
       await nextTick()
       const rootNode = rightsTreeRef.value.getNode(0)
       // console.log(rootNode)
-      if (rootNode.checked) {
-        emit('update:halfCheckedValue', [0])
-      }
+      // if (rootNode.checked) {
+      //   emit('update:halfCheckedValue', [0])
+      // }
       console.log('重刷modelValue', +new Date() - date)
       date = +new Date()
     }
@@ -178,13 +178,13 @@ export default {
         // console.log(rightsTreeRef.value.getCheckedKeys(true))
         emit(
           'update:halfCheckedValue',
-          [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0)
+          [...rightsTreeRef.value.getCheckedKeys(), ...rightsTreeRef.value.getHalfCheckedKeys()].filter((item) => item != 0).sort((a, b) => a - b)
         )
         const rootNode = rightsTreeRef.value.getNode(0)
         // console.log(rootNode)
-        if (rootNode.checked) {
-          emit('update:halfCheckedValue', [0])
-        }
+        // if (rootNode.checked) {
+        //   emit('update:halfCheckedValue', [0])
+        // }
       }, 100)
     }
     let rightsFilterTimer = null

@@ -133,7 +133,7 @@ export default {
       pagesize: 10
     })
     const getUsers = async () => {
-      const { data: res } = await service.post('getUsers', queryInfo)
+      const { data: res } = await service.post('getAdminList', queryInfo)
       users.value = res.users
       count.value = res.count
     }
@@ -387,7 +387,7 @@ export default {
               const passwordFormCopy = {}
               passwordFormCopy.id = passwordForm.id
               passwordFormCopy.password = passwordForm.password
-              const res = await service.post('editPassword', passwordFormCopy)
+              const res = await service.post('modifyPwd', passwordFormCopy)
               if (res.status === 0) {
                 ElMessage.success('修改成功')
               }

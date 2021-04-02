@@ -45,6 +45,8 @@
     "postcss-pxtorem": "^5.1.1",
     "sass-loader": "^8.0.2",
     "svg-sprite-loader": "^5.2.1",
+    "svgo": "^2.3.0",
+    "svgo-loader": "^3.0.0",
     "vue-click-outside": "^1.1.0"
   }
 }
