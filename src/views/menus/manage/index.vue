@@ -36,10 +36,10 @@
         </template>
       </el-table-column>
       <el-table-column label="菜单URL" prop="url"></el-table-column>
-      <el-table-column label="菜单排序" prop="index"></el-table-column>
+      <el-table-column label="菜单排序" prop="order"></el-table-column>
       <el-table-column label="是否显示" prop="isShow">
         <template #default="scope">
-          <el-switch :model-value="scope.row.isShow" @click="changeIsShow(scope.row.id, !scope.row.isShow)"></el-switch>
+          <el-switch :model-value="scope.row.isShow == 1" @click="changeIsShow(scope.row.id, 3 - scope.row.isShow)"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="添加时间" prop="createTime" width="150"></el-table-column>
@@ -53,8 +53,8 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      v-model:currentPage="queryInfo.pagenum"
-      :page-size="queryInfo.pagesize"
+      v-model:currentPage="queryInfo.page"
+      :page-size="queryInfo.limit"
       layout="total, prev, pager, next, sizes, jumper"
       :total="count"
       :page-sizes="[10, 20, 50, 100]"
@@ -91,8 +91,8 @@
           <el-option v-for="item in allMenuList" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="菜单排序" v-if="addForm.type !== 3" prop="index">
-        <el-input v-model="addForm.index"></el-input>
+      <el-form-item label="菜单排序" v-if="addForm.type !== 3" prop="order">
+        <el-input v-model="addForm.order"></el-input>
       </el-form-item>
       <el-form-item label="是否显示">
         <el-radio-group v-model="addForm.isShow">
@@ -121,8 +121,8 @@ export default {
     const queryInfo = reactive({
       name: '',
       pname: '',
-      pagenum: 1,
-      pagesize: 10
+      page: 1,
+      limit: 10
     })
     const handleSearch = () => {
       queryInfo.page = 1
@@ -146,7 +146,7 @@ export default {
       addForm.name = menu.name
       addForm.url = menu.url
       addForm.pid = menu.pid || ''
-      addForm.index = menu.index
+      addForm.order = menu.order
       addForm.isShow = menu.isShow
       addDialogVisible.value = true
     }
@@ -186,12 +186,12 @@ export default {
       }
     }
     const handleSizeChange = (val) => {
-      queryInfo.pagenum = 1
-      queryInfo.pagesize = val
+      queryInfo.page = 1
+      queryInfo.limit = val
       getMenus()
     }
     const handleCurrentChange = (val) => {
-      queryInfo.pagenum = val
+      queryInfo.page = val
       getMenus()
     }
     const addDialogVisible = ref(false)
@@ -202,7 +202,7 @@ export default {
       name: '',
       url: '',
       pid: '',
-      index: '',
+      order: '',
       isShow: true
     })
     const addFormRules = {
@@ -234,7 +234,7 @@ export default {
           trigger: 'blur'
         }
       ],
-      index: [
+      order: [
         {
           required: true,
           message: '请输入菜单排序！',
@@ -258,7 +258,7 @@ export default {
       addForm.name = ''
       addForm.url = ''
       addForm.pid = ''
-      addForm.index = ''
+      addForm.order = ''
       addForm.isShow = true
     }
     const resetFields = () => {
@@ -277,16 +277,16 @@ export default {
           const addFormCopy = {}
           addFormCopy.type = addForm.type
           addFormCopy.name = addForm.name
-          // addFormCopy.index = addForm.index
+          // addFormCopy.order = addForm.order
           addFormCopy.isShow = addForm.isShow
           switch (addFormCopy.type) {
             case 1:
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 2:
               addFormCopy.pid = addForm.pid
               addFormCopy.url = addForm.url
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 3:
               addFormCopy.pid = addForm.pid
@@ -313,12 +313,12 @@ export default {
           addFormCopy.isShow = addForm.isShow
           switch (addFormCopy.type) {
             case 1:
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 2:
               addFormCopy.pid = addForm.pid
               addFormCopy.url = addForm.url
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 3:
               addFormCopy.pid = addForm.pid
@@ -338,11 +338,15 @@ export default {
     const allCategoryList = ref([])
     const allMenuList = ref([])
     const getAllCategories = async () => {
-      const { data: res } = await service.post('getAllCategories')
+      const { data: res } = await service.post('getMenuListByType', {
+        type: 1
+      })
       allCategoryList.value = res
     }
     const getAllMenus = async () => {
-      const { data: res } = await service.post('getAllMenus')
+      const { data: res } = await service.post('getMenuListByType', {
+        type: 2
+      })
       allMenuList.value = res
     }
     getAllCategories()

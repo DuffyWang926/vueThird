@@ -14,9 +14,7 @@ const getters = {
   }
 }
 
-const actions = {
-
-}
+const actions = {}
 
 // mutations
 const mutations = {

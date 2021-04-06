@@ -39,7 +39,7 @@
       </div>
     </el-aside>
     <el-container>
-      <el-header>
+      <el-header :class="[links.length > 0 ? 'h72' : 'h42']">
         <div class="top">
           <i class="el-icon-s-fold hamburger" v-if="!isCollapse" @click="isCollapse = true"></i>
           <i class="el-icon-s-unfold hamburger" v-else @click="isCollapse = false"></i>
@@ -64,7 +64,7 @@
             </template>
           </el-dropdown>
         </div>
-        <div class="links-wrapper">
+        <div class="links-wrapper" v-show="links.length > 0">
           <div class="left"><i class="el-icon-arrow-left"></i></div>
           <div class="links">
             <!-- <el-tag
@@ -190,6 +190,7 @@ export default {
         router.push('/')
       }
       store.commit('links/deleteLink', item)
+      store.commit('menu/setActivePath', null)
     }
     const handleLinkClick = (item) => {
       router.push(item.url)
@@ -269,9 +270,10 @@ export default {
             .then(async () => {
               const passwordFormCopy = {}
               // passwordFormCopy.id = passwordForm.id
-              passwordFormCopy.username = store.getters['user/getUsername']
+              // passwordFormCopy.username = store.getters['user/getUsername']
+              passwordFormCopy.oldPassword = passwordForm.oldPassword
               passwordFormCopy.newPassword = passwordForm.newPassword
-              const res = await service.post('modifySelfPwd', passwordFormCopy)
+              const res = await service.post('backend/modifySelfPwd', passwordFormCopy)
               if (res.status === 0) {
                 ElMessage.success('密码修改成功')
               }
@@ -373,12 +375,20 @@ export default {
   overflow-x: hidden;
 }
 
+.h72 {
+  height: 72px !important;
+}
+
+.h42 {
+  height: 42px !important;
+}
+
 .el-header {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  height: 72px !important;
+
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;
@@ -584,6 +594,8 @@ export default {
   }
   /deep/.el-menu--inline {
     margin: 10px 10px !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
     background-color: #fff !important;
     border-radius: 5px !important;
     .el-menu-item {

@@ -147,7 +147,7 @@ export default {
       count.value = res.count
     }
     const handleSearch = () => {
-      queryInfo.pagenum = 1
+      queryInfo.page = 1
       getUsers()
     }
     getUsers()

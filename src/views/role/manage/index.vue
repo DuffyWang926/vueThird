@@ -90,7 +90,7 @@ export default {
       console.log(res.roles)
     }
     const handleSearch = () => {
-      queryInfo.pagenum = 1
+      queryInfo.page = 1
       getRoles()
     }
     getAllRoles()

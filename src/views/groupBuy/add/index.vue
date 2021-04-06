@@ -32,7 +32,8 @@
       <el-form-item label="团购商品" :rules="[{ required: true, message: '', trigger: 'blur' }]">
         <el-row class="w800">
           <el-button type="primary" size="medium" style="margin-right: 10px" @click="dialogVisible = true" v-if="!productFlag">选择商品</el-button>
-          <el-button type="warning" size="medium" @click="dialogVisible = true" v-else>更换商品</el-button>
+          <el-button type="warning" size="medium" @click="dialogVisible = true" v-if="productFlag && !id">更换商品</el-button>
+          <el-alert title="修改团购时，不能修改团购商品！" type="info" show-icon :closable="false" v-if="id" style="margin-left: -10px"> </el-alert>
         </el-row>
         <el-table :data="[product]" style="width: 800px; margin-top: 10px" v-if="productFlag" border>
           <el-table-column prop="name" label="商品"></el-table-column>
@@ -165,7 +166,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="开团人成团奖励" :rules="[{ required: true, message: '', trigger: 'blur' }]" v-if="addForm.startGroupBuyLevels.length > 0">
-        <el-row class="money-row">
+        <el-row class="money-row w800">
           <el-col :span="7">
             <el-form :model="addForm.groupBuyRewards">
               <el-form-item :label="key" label-width="40px" v-for="(value, key) in addForm.groupBuyRewards" :key="key" style="padding-bottom: 10px">
@@ -730,13 +731,13 @@ export default {
           id
         }
       })
-      addForm.startDate = res.startDate
-      addForm.endDate = res.endDate
+      // addForm.startDate = res.startDate
+      // addForm.endDate = res.endDate
       const groupBuy = res.groupBuy
       addForm.id = groupBuy.id
       addForm.name = groupBuy.name
-      // addForm.startDate = groupBuy.startDate
-      // addForm.endDate = groupBuy.endDate
+      addForm.startDate = groupBuy.startDate
+      addForm.endDate = groupBuy.endDate
       addForm.activityRules = groupBuy.groupDesc
       addForm.startGroupBuyRules = groupBuy.beginDesc
       addForm.finishGroupByRules = groupBuy.joinDesc
