@@ -86,7 +86,7 @@
       </el-header>
       <el-main>
         <!-- <keep-alive :include="include"><router-view :key="key" /></keep-alive> -->
-        <keep-alive><router-view :key="key" /></keep-alive>
+        <router-view :key="key" />
         <!-- <router-view v-slot="{ Component }" :key="key">
           <keep-alive>
             <component :is="Component" />

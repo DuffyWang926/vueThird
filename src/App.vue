@@ -1,7 +1,7 @@
 <template>
-  <keep-alive :include="include">
-    <router-view :key="key"></router-view>
-  </keep-alive>
+  <!-- <keep-alive :include="include"> -->
+  <router-view :key="key"></router-view>
+  <!-- </keep-alive> -->
 </template>
 
 <script>

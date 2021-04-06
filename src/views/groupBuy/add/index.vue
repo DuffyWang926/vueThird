@@ -773,26 +773,26 @@ export default {
       console.log(addForm)
       // debugger
     })
-    onUpdated(() => {
-      console.log(addForm.name, product)
-      debugger
-    })
-    onActivated(() => {
-      console.log(addForm.name, product)
-      debugger
-    })
-    onDeactivated(() => {
-      console.log(addForm.name, product)
-      debugger
-    })
-    onMounted(() => {
-      console.log(addForm.name, product)
-      debugger
-    })
-    onUnmounted(() => {
-      console.log(addForm.name, product)
-      debugger
-    })
+    // onUpdated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onActivated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onDeactivated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onMounted(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onUnmounted(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
     return {
       addForm,
       addFormRef,
