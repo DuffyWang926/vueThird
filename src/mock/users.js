@@ -17,20 +17,20 @@ for (let i = 1; i <= 101; i++) {
   )
 }
 
-Mock.mock('http://127.0.0.1:8079/getAdminList', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getAdminList', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo.pagenum, queryInfo.pagesize)
+  console.log(queryInfo.page, queryInfo.page)
   return {
     status: 0,
     data: {
-      users: users.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+      users: users.slice((queryInfo.page - 1) * queryInfo.limit, queryInfo.page * queryInfo.limit),
       count: users.length
     }
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/deleteAdmin', options => {
+Mock.mock('http://127.0.0.1:8079/backend/deleteAdmin', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -39,7 +39,7 @@ Mock.mock('http://127.0.0.1:8079/deleteAdmin', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/addAdmin', options => {
+Mock.mock('http://127.0.0.1:8079/backend/addAdmin', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -48,7 +48,7 @@ Mock.mock('http://127.0.0.1:8079/addAdmin', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editAdmin', options => {
+Mock.mock('http://127.0.0.1:8079/backend/editAdmin', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -57,7 +57,7 @@ Mock.mock('http://127.0.0.1:8079/editAdmin', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/modifyPwd', options => {
+Mock.mock('http://127.0.0.1:8079/backend/modifyPwd', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -66,7 +66,7 @@ Mock.mock('http://127.0.0.1:8079/modifyPwd', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getAdminById', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getAdminById', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -75,7 +75,7 @@ Mock.mock('http://127.0.0.1:8079/getAdminById', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/modifySelfPwd', options => {
+Mock.mock('http://127.0.0.1:8079/backend/modifySelfPwd', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {

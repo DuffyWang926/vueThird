@@ -5,7 +5,7 @@
         <span>权限管理</span>
       </div>
     </template>
-    <el-form :model="queryInfo" label-position="left">
+    <el-form :model="queryInfo" label-position="left" label-width="60px">
       <el-row :gutter="20">
         <el-col :span="10">
           <el-form-item label="角色">
@@ -15,7 +15,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
           <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
         </el-col>
@@ -30,8 +30,8 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      v-model:currentPage="queryInfo.pagenum"
-      :page-size="queryInfo.pagesize"
+      v-model:currentPage="queryInfo.page"
+      :page-size="queryInfo.limit"
       layout="total, prev, pager, next, sizes, jumper"
       :total="count"
       :page-sizes="[10, 20, 50, 100]"
@@ -85,7 +85,7 @@ export default {
     const roles = ref([])
     const allRoles = ref([])
     const getAllRoles = async () => {
-      const { data: res } = await service.post('getAllRoles')
+      const { data: res } = await service.post('backend/getAllRoles')
       allRoles.value = res.roles
       console.log(res.roles)
     }
@@ -95,15 +95,15 @@ export default {
     }
     getAllRoles()
     let queryInfo = reactive({
-      pagenum: 1,
-      pagesize: 10,
+      page: 1,
+      limit: 10,
       roleId: ''
     })
     const count = ref(0)
     // const { data: res } = await service.post('login')
     const getRoles = async () => {
       try {
-        const { data: res } = await service.post('roles', queryInfo)
+        const { data: res } = await service.post('backend/getRoleList', queryInfo)
         roles.value = res.roles
         count.value = res.count
       } catch (e) {
@@ -121,7 +121,7 @@ export default {
     const editRole = async (id) => {
       editForm.id = id
       editForm.roleName = roles.value.find((item) => item.id == id).roleName
-      const { data: res } = await service.post('getRoleById', { id })
+      const { data: res } = await service.post('backend/getRoleById', { id })
       editForm.rights = res.menus.split(',').map((item) => parseInt(item))
       editDialogVisible.value = true
     }
@@ -132,7 +132,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const res = await service.post('deleteRole', {
+          const res = await service.post('backend/deleteRole', {
             id
           })
           if (res.status === 0) {
@@ -153,12 +153,12 @@ export default {
         })
     }
     const handleSizeChange = (val) => {
-      queryInfo.pagenum = 1
-      queryInfo.pagesize = val
+      queryInfo.page = 1
+      queryInfo.limit = val
       getRoles()
     }
     const handleCurrentChange = (val) => {
-      queryInfo.pagenum = val
+      queryInfo.page = val
       getRoles()
     }
     const currentPage = ref(1)
@@ -199,7 +199,7 @@ export default {
           console.log(addFormCopy.rightIds)
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
-          const res = await service.post('addRole', addFormCopy)
+          const res = await service.post('backend/addRole', addFormCopy)
           if (res.status === 0) {
             ElMessage.success('添加成功！')
           }
@@ -240,7 +240,7 @@ export default {
           console.log(editFormCopy.rightIds)
           // passwordFormCopy.id = passwordForm.id
           // passwordFormCopy.password = passwordForm.password
-          const res = await service.post('editRole', editFormCopy)
+          const res = await service.post('backend/editRole', editFormCopy)
           if (res.status === 0) {
             ElMessage.success('修改成功！')
           }
@@ -287,6 +287,7 @@ export default {
 }
 .el-select {
   // width: 300px;
-  flex: 1;
+  // flex: 1;
+  width: 100%;
 }
 </style>

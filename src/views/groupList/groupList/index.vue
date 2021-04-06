@@ -89,7 +89,7 @@ export default {
     })
     const groupBuyList = ref([])
     const getAllGroupBuy = async () => {
-      const { data: res } = await service.get('getgroupbuyname')
+      const { data: res } = await service.get('backend/getgroupbuyname')
       groupBuyList.value = res
       await nextTick()
       // debugger
@@ -126,7 +126,7 @@ export default {
       }
       console.log(queryInfo)
       console.log(queryInfoCopy)
-      const { data: res } = await service.get('appedgrouplist', {
+      const { data: res } = await service.get('backend/appedgrouplist', {
         params: queryInfoCopy
       })
       console.log(res)

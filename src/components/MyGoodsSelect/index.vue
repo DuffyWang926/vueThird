@@ -61,7 +61,7 @@ export default {
     const getAllGoodsList = async () => {
       let date = +new Date()
       goodsTreeLoading.value = true
-      const { data: res } = await service.get('getAllCategory')
+      const { data: res } = await service.get('backend/getAllCategory')
       console.log(res)
       goodsList.value = res
       if (!goodsList.value.find((item) => item.id == 0)) {

@@ -104,14 +104,12 @@ export default {
     const loginClick = (formName) => {
       formRef.value.validate(async (valid) => {
         if (valid) {
-          ElMessage.success({
-            message: '您已成功登录',
-            type: 'success',
-            center: true
-          })
           await $store.dispatch('user/login', {
             card: loginForm.username,
-            password: loginForm.password
+            password: loginForm.password,
+            client_id: 'jkk_backend',
+            client_secret: 'jkkoauth@backend',
+            grant_type: 'backend'
           })
           $router.push('./index')
         } else {

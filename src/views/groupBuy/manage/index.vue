@@ -97,7 +97,7 @@ export default {
           queryInfoCopy.startDate = ''
           queryInfoCopy.endDate = ''
         }
-        const { data: res } = await service.get('getgroupbuylist', {
+        const { data: res } = await service.get('backend/getgroupbuylist', {
           params: queryInfoCopy
         })
         console.log(res)
@@ -199,7 +199,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const res = await service.get('updatestate', {
+          const res = await service.get('backend/updatestate', {
             params: {
               groupId: id,
               state: 3

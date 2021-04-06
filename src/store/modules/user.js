@@ -1,9 +1,11 @@
 import { loginApi, menuApi } from '@/api/login'
+import { ElMessage } from 'element-plus'
 const state = {
   //此时数据由接口文档给定
 
   access_token: window.localStorage.getItem('access_token') || '',
   refresh_token: window.localStorage.getItem('refresh_token') || '',
+  token_type: window.localStorage.getItem('token_type') || '',
   expires_in: window.localStorage.getItem('expires_in') || '',
   scope: window.localStorage.getItem('scope') || '',
   username: window.localStorage.getItem('username') || '',
@@ -62,16 +64,23 @@ const actions = {
     return new Promise((resolve, reject) => {
       loginApi(loginForm)
         .then(response => {
-          const data = response
+          // const data = response
           console.log(response)
-
-          commit('loginMutation', response.data)
-          console.log(menuApi)
-
-          menuApi().then(res => {
-            commit('menuMutation', res.data)
-            resolve()
-          })
+          if (response.status == 0) {
+            commit('loginMutation', response.data)
+            console.log(menuApi)
+            menuApi().then(res => {
+              commit('menuMutation', res.data)
+              if (res.status == 0) {
+                ElMessage.success({
+                  message: '您已成功登录',
+                  type: 'success',
+                  center: true
+                })
+              }
+              resolve()
+            })
+          }
         })
         .catch(error => {
           console.log(error)

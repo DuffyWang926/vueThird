@@ -1,22 +1,19 @@
 import request from '@/utils/request'
-import apiUrl  from './url.js'
-
+import apiUrl from './url.js'
 
 export function loginApi(params) {
-  const { name, password} = params
+  // const { name, password } = params
   return request({
     url: apiUrl.loginUrl,
-    method: 'post',
-    data: params,
+    method: 'get',
+    params: params
   })
 }
 
 export function menuApi(params) {
-  
-
   return request({
     url: apiUrl.menuUrl,
     method: 'post',
-    data: params,
+    data: params
   })
 }

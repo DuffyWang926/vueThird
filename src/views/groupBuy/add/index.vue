@@ -569,7 +569,7 @@ export default {
     const getProducts = async () => {
       productFlag.value = false
       product.subProducts = []
-      const { data: productRes } = await service.get('getproductbyid', {
+      const { data: productRes } = await service.get('backend/getproductbyid', {
         params: {
           id: parseInt(productId.value)
         }
@@ -577,7 +577,7 @@ export default {
       product.name = productRes.name
       for (let index = 0; index < subProductIds.value.length; index++) {
         const item = subProductIds.value[index]
-        const { data: productItemRes } = await service.get('getproductitembyid', {
+        const { data: productItemRes } = await service.get('backend/getproductitembyid', {
           params: {
             id: item
           }
@@ -634,6 +634,8 @@ export default {
             }
           }
           const data = {}
+          data.startDate = dateFormat(addForm.startDate)
+          data.endDate = dateFormat(addForm.endDate)
           // --- groupBuy
           const groupBuy = {}
           groupBuy.name = addForm.name
@@ -655,8 +657,8 @@ export default {
           if (id) {
             groupBuy.id = id
           }
-          groupBuy.startDate = dateFormat(addForm.startDate)
-          groupBuy.endDate = dateFormat(addForm.endDate)
+          // groupBuy.startDate = dateFormat(addForm.startDate)
+          // groupBuy.endDate = dateFormat(addForm.endDate)
           groupBuy.groupDesc = addForm.activityRules
           groupBuy.beginDesc = addForm.startGroupBuyRules
           groupBuy.joinDesc = addForm.finishGroupByRules
@@ -700,15 +702,15 @@ export default {
           }
           data.groupBuyLevel = groupBuyLevel
           console.log(data)
-          const res = await service.post('addgroupbuy', data)
+          const res = await service.post('backend/addgroupbuy', data)
           if (res.status == 0) {
             if (id) {
               ElMessage.success('修改成功！')
             } else {
               ElMessage.success('添加成功！')
             }
+            router.push('/groupBuyManage')
           }
-          router.push('/groupBuyManage')
         } else {
           ElMessage.error('保存失败！请检查标红的表单项！')
           return false
@@ -723,16 +725,18 @@ export default {
       const id = props.id
       console.log(id)
       if (!id) return
-      const { data: res } = await service.get('groupbuydetail', {
+      const { data: res } = await service.get('backend/groupbuydetail', {
         params: {
           id
         }
       })
+      addForm.startDate = res.startDate
+      addForm.endDate = res.endDate
       const groupBuy = res.groupBuy
       addForm.id = groupBuy.id
       addForm.name = groupBuy.name
-      addForm.startDate = groupBuy.startDate
-      addForm.endDate = groupBuy.endDate
+      // addForm.startDate = groupBuy.startDate
+      // addForm.endDate = groupBuy.endDate
       addForm.activityRules = groupBuy.groupDesc
       addForm.startGroupBuyRules = groupBuy.beginDesc
       addForm.finishGroupByRules = groupBuy.joinDesc

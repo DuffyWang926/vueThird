@@ -13,7 +13,7 @@ for (let i = 1; i <= 100; i++) {
   )
 }
 
-Mock.mock('http://127.0.0.1:8079/roles', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getRoleList', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   if (queryInfo.roleId) {
@@ -28,14 +28,14 @@ Mock.mock('http://127.0.0.1:8079/roles', options => {
     return {
       status: 0,
       data: {
-        roles: roles.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+        roles: roles.slice((queryInfo.page - 1) * queryInfo.limit, queryInfo.page * queryInfo.limit),
         count: roles.length
       }
     }
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getAllRoles', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getAllRoles', options => {
   return {
     status: 0,
     data: {
@@ -44,7 +44,7 @@ Mock.mock('http://127.0.0.1:8079/getAllRoles', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/deleteRole', options => {
+Mock.mock('http://127.0.0.1:8079/backend/deleteRole', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -53,7 +53,7 @@ Mock.mock('http://127.0.0.1:8079/deleteRole', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/addRole', options => {
+Mock.mock('http://127.0.0.1:8079/backend/addRole', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
@@ -62,7 +62,7 @@ Mock.mock('http://127.0.0.1:8079/addRole', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editRole', options => {
+Mock.mock('http://127.0.0.1:8079/backend/editRole', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {

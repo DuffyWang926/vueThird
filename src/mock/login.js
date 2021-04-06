@@ -33,7 +33,7 @@ Mock.mock('http://127.0.0.1:8079/loginregis/oauth/token', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getMenuList', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenuList', options => {
   console.log(options.body)
   return {
     is_succ: 1,

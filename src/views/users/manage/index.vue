@@ -37,7 +37,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
           <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
         </el-col>
@@ -47,14 +47,14 @@
       <template v-slot:userbtns="scope">
         <el-button size="mini" type="primary" @click="editPassword(scope.row.id)">修改密码</el-button>
         <el-button size="mini" type="success" @click="editInfo(scope.row.id)">修改信息</el-button>
-        <el-button v-if="scope.row.status == '正常'" size="mini" type="danger" @click="deleteUser(scope.row.id)">删除</el-button>
+        <el-button v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'" size="mini" type="danger" @click="deleteUser(scope.row.id)">删除</el-button>
       </template>
     </my-table>
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      v-model:currentPage="queryInfo.pagenum"
-      :page-size="queryInfo.pagesize"
+      v-model:currentPage="queryInfo.page"
+      :page-size="queryInfo.limit"
       layout="total, prev, pager, next, sizes, jumper"
       :total="count"
       :page-sizes="[10, 20, 50, 100]"
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
 export default {
@@ -129,12 +129,21 @@ export default {
       number: '',
       phone: '',
       roleId: '',
-      pagenum: 1,
-      pagesize: 10
+      page: 1,
+      limit: 10
     })
     const getUsers = async () => {
-      const { data: res } = await service.post('getAdminList', queryInfo)
+      const { data: res } = await service.post('backend/getAdminList', queryInfo)
       users.value = res.users
+      users.value.forEach((item) => {
+        if (item.status == 0) {
+          item.statusStr = '禁用'
+        } else if (item.status == 1) {
+          item.statusStr = '正常'
+        } else {
+          item.statusStr = '已删除'
+        }
+      })
       count.value = res.count
     }
     const handleSearch = () => {
@@ -158,7 +167,7 @@ export default {
       },
       {
         title: '状态',
-        prop: 'status'
+        prop: 'statusStr'
       },
       {
         title: '姓名',
@@ -175,7 +184,7 @@ export default {
     ]
     const allRoles = ref([])
     const getAllRoles = async () => {
-      const { data: res } = await service.post('getAllRoles')
+      const { data: res } = await service.post('backend/getAllRoles')
       allRoles.value = res.roles
       console.log(res.roles)
     }
@@ -186,7 +195,7 @@ export default {
     }
     const editInfo = async (id) => {
       currentEditId.value = id
-      const { data: res } = await service.post('getAdminById', {
+      const { data: res } = await service.post('backend/getAdminById', {
         id
       })
       const user = res
@@ -194,8 +203,9 @@ export default {
       addForm.name = user.name
       addForm.number = user.number
       addForm.phone = user.phone
-      addForm.roleId = user.roleId
       addDialogVisible.value = true
+      await nextTick()
+      addForm.roleId = user.roleId.split(',').map((item) => parseInt(item))
     }
     const deleteUser = (id) => {
       ElMessageBox.confirm('是否删除该账户', '提示', {
@@ -204,7 +214,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          const res = await service.post('deleteAdmin', {
+          const res = await service.post('backend/deleteAdmin', {
             id
           })
           if (res.status === 0) {
@@ -226,12 +236,12 @@ export default {
     }
     const count = ref(0)
     const handleSizeChange = (val) => {
-      queryInfo.pagenum = 1
-      queryInfo.pagesize = val
+      queryInfo.page = 1
+      queryInfo.limit = val
       getUsers()
     }
     const handleCurrentChange = (val) => {
-      queryInfo.pagenum = val
+      queryInfo.page = val
       getUsers()
     }
     const addFormRef = ref(null)
@@ -242,7 +252,7 @@ export default {
       phone: '',
       password: '',
       confirmPassword: '',
-      roleId: ''
+      roleId: []
     })
     const addFormRules = {
       username: [
@@ -302,7 +312,7 @@ export default {
               formCopy.password = addForm.password
               // formCopy.confirmPassword = addForm.confirmPassword
               formCopy.roleId = addForm.roleId.join(',')
-              const res = await service.post('addAdmin', formCopy)
+              const res = await service.post('backend/addAdmin', formCopy)
               if (res.status === 0) {
                 ElMessage.success('添加成功')
               }
@@ -337,7 +347,7 @@ export default {
               formCopy.number = addForm.number
               formCopy.phone = addForm.phone
               formCopy.roleId = addForm.roleId.join(',')
-              const res = await service.post('editAdmin', formCopy)
+              const res = await service.post('backend/editAdmin', formCopy)
               if (res.status === 0) {
                 ElMessage.success('修改成功')
               }
@@ -387,7 +397,7 @@ export default {
               const passwordFormCopy = {}
               passwordFormCopy.id = passwordForm.id
               passwordFormCopy.password = passwordForm.password
-              const res = await service.post('modifyPwd', passwordFormCopy)
+              const res = await service.post('backend/modifyPwd', passwordFormCopy)
               if (res.status === 0) {
                 ElMessage.success('修改成功')
               }

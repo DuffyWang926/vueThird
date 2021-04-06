@@ -41,7 +41,7 @@ export default {
     const getAllRightsList = async () => {
       rightsTreeLoading.value = true
       let date = +new Date()
-      let { data: res } = await service.post('getAllMenu')
+      let { data: res } = await service.post('backend/getAllMenu')
       console.log(res)
       console.log('请求所有菜单项', +new Date() - date)
       date = +new Date()
@@ -59,7 +59,7 @@ export default {
       // console.log(node)
       // // 测试结束
       if (props.currentRoleId) {
-        const { data: res } = await service.post('getRoleById', {
+        const { data: res } = await service.post('backend/getRoleById', {
           id: props.currentRoleId
         })
         console.log('查找选中菜单项', +new Date() - date)
@@ -75,7 +75,7 @@ export default {
             //   selectedArr.push(item.id)
             // }
             console.log(item)
-            if (rightsList.value.find((rightItem) => rightItem.id == item).leaf) {
+            if (rightsList.value.find((rightItem) => rightItem.id == item) && rightsList.value.find((rightItem) => rightItem.id == item).leaf) {
               selectedArr.push(item)
             }
           })
