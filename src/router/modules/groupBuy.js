@@ -18,7 +18,8 @@ export default [
         component: () => import('@/views/groupBuy/manage/index'),
         meta: {
           index: 3,
-          title: '团购管理'
+          title: '团购管理',
+          keepAlive: true
         }
       },
       {
@@ -27,7 +28,8 @@ export default [
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
-          title: '添加团购'
+          title: '添加团购',
+          keepAlive: true
         }
       },
       {
@@ -37,7 +39,8 @@ export default [
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
-          title: '修改团购'
+          title: '修改团购',
+          keepAlive: true
         }
       }
     ]

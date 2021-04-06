@@ -101,9 +101,8 @@ export default {
           params: queryInfoCopy
         })
         console.log(res)
-        groupsInfo.value = res.groupBuyListVos
-        count.value = res.total
-        groupsInfo.value.forEach((item) => {
+        // groupsInfo.value = res.groupBuyListVos
+        res.groupBuyListVos.forEach((item) => {
           switch (item.state) {
             case 0:
               item.stateStr = '未开始'
@@ -119,17 +118,18 @@ export default {
               break
           }
         })
-        for (let index = 0; index < groupsInfo.value.length; index++) {
-          const item = groupsInfo.value[index]
-          const { data: res } = await service.get('getgroupNumber', {
-            params: {
-              groupId: item.id
-            }
-          })
-          item.openNumber = res.openNumber
-          item.groupNumber = res.groupNumber
-        }
-        // count.value = res.count
+        // for (let index = 0; index < res.groupBuyListVos.length; index++) {
+        //   const item = res.groupBuyListVos[index]
+        //   const { data: numberRes } = await service.get('getgroupNumber', {
+        //     params: {
+        //       groupId: item.id
+        //     }
+        //   })
+        //   item.openNumber = numberRes.openNumber
+        //   item.groupNumber = numberRes.groupNumber
+        // }
+        groupsInfo.value = res.groupBuyListVos
+        count.value = res.total
       } catch (err) {
         console.log(err)
       }

@@ -10,6 +10,7 @@ export default [
       sort: 2
     },
     component: () => import('@/views/groupList/index'),
+    // component: () => import('@/views/groupBuy/index'),
     children: [
       {
         path: '/groupList/:id',
@@ -24,6 +25,7 @@ export default [
         path: '/groupList',
         name: 'groupListNoId',
         component: () => import('@/views/groupList/groupList/index'),
+        // component: import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
           title: '拼团列表'

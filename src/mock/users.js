@@ -17,7 +17,7 @@ for (let i = 1; i <= 101; i++) {
   )
 }
 
-Mock.mock('http://127.0.0.1:8079/getUsers', options => {
+Mock.mock('http://127.0.0.1:8079/getAdminList', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo.pagenum, queryInfo.pagesize)
@@ -35,9 +35,7 @@ Mock.mock('http://127.0.0.1:8079/deleteAdmin', options => {
   console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '删除成功！'
-    }
+    message: '删除成功！'
   }
 })
 
@@ -46,9 +44,7 @@ Mock.mock('http://127.0.0.1:8079/addAdmin', options => {
   console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '添加成功！'
-    }
+    message: '添加成功！'
   }
 })
 
@@ -57,20 +53,16 @@ Mock.mock('http://127.0.0.1:8079/editAdmin', options => {
   console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '修改成功！'
-    }
+    message: '修改成功！'
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editPassword', options => {
+Mock.mock('http://127.0.0.1:8079/modifyPwd', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '修改成功！'
-    }
+    message: '修改成功！'
   }
 })
 
@@ -83,13 +75,11 @@ Mock.mock('http://127.0.0.1:8079/getAdminById', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editSelfPassword', options => {
+Mock.mock('http://127.0.0.1:8079/modifySelfPwd', options => {
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
   return {
     status: 0,
-    data: {
-      message: '修改成功！'
-    }
+    message: '修改成功！'
   }
 })

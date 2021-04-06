@@ -12,7 +12,7 @@ let service = axios.create({
     'Cache-Control': 'no-cache',
     // "authKey" :store.getters.authkey,
     //authKey: localStorage.getItem('authkey'),
-    'Authorization': 'Bearer' + localStorage.getItem('access_token'),
+    Authorization: 'Bearer' + localStorage.getItem('access_token'),
     appType: 5,
     version: '1.0.01'
   }
@@ -66,7 +66,7 @@ service.interceptors.response.use(
     }
     if (Number(res.status) !== 0) {
       ElMessage({
-        message: res.message || res.msg || res.data.message,
+        message: res.message || res.msg,
         type: 'error',
         duration: 2 * 1000
       })

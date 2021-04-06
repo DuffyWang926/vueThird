@@ -36,7 +36,7 @@ const routes = [
     component: () => import('@/views/index')
   },
   {
-    path: '/*',
+    path: '/404',
     name: '404',
     meta: {
       index: 1
@@ -65,7 +65,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   console.log(to)
   if (to.matched.length === 0) {
-    return next(false)
+    return next('/404')
   }
   if (to.fullPath !== '/login') {
     if (!store.getters['user/getToken']) {

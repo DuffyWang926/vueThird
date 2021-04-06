@@ -262,7 +262,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch, computed, onMounted, nextTick, onBeforeUpdate } from 'vue'
+import { ref, reactive, watch, computed, onMounted, nextTick, onBeforeUpdate, onUpdated, onActivated, onDeactivated, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import lodash from 'lodash'
@@ -773,6 +773,26 @@ export default {
       console.log(addForm)
       // debugger
     })
+    // onUpdated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onActivated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onDeactivated(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onMounted(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
+    // onUnmounted(() => {
+    //   console.log(addForm.name, product)
+    //   debugger
+    // })
     return {
       addForm,
       addFormRef,
