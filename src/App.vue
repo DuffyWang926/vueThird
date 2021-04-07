@@ -1,6 +1,6 @@
 <template>
   <!-- <keep-alive :include="include"> -->
-  <router-view :key="key"></router-view>
+  <router-view></router-view>
   <!-- </keep-alive> -->
 </template>
 

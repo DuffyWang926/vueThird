@@ -4,7 +4,7 @@ export default [
     name: 'groupList',
     meta: {
       index: 2,
-      id: 52,
+      id: 7,
       title: '拼团列表',
       parent: '营销管理',
       sort: 2

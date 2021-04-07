@@ -5,7 +5,7 @@ export default [
     redirect: '/usersManage',
     meta: {
       index: 2,
-      id: 22,
+      id: 4,
       title: '账户管理',
       parent: '安全管理',
       sort: 2
@@ -23,5 +23,4 @@ export default [
       }
     ]
   }
-
 ]

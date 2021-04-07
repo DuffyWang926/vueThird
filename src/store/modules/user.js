@@ -87,6 +87,12 @@ const actions = {
           reject(error)
         })
     })
+  },
+  getMenus({ commit, state }) {
+    menuApi().then(res => {
+      commit('menuMutation', res.data)
+      // resolve()
+    })
   }
 }
 

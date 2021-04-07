@@ -9,17 +9,17 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="名称" prop="name">
-            <el-input v-model="queryInfo.username" placeholder="请输入名称" size="large"></el-input>
+            <el-input v-model="queryInfo.name" placeholder="请输入名称" size="large"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="上级名称" prop="pname">
-            <el-input v-model="queryInfo.pid" placeholder="请输入上级名称" size="large"></el-input>
+            <el-input v-model="queryInfo.pname" placeholder="请输入上级名称" size="large"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
-          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
+          <el-button size="large" type="primary" @click="handleSearch" v-show="store.getters['user/getRightById'](12)">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true" v-show="store.getters['user/getRightById'](11)">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -36,25 +36,25 @@
         </template>
       </el-table-column>
       <el-table-column label="菜单URL" prop="url"></el-table-column>
-      <el-table-column label="菜单排序" prop="index"></el-table-column>
+      <el-table-column label="菜单排序" prop="order"></el-table-column>
       <el-table-column label="是否显示" prop="isShow">
         <template #default="scope">
-          <el-switch :model-value="scope.row.isShow" @click="changeIsShow(scope.row.id, !scope.row.isShow)"></el-switch>
+          <el-switch :model-value="scope.row.isShow == 1" @click="changeIsShow(scope.row.id, 3 - scope.row.isShow)"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="添加时间" prop="createTime" width="150"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="150" v-show="store.getters['user/getRightById'](13) || store.getters['user/getRightById'](14)">
         <template #default="scope">
-          <el-button type="warning" size="mini" @click="editMenu(scope.row.id)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="deleteMenu(scope.row.id)">删除</el-button>
+          <el-button type="warning" size="mini" @click="editMenu(scope.row.id)" v-show="store.getters['user/getRightById'](13)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteMenu(scope.row.id)" v-show="store.getters['user/getRightById'](14)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      v-model:currentPage="queryInfo.pagenum"
-      :page-size="queryInfo.pagesize"
+      v-model:currentPage="queryInfo.page"
+      :page-size="queryInfo.limit"
       layout="total, prev, pager, next, sizes, jumper"
       :total="count"
       :page-sizes="[10, 20, 50, 100]"
@@ -91,13 +91,13 @@
           <el-option v-for="item in allMenuList" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="菜单排序" v-if="addForm.type !== 3" prop="index">
-        <el-input v-model="addForm.index"></el-input>
+      <el-form-item label="菜单排序" v-if="addForm.type !== 3" prop="order">
+        <el-input v-model="addForm.order"></el-input>
       </el-form-item>
       <el-form-item label="是否显示">
         <el-radio-group v-model="addForm.isShow">
-          <el-radio :label="true">是</el-radio>
-          <el-radio :label="false">否</el-radio>
+          <el-radio :label="1">是</el-radio>
+          <el-radio :label="2">否</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -114,6 +114,7 @@
 import { ref, reactive } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useStore } from 'vuex'
 
 export default {
   name: 'MenusManage',
@@ -121,23 +122,27 @@ export default {
     const queryInfo = reactive({
       name: '',
       pname: '',
-      pagenum: 1,
-      pagesize: 10
+      page: 1,
+      limit: 10
     })
     const handleSearch = () => {
       queryInfo.page = 1
       getMenus()
     }
     const getMenus = async () => {
-      const { data: res } = await service.post('getMenus', queryInfo)
-      menus.value = res.menus
-      count.value = res.count
+      const { data: res } = await service.post('backend/getMenus', queryInfo)
+      if (res && res.menus) {
+        menus.value = res.menus
+      }
+      if (res && res.count) {
+        count.value = res.count
+      }
     }
     getMenus()
     const menus = ref([])
     const count = ref(0)
     const editMenu = async (id) => {
-      const { data: res } = await service.post('getMenuById', {
+      const { data: res } = await service.post('backend/getMenuById', {
         id
       })
       const menu = res
@@ -146,7 +151,7 @@ export default {
       addForm.name = menu.name
       addForm.url = menu.url
       addForm.pid = menu.pid || ''
-      addForm.index = menu.index
+      addForm.order = menu.order
       addForm.isShow = menu.isShow
       addDialogVisible.value = true
     }
@@ -158,9 +163,10 @@ export default {
       })
         .then(async () => {
           // console.log(id)
-          const res = await service.post('deleteMenu', { id })
+          const res = await service.post('backend/deleteMenu', { id })
           if (res.status == 0) {
             ElMessage.success('删除成功')
+            getMenus()
           }
         })
         .catch(() => {
@@ -172,12 +178,12 @@ export default {
     }
     const changeIsShow = async (id, isShow) => {
       console.log(id, isShow)
-      const res = await service.post('changeIsShow', {
+      const res = await service.post('backend/changeIsShow', {
         id,
         isShow
       })
       if (res.status == 0) {
-        if (isShow) {
+        if (isShow == 1) {
           ElMessage.success('已成功显示菜单')
         } else {
           ElMessage.success('已成功隐藏菜单')
@@ -186,12 +192,12 @@ export default {
       }
     }
     const handleSizeChange = (val) => {
-      queryInfo.pagenum = 1
-      queryInfo.pagesize = val
+      queryInfo.page = 1
+      queryInfo.limit = val
       getMenus()
     }
     const handleCurrentChange = (val) => {
-      queryInfo.pagenum = val
+      queryInfo.page = val
       getMenus()
     }
     const addDialogVisible = ref(false)
@@ -202,8 +208,8 @@ export default {
       name: '',
       url: '',
       pid: '',
-      index: '',
-      isShow: true
+      order: '',
+      isShow: 1
     })
     const addFormRules = {
       type: [
@@ -234,7 +240,7 @@ export default {
           trigger: 'blur'
         }
       ],
-      index: [
+      order: [
         {
           required: true,
           message: '请输入菜单排序！',
@@ -258,8 +264,8 @@ export default {
       addForm.name = ''
       addForm.url = ''
       addForm.pid = ''
-      addForm.index = ''
-      addForm.isShow = true
+      addForm.order = ''
+      addForm.isShow = 1
     }
     const resetFields = () => {
       handleAddClose()
@@ -270,6 +276,8 @@ export default {
       } else {
         handleAdd()
       }
+      getAllCategories()
+      getAllMenus()
     }
     const handleAdd = () => {
       addFormRef.value.validate(async (valid) => {
@@ -277,24 +285,25 @@ export default {
           const addFormCopy = {}
           addFormCopy.type = addForm.type
           addFormCopy.name = addForm.name
-          // addFormCopy.index = addForm.index
+          // addFormCopy.order = addForm.order
           addFormCopy.isShow = addForm.isShow
           switch (addFormCopy.type) {
             case 1:
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 2:
               addFormCopy.pid = addForm.pid
               addFormCopy.url = addForm.url
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 3:
               addFormCopy.pid = addForm.pid
               break
           }
-          const res = await service.post('addMenu', addFormCopy)
+          const res = await service.post('backend/addMenu', addFormCopy)
           if (res.status == 0) {
             ElMessage.success('添加成功！')
+            getMenus()
           }
           addDialogVisible.value = false
         } else {
@@ -311,22 +320,23 @@ export default {
           // addFormCopy.type = addForm.type
           addFormCopy.name = addForm.name
           addFormCopy.isShow = addForm.isShow
-          switch (addFormCopy.type) {
+          switch (addForm.type) {
             case 1:
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 2:
               addFormCopy.pid = addForm.pid
               addFormCopy.url = addForm.url
-              addFormCopy.index = addForm.index
+              addFormCopy.order = addForm.order
               break
             case 3:
               addFormCopy.pid = addForm.pid
               break
           }
-          const res = await service.post('editMenu', addFormCopy)
+          const res = await service.post('backend/editMenu', addFormCopy)
           if (res.status == 0) {
             ElMessage.success('修改成功！')
+            getMenus()
           }
           addDialogVisible.value = false
         } else {
@@ -338,15 +348,20 @@ export default {
     const allCategoryList = ref([])
     const allMenuList = ref([])
     const getAllCategories = async () => {
-      const { data: res } = await service.post('getAllCategories')
+      const { data: res } = await service.post('backend/getMenuListByType', {
+        type: 1
+      })
       allCategoryList.value = res
     }
     const getAllMenus = async () => {
-      const { data: res } = await service.post('getAllMenus')
+      const { data: res } = await service.post('backend/getMenuListByType', {
+        type: 2
+      })
       allMenuList.value = res
     }
     getAllCategories()
     getAllMenus()
+    const store = useStore()
     return {
       queryInfo,
       handleSearch,
@@ -366,7 +381,8 @@ export default {
       resetFields,
       handleAddOrEdit,
       allMenuList,
-      allCategoryList
+      allCategoryList,
+      store
     }
   }
 }
