@@ -15,7 +15,8 @@ const routes = [
     path: '/login',
     name: 'login',
     meta: {
-      index: 1
+        title: '管理员登录',
+        index: 1
     },
     component: () => import('@/views/login/index')
   },
@@ -23,6 +24,7 @@ const routes = [
     path: '/nopermission',
     name: 'nopermission',
     meta: {
+      title: '华尚荐康客商城综合管理平台',
       index: 1
     },
     component: () => import('@/views/error/NoPermission')
@@ -31,6 +33,7 @@ const routes = [
     path: '/index',
     name: 'home',
     meta: {
+      title: '首页',
       index: 1
     },
     component: () => import('@/views/index')
@@ -39,6 +42,7 @@ const routes = [
     path: '/404',
     name: '404',
     meta: {
+      title: '华尚荐康客商城综合管理平台',
       index: 1
     },
     component: () => import('@/views/error/404')

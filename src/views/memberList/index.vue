@@ -19,7 +19,7 @@
       <el-form-item label="推荐人">
         <el-input size="medium" placeholder="请输入推荐人会员卡号" v-model="queryInfo.membersBankNum"></el-input>
       </el-form-item>
-      <el-form-item label="来源" >
+    <!--  <el-form-item label="来源" >
         <el-select v-model="memberMessage.region" placeholder="全部">
               <el-option value="全部"></el-option>
               <el-option value="新会员"></el-option>
@@ -35,10 +35,21 @@
                   <el-option value="二级会员"></el-option>
                   <el-option value="三级会员"></el-option>
           </el-select>
-      </el-form-item>
+      </el-form-item> -->
+
+      <el-form-item label="来源" >
+          <el-select v-model="queryInfo.regionId" placeholder="全部">
+                <el-option v-for="item in memberRegion" :key="item.id" :value="item.id" :label="item.name"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="会员等级">
+            <el-select v-model="queryInfo.rankId" placeholder="全部">
+                    <el-option v-for="item in memberRank" :key='item.id' :value="item.id" :label="item.name"></el-option>
+            </el-select>
+        </el-form-item>
       <el-form-item label="注册时间">
           <el-date-picker
-              v-model="memberMessage.value1"
+              v-model="queryInfo.time1"
               type="daterange"
               align="center"
               unlink-panels
@@ -51,7 +62,7 @@
       </el-form-item>
       <el-form-item label="首登时间">
         <el-date-picker
-            v-model="memberMessage.value2"
+            v-model="queryInfo.time2"
             type="daterange"
             align="center"
             unlink-panels
@@ -62,19 +73,17 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="积分">
-        <el-input-number v-model="memberMessage.num1" controls-position="right" @change="handleNumChange" range-separator="-"></el-input-number>
+        <el-input-number v-model="queryInfo.num1" controls-position="right" @change="handleNumChange" range-separator="-" :min="0"></el-input-number>
         <span>&nbsp;-&nbsp;</span>
-        <el-input-number v-model="memberMessage.num2" controls-position="right" @change="handleNumChange"></el-input-number>
+        <el-input-number v-model="queryInfo.num2" controls-position="right" @change="handleNumChange" :min="0"></el-input-number>
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="memberMessage.status" placeholder="全部">
-                <el-option value="全部"></el-option>
-                <el-option value="正常"></el-option>
-                <el-option value="注销"></el-option>
+        <el-select v-model="queryInfo.statusId" placeholder="全部">
+                <el-option v-for="item in memberStatus" :key="item.id" :value="item.id" :label="item.name"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="success" @click="getMembersInfo">查询</el-button>
+        <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
       </el-form-item>
     </el-form>
     <my-table
@@ -142,10 +151,17 @@ export default {
       membersCard: '',
       membersIdCard: '',
       membersBankNum: '',
+      regionId: '',
+      rankId: '',
+      time1: [],
+      time2: [],
+      statusId: '',
+      num1: '',
+      num2: '',
       pagenum: 1,
       pagesize: 10
     })
-    const memberMessage = reactive({
+/*    const memberMessage = reactive({
       region: '',
       rank: '',
       date1: '',
@@ -153,7 +169,57 @@ export default {
       num1: '',
       num2: '',
       status: ''
-    })
+    }) */
+    const memberRegion =[
+      {
+        id: 0,
+        name: '全部'
+      },
+      {
+        id: 1,
+        name: '新会员'
+      },
+      {
+        id: 2,
+        name: '老会员（积分注册）'
+      },
+      {
+        id: 3,
+        name: '老会员直销'
+      }
+    ]
+    const memberRank = [
+      {
+        id: 0,
+        name: '零级会员'
+      },
+      {
+        id: 1,
+        name: '一级会员'
+      },
+      {
+        id: 2,
+        name: '二级会员'
+      },
+      {
+        id: 3,
+        name: '三级会员'
+      }
+    ]
+    const memberStatus = [
+      {
+        id: 0,
+        name: '全部'
+      },
+      {
+        id: 1,
+        name: '正常'
+      },
+      {
+        id: 2,
+        name: '注销'
+      }
+    ]
     const handleNumChange = (val) => {
       console.log(val)
     }
@@ -309,6 +375,18 @@ export default {
       dialogFormVisible.value = true;
       console.log(id)
    }
+  const matchMemList = async () => {
+    const { data : res } = await service.get('matchMemList', {
+      params: queryInfo
+    })
+    console.log(res)
+    membersInfo.value = res.matachMemInfo
+    count.value = res.count
+  }
+  const handleSubmit = () => {
+      queryInfo.pagenum = 1
+      matchMemList()
+  }
 
     return {
       queryInfo,
@@ -318,13 +396,16 @@ export default {
       handleSizeChange,
       handleCurrentChange,
       currentPage,
-      memberMessage,
       shortcuts,
       handleNumChange,
       detailChange,
       handleChangeTel,
       dialogFormVisible,
-      form
+      form,
+      memberRegion,
+      memberRank,
+      memberStatus,
+      handleSubmit
  }
   }
 };

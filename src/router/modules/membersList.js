@@ -5,9 +5,9 @@ export default [
     meta: {
       index: 2,
       title: '会员列表',
+      parent: '会员管理',
       sort:1,
-	  id: 41,
-      parent: '会员管理'
+      id: 41
     },
     component: () => import('@/views/memberList/index')
    /* children: [

@@ -20,7 +20,7 @@
         <el-input size="medium" placeholder="请输入银行卡号" v-model="queryInfo.membersBankNum"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="success" @click="getMembersInfo">查询</el-button>
+        <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
       </el-form-item>
     </el-form>
     <my-table
@@ -76,6 +76,18 @@ export default {
       }
     }
     getMembersInfo()
+    const matchMemCard = async () => {
+      const { data: res} = await service.get('matchMemCard', {
+        params: queryInfo
+      })
+      console.log(res)
+      membersInfo.value = res.matchMemCardInfo
+      count.value = res.count
+    }
+    const handleSubmit = () => {
+      queryInfo.pagenum = 1
+      matchMemCard()
+    }
     const columns = [
       {
         title: '编号',
@@ -135,7 +147,8 @@ export default {
       handleSizeChange,
       handleCurrentChange,
       currentPage,
-      detailChange
+      detailChange,
+      handleSubmit
     }
   }
 };

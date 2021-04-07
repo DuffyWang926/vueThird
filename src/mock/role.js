@@ -15,7 +15,8 @@ for (let i = 1; i <= 100; i++) {
 
 Mock.mock('http://127.0.0.1:8079/backend/getRoleList', options => {
   console.log(options.body)
-  const queryInfo = JSON.parse(options.body)
+  const queryInfo = JSON.parse(options.body)//将JSON字符串转换成对象
+  console.log(queryInfo)
   if (queryInfo.roleId) {
     return {
       status: 0,

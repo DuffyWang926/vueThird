@@ -10,11 +10,14 @@
     <!--  <el-form-item>
         <span>用户头像</span>
       </el-form-item> -->
-      <el-form-item>
+      <el-form-item label="头像">
         <el-avatar shape="square" :size="50" :src="info.membersImg"></el-avatar>
       </el-form-item>
       <el-form-item v-for="item in detailList" :key="item.id" :label="item.title" :prop="item.prop" :width="item.width || ''">
         <el-input :model-value="info[item.prop]"></el-input>
+      </el-form-item>
+      <el-form-item label="微信头像">
+        <el-avatar shape="square" :size="50" :src="info.wechatImg"></el-avatar>
       </el-form-item>
     </el-form>
   </el-card>
@@ -169,11 +172,7 @@
       {
         title: '微信昵称',
         prop: 'wechatNickname'
-      },
-      {
-        title: '微信头像',
-        prop: 'wechatImg'
-      },
+      }
       ]
     const walletList = [
       {
