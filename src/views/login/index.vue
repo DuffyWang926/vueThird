@@ -1,6 +1,5 @@
 <template>
   <div class="bg">
-    <!-- <img src="../../../public/bj1.jpg" /> -->
     <div class="loginBox">
       <el-card class="box-card" shadow="never">
         <template #header>

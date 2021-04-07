@@ -51,18 +51,46 @@ for (let i = 1; i <= 999; i++) {
         'membersType|1': ['A', 'B', 'C', 'D', 'E', 'F'],//会员类型
         'blackOuts|1': ['正常', '已拉黑'],//拉黑状态
         'cashStatus|1': ['可提现', '已提现', '不可提现'],//提现状态
-        
+
   }))
 }
 
 Mock.mock(RegExp('http://127.0.0.1:8079/getMembersInfo?' + '.*'), options => {
-  const queryInfo = parseGetParams(options.url)
+  const queryInfo = parseGetParams(options.url)//解析url中的信息
   console.log(queryInfo)
   console.log(options)
   return {
     status: 0,
     data: {
       membersInfo: membersInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+      count: membersInfo.length
+    }
+  }
+})
+
+Mock.mock(RegExp('http://127.0.0.1:8079/matchMemList?' + '.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
+  console.log(options)
+  // const matachMemInfo = membersInfo.filter(item => item.id == queryInfo.id)
+  return {
+    status: 0,
+    data: {
+      matachMemInfo: membersInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+      count: membersInfo.length
+    }
+  }
+})
+
+Mock.mock(RegExp('http://127.0.0.1:8079/matchMemCard?' + '.*'), options => {
+  const queryInfo = parseGetParams(options.url)
+  console.log(queryInfo)
+  console.log(options)
+  // const matachMemInfo = membersInfo.filter(item => item.id == queryInfo.id)
+  return {
+    status: 0,
+    data: {
+      matchMemCardInfo: membersInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
       count: membersInfo.length
     }
   }

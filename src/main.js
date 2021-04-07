@@ -30,3 +30,11 @@ app.use(components)
 app.use(eventBus)
 app.use(elementUI, { locale })
 // app.use(VueQuillEditor)
+
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化时修改title */
+  if( to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+})
