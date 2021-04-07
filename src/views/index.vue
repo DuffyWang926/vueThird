@@ -139,26 +139,53 @@ export default {
     console.log('rights:', rights)
 
     const getSubMenus = () => {
-      let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
-        return {
-          title: item,
-          children: []
-        }
-      })
-      const activeRights = rights.filter((item) => item.checked && item.pid !== 0)
-      indexRouter.children.forEach((item) => {
-        if (activeRights.find((right) => item.meta.id === right.id)) {
-          const subMenu = subMenus.find((subMenu) => subMenu.title === item.meta.parent)
-          const menuItem = {
-            index: item.path,
-            title: item.meta.title,
-            sort: item.meta.sort
+      // let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
+      //   return {
+      //     title: item,
+      //     children: []
+      //   }
+      // })
+      // const activeRights = rights.filter((item) => item.checked && item.pid !== 0)
+      // indexRouter.children.forEach((item) => {
+      //   if (activeRights.find((right) => item.meta.id === right.id)) {
+      //     const subMenu = subMenus.find((subMenu) => subMenu.title === item.meta.parent)
+      //     const menuItem = {
+      //       index: item.path,
+      //       title: item.meta.title,
+      //       sort: item.meta.sort
+      //     }
+      //     subMenu.children.push(menuItem)
+      //   }
+      // })
+      // subMenus = subMenus.filter((item) => item.children.length > 0)
+      let subMenus = rights
+        .filter((item) => item.level == 1 && item.checked)
+        .map((item) => {
+          return {
+            id: item.id,
+            title: item.name,
+            children: [],
+            order: item.order || 0
           }
-          subMenu.children.push(menuItem)
-        }
+        })
+      let menuItems = rights
+        .filter((item) => item.level == 2 && item.checked)
+        .map((item) => {
+          return {
+            id: item.id,
+            pid: item.pid,
+            title: item.name,
+            index: item.url,
+            order: item.order || 0
+          }
+        })
+      console.log(subMenus, menuItems)
+      menuItems.forEach((menuItem) => {
+        const subMenu = subMenus.find((subMenu) => subMenu.id == menuItem.pid)
+        subMenu.children.push(menuItem)
       })
-      subMenus = subMenus.filter((item) => item.children.length > 0)
-      subMenus.forEach((subMenu) => subMenu.children.sort((a, b) => a.sort - b.sort))
+      subMenus.forEach((subMenu) => subMenu.children.sort((a, b) => a.order - b.order))
+      subMenus.sort((a, b) => a.order - b.order)
       return subMenus
     }
     const subMenus = computed(getSubMenus)
@@ -329,6 +356,8 @@ export default {
     ]
     const logout = () => {
       store.commit('user/logoutMutation')
+      store.commit('links/clear')
+      store.commit('menu/setActivePath', '')
       ElMessage.success('已退出登录')
       router.push('/login')
     }

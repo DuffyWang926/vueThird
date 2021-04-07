@@ -5,7 +5,7 @@ export default [
     redirect: '/menusManage',
     meta: {
       index: 2,
-      id: 22,
+      id: 3,
       title: '菜单管理',
       parent: '安全管理',
       sort: 2

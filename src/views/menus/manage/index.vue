@@ -9,17 +9,17 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="名称" prop="name">
-            <el-input v-model="queryInfo.username" placeholder="请输入名称" size="large"></el-input>
+            <el-input v-model="queryInfo.name" placeholder="请输入名称" size="large"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="上级名称" prop="pname">
-            <el-input v-model="queryInfo.pid" placeholder="请输入上级名称" size="large"></el-input>
+            <el-input v-model="queryInfo.pname" placeholder="请输入上级名称" size="large"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
-          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
+          <el-button size="large" type="primary" @click="handleSearch" v-show="store.getters['user/getRightById'](12)">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true" v-show="store.getters['user/getRightById'](11)">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -43,10 +43,10 @@
         </template>
       </el-table-column>
       <el-table-column label="添加时间" prop="createTime" width="150"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="150" v-show="store.getters['user/getRightById'](13) || store.getters['user/getRightById'](14)">
         <template #default="scope">
-          <el-button type="warning" size="mini" @click="editMenu(scope.row.id)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="deleteMenu(scope.row.id)">删除</el-button>
+          <el-button type="warning" size="mini" @click="editMenu(scope.row.id)" v-show="store.getters['user/getRightById'](13)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteMenu(scope.row.id)" v-show="store.getters['user/getRightById'](14)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,8 +96,8 @@
       </el-form-item>
       <el-form-item label="是否显示">
         <el-radio-group v-model="addForm.isShow">
-          <el-radio :label="true">是</el-radio>
-          <el-radio :label="false">否</el-radio>
+          <el-radio :label="1">是</el-radio>
+          <el-radio :label="2">否</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -114,6 +114,7 @@
 import { ref, reactive } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useStore } from 'vuex'
 
 export default {
   name: 'MenusManage',
@@ -129,15 +130,19 @@ export default {
       getMenus()
     }
     const getMenus = async () => {
-      const { data: res } = await service.post('getMenus', queryInfo)
-      menus.value = res.menus
-      count.value = res.count
+      const { data: res } = await service.post('backend/getMenus', queryInfo)
+      if (res && res.menus) {
+        menus.value = res.menus
+      }
+      if (res && res.count) {
+        count.value = res.count
+      }
     }
     getMenus()
     const menus = ref([])
     const count = ref(0)
     const editMenu = async (id) => {
-      const { data: res } = await service.post('getMenuById', {
+      const { data: res } = await service.post('backend/getMenuById', {
         id
       })
       const menu = res
@@ -158,9 +163,10 @@ export default {
       })
         .then(async () => {
           // console.log(id)
-          const res = await service.post('deleteMenu', { id })
+          const res = await service.post('backend/deleteMenu', { id })
           if (res.status == 0) {
             ElMessage.success('删除成功')
+            getMenus()
           }
         })
         .catch(() => {
@@ -172,12 +178,12 @@ export default {
     }
     const changeIsShow = async (id, isShow) => {
       console.log(id, isShow)
-      const res = await service.post('changeIsShow', {
+      const res = await service.post('backend/changeIsShow', {
         id,
         isShow
       })
       if (res.status == 0) {
-        if (isShow) {
+        if (isShow == 1) {
           ElMessage.success('已成功显示菜单')
         } else {
           ElMessage.success('已成功隐藏菜单')
@@ -203,7 +209,7 @@ export default {
       url: '',
       pid: '',
       order: '',
-      isShow: true
+      isShow: 1
     })
     const addFormRules = {
       type: [
@@ -259,7 +265,7 @@ export default {
       addForm.url = ''
       addForm.pid = ''
       addForm.order = ''
-      addForm.isShow = true
+      addForm.isShow = 1
     }
     const resetFields = () => {
       handleAddClose()
@@ -270,6 +276,8 @@ export default {
       } else {
         handleAdd()
       }
+      getAllCategories()
+      getAllMenus()
     }
     const handleAdd = () => {
       addFormRef.value.validate(async (valid) => {
@@ -292,9 +300,10 @@ export default {
               addFormCopy.pid = addForm.pid
               break
           }
-          const res = await service.post('addMenu', addFormCopy)
+          const res = await service.post('backend/addMenu', addFormCopy)
           if (res.status == 0) {
             ElMessage.success('添加成功！')
+            getMenus()
           }
           addDialogVisible.value = false
         } else {
@@ -311,7 +320,7 @@ export default {
           // addFormCopy.type = addForm.type
           addFormCopy.name = addForm.name
           addFormCopy.isShow = addForm.isShow
-          switch (addFormCopy.type) {
+          switch (addForm.type) {
             case 1:
               addFormCopy.order = addForm.order
               break
@@ -324,9 +333,10 @@ export default {
               addFormCopy.pid = addForm.pid
               break
           }
-          const res = await service.post('editMenu', addFormCopy)
+          const res = await service.post('backend/editMenu', addFormCopy)
           if (res.status == 0) {
             ElMessage.success('修改成功！')
+            getMenus()
           }
           addDialogVisible.value = false
         } else {
@@ -338,19 +348,20 @@ export default {
     const allCategoryList = ref([])
     const allMenuList = ref([])
     const getAllCategories = async () => {
-      const { data: res } = await service.post('getMenuListByType', {
+      const { data: res } = await service.post('backend/getMenuListByType', {
         type: 1
       })
       allCategoryList.value = res
     }
     const getAllMenus = async () => {
-      const { data: res } = await service.post('getMenuListByType', {
+      const { data: res } = await service.post('backend/getMenuListByType', {
         type: 2
       })
       allMenuList.value = res
     }
     getAllCategories()
     getAllMenus()
+    const store = useStore()
     return {
       queryInfo,
       handleSearch,
@@ -370,7 +381,8 @@ export default {
       resetFields,
       handleAddOrEdit,
       allMenuList,
-      allCategoryList
+      allCategoryList,
+      store
     }
   }
 }

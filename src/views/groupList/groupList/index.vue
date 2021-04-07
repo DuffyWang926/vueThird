@@ -47,7 +47,7 @@
         ></el-col>
         <el-col :span="5">
           <el-form-item label-width="0">
-            <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
+            <el-button size="medium" type="success" @click="handleSubmit" v-show="store.getters['user/getRightById'](29)">查询</el-button>
           </el-form-item></el-col
         >
       </el-row>
@@ -72,6 +72,7 @@
 import { ref, reactive, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import service from '@/utils/request'
+import { useStore } from 'vuex'
 export default {
   name: 'GroupList',
   setup() {
@@ -197,6 +198,7 @@ export default {
       appedgrouplist()
     }
     const currentPage = ref(1)
+    const store = useStore()
     return {
       queryInfo,
       groupBuyList,
@@ -207,7 +209,8 @@ export default {
       handleCurrentChange,
       currentPage,
       appedgrouplist,
-      handleSubmit
+      handleSubmit,
+      store
     }
   }
 }

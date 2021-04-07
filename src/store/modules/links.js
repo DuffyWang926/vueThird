@@ -26,6 +26,10 @@ const mutations = {
   },
   deleteLink(state, link) {
     state.links = state.links.filter(item => item.url !== link.url)
+  },
+  clear(state, link) {
+    state.links = []
+    state.currentLink = ''
   }
 }
 

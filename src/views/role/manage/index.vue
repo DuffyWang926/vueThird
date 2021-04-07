@@ -16,15 +16,16 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
-          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
+          <el-button size="large" type="primary" @click="handleSearch" v-show="store.getters['user/getRightById'](15)">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true" v-show="store.getters['user/getRightById'](16)">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
     <my-table :data="roles" :columns="columns" :operation-width="200">
       <template v-slot:userbtns="scope">
-        <el-button size="mini" type="warning" @click="editRole(scope.row.id)" :disabled="scope.row.id === 1">修改</el-button>
-        <el-button size="mini" type="danger" @click="deleteRole(scope.row.id)" :disabled="scope.row.id === 1">删除</el-button>
+        <el-button size="mini" type="warning" @click="editRole(scope.row.id)" v-show="store.getters['user/getRightById'](17)">修改</el-button>
+        <el-button size="mini" type="danger" @click="deleteRole(scope.row.id)" v-show="store.getters['user/getRightById'](18)">删除</el-button>
+        <!-- :disabled="scope.row.roleName === '超级管理员'" -->
       </template>
     </my-table>
     <el-pagination
@@ -76,12 +77,14 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useStore } from 'vuex'
 export default {
   name: 'RoleManage',
   setup() {
+    const store = useStore()
     const roles = ref([])
     const allRoles = ref([])
     const getAllRoles = async () => {
@@ -235,6 +238,7 @@ export default {
       })
         .then(async () => {
           const editFormCopy = {}
+          editFormCopy.id = editForm.id
           editFormCopy.roleName = editForm.roleName
           editFormCopy.rightIds = editForm.halfCheckedRights.join(',')
           console.log(editFormCopy.rightIds)
@@ -246,6 +250,8 @@ export default {
           }
           editDialogVisible.value = false
           getRoles()
+          getAllRoles()
+          store.dispatch('user/getMenus')
         })
         .catch(() => {
           ElMessage({
@@ -254,6 +260,12 @@ export default {
           })
         })
     }
+    watch(
+      () => roles.value.length,
+      () => {
+        getAllRoles()
+      }
+    )
     return {
       roles,
       allRoles,
@@ -273,7 +285,8 @@ export default {
       handleAdd,
       editDialogVisible,
       editForm,
-      handleEdit
+      handleEdit,
+      store
     }
   }
 }

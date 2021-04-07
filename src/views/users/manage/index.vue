@@ -38,16 +38,35 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
-          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
+          <el-button size="large" type="primary" @click="handleSearch" v-show="store.getters['user/getRightById'](19)">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true" v-show="store.getters['user/getRightById'](20)">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
-    <my-table :data="users" :columns="columns" operation-width="280px">
+    <my-table
+      :data="users"
+      :columns="columns"
+      operation-width="280px"
+      :operation-show="store.getters['user/getRightById'](21) || store.getters['user/getRightById'](22) || store.getters['user/getRightById'](23)"
+    >
       <template v-slot:userbtns="scope">
-        <el-button size="mini" type="primary" @click="editPassword(scope.row.id)">修改密码</el-button>
-        <el-button size="mini" type="success" @click="editInfo(scope.row.id)">修改信息</el-button>
-        <el-button v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'" size="mini" type="danger" @click="deleteUser(scope.row.id)">删除</el-button>
+        <el-button
+          size="mini"
+          type="primary"
+          @click="editPassword(scope.row.id)"
+          v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'"
+          v-show="store.getters['user/getRightById'](21)"
+          >修改密码</el-button
+        >
+        <el-button size="mini" type="success" @click="editInfo(scope.row.id)" v-show="store.getters['user/getRightById'](22)">修改信息</el-button>
+        <el-button
+          v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'"
+          size="mini"
+          type="danger"
+          @click="deleteUser(scope.row.id)"
+          v-show="store.getters['user/getRightById'](23)"
+          >删除</el-button
+        >
       </template>
     </my-table>
     <el-pagination
@@ -120,6 +139,7 @@
 import { ref, reactive, nextTick } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useStore } from 'vuex'
 export default {
   name: 'UsersManage',
   setup() {
@@ -306,7 +326,7 @@ export default {
             .then(async () => {
               const formCopy = {}
               formCopy.username = addForm.username
-              formCopy.name = addForm.username
+              formCopy.name = addForm.name
               formCopy.number = addForm.number
               formCopy.phone = addForm.phone
               formCopy.password = addForm.password
@@ -343,7 +363,7 @@ export default {
               const formCopy = {}
               formCopy.id = currentEditId.value
               formCopy.username = addForm.username
-              formCopy.name = addForm.username
+              formCopy.name = addForm.name
               formCopy.number = addForm.number
               formCopy.phone = addForm.phone
               formCopy.roleId = addForm.roleId.join(',')
@@ -471,6 +491,7 @@ export default {
         trigger: 'blur'
       }
     ]
+    const store = useStore()
     return {
       queryInfo,
       handleSearch,
@@ -497,7 +518,8 @@ export default {
       handlePasswordChange,
       passwordRules,
       confirmPasswordRules,
-      confirmPasswordRules2
+      confirmPasswordRules2,
+      store
     }
   }
 }

@@ -48,7 +48,7 @@ for (let i = 31; i <= 50; i++) {
 }
 1
 
-Mock.mock('http://127.0.0.1:8079/getMenus', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenus', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo.page, queryInfo.limit)
@@ -61,7 +61,7 @@ Mock.mock('http://127.0.0.1:8079/getMenus', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getMenuById', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenuById', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -70,7 +70,7 @@ Mock.mock('http://127.0.0.1:8079/getMenuById', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/deleteMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/deleteMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -79,7 +79,7 @@ Mock.mock('http://127.0.0.1:8079/deleteMenu', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/changeIsShow', options => {
+Mock.mock('http://127.0.0.1:8079/backend/changeIsShow', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -87,7 +87,7 @@ Mock.mock('http://127.0.0.1:8079/changeIsShow', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getMenuListByType', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenuListByType', options => {
   const queryInfo = JSON.parse(options.body)
   if (queryInfo.type == 1) {
     return {
@@ -121,7 +121,7 @@ Mock.mock('http://127.0.0.1:8079/getMenuListByType', options => {
 //   }
 // })
 
-Mock.mock('http://127.0.0.1:8079/addMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/addMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -129,7 +129,7 @@ Mock.mock('http://127.0.0.1:8079/addMenu', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/editMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {

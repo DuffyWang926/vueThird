@@ -1,6 +1,6 @@
 <template>
   <div class="tree-container" v-loading="goodsTreeLoading">
-    <el-input type="textarea" :rows="3" placeholder="此处展示所选商品列表" :model-value="goodsNameSelectedList" disabled resize="none"> </el-input>
+    <el-input type="textarea" :rows="3" placeholder="此处展示所选商品列表" :model-value="goodsNameSelectedList" disabled resize="none" v-if="onlyOneProduct == false"> </el-input>
     <el-input placeholder="输入关键字进行过滤" v-model="goodsFilterText"></el-input>
     <el-tree :data="data" ref="goodsTreeRef" :props="goodsTreeProps" :filter-node-method="goodsFilterNode" show-checkbox node-key="id" @check-change="handleGoodsCheckChange" @check="handleCheck">
       <template #default="{ node, data }">

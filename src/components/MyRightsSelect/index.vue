@@ -1,6 +1,6 @@
 <template>
   <div class="tree-container" v-loading="rightsTreeLoading">
-    <el-input type="textarea" :rows="3" placeholder="此处展示所选权限列表" :model-value="rightsNameSelectedList" disabled resize="none" style="display: none"> </el-input>
+    <!-- <el-input type="textarea" :rows="3" placeholder="此处展示所选权限列表" :model-value="rightsNameSelectedList" disabled resize="none" style="display: none"> </el-input> -->
     <el-input placeholder="输入关键字进行过滤" v-model="rightsFilterText"></el-input>
     <el-tree :data="data" ref="rightsTreeRef" :props="rightsTreeProps" :filter-node-method="rightsFilterNode" show-checkbox node-key="id" @check-change="handleRightsCheckChange"> </el-tree>
   </div>
@@ -45,7 +45,9 @@ export default {
       console.log(res)
       console.log('请求所有菜单项', +new Date() - date)
       date = +new Date()
-      rightsList.value = res.menus
+      if (res && res.menus) {
+        rightsList.value = res.menus
+      }
       data.value = generateNodes()
       console.log('渲染列表', +new Date() - date)
       date = +new Date()
@@ -156,18 +158,18 @@ export default {
       }
       return [root]
     }
-    const rightsNameSelectedList = computed(() => {
-      const filtered = []
-      props.modelValue.forEach((id) => {
-        if (rightsList.value.length > 0) {
-          const item = rightsList.value.find((item) => item.id == id + '')
-          if (props.modelValue.indexOf(item.pid) === -1) {
-            filtered.push(item)
-          }
-        }
-      })
-      return filtered.map((item) => item.name).join(',')
-    })
+    // const rightsNameSelectedList = computed(() => {
+    //   const filtered = []
+    //   props.modelValue.forEach((id) => {
+    //     if (rightsList.value.length > 0) {
+    //       const item = rightsList.value.find((item) => item.id == id)
+    //       if (props.modelValue.indexOf(item.pid) === -1) {
+    //         filtered.push(item)
+    //       }
+    //     }
+    //   })
+    //   return filtered.map((item) => item.name).join(',')
+    // })
     let emitTimer = null
     const handleRightsCheckChange = () => {
       clearTimeout(emitTimer)
@@ -263,7 +265,7 @@ export default {
       rightsTreeProps,
       rightsFilterText,
       rightsFilterNode,
-      rightsNameSelectedList,
+      // rightsNameSelectedList,
       handleRightsCheckChange
     }
   }

@@ -4,11 +4,11 @@
       <div class="card-header">团购管理</div>
     </template>
     <el-form :model="formInline" class="demo-form-inline" label-position="left" label-width="70px">
-      <el-row :gutter="20">
-        <el-col :span="7">
+      <el-row :gutter="20" class="query-row">
+        <el-col :span="isQueryRowWide ? 5 : 7">
           <el-form-item label="活动名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.activityName"> </el-input> </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="isQueryRowWide ? 8 : 10">
           <el-form-item label="创建时间">
             <el-date-picker
               v-model="queryInfo.activityTime"
@@ -24,15 +24,13 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="isQueryRowWide ? 5 : 7">
           <el-form-item label="商品名称"> <el-input size="medium" placeholder="单行输入" v-model="queryInfo.name"></el-input> </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label-width="0">
-            <el-button size="medium" type="primary" @click="handleSubmit">查询</el-button>
-            <el-button size="medium" type="success" @click="addGroupBuy">添加</el-button>
+            <el-button size="medium" type="primary" @click="handleSubmit" v-show="store.getters['user/getRightById'](24)">查询</el-button>
+            <el-button size="medium" type="success" @click="addGroupBuy" v-show="store.getters['user/getRightById'](25)">添加</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -43,9 +41,20 @@
     <template #header>
       <div class="card-header">数据列表</div>
     </template>
-    <my-table :data="groupsInfo" :columns="columns" :operation-width="260" edit-show @edit="editDetail" edit-text="编辑" preview-show @preview="groupList" preiview-text="拼团列表">
+    <my-table
+      :data="groupsInfo"
+      :columns="columns"
+      :operation-width="260"
+      :operation-show="store.getters['user/getRightById'](26) || store.getters['user/getRightById'](27) || store.getters['user/getRightById'](28)"
+      :edit-show="store.getters['user/getRightById'](27)"
+      @edit="editDetail"
+      edit-text="编辑"
+      :preview-show="store.getters['user/getRightById'](26)"
+      @preview="groupList"
+      preiview-text="拼团列表"
+    >
       <template v-slot:userbtns="scope">
-        <el-button size="mini" type="danger" @click="closeActivity(scope.row.id)" v-if="scope.row.state != 3">关闭</el-button>
+        <el-button size="mini" type="danger" @click="closeActivity(scope.row.id)" v-if="scope.row.state != 3" v-show="store.getters['user/getRightById'](28)">关闭</el-button>
       </template>
     </my-table>
     <el-pagination
@@ -63,10 +72,11 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import service from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useStore } from 'vuex'
 export default {
   name: 'GroupBuyManage',
   setup() {
@@ -158,7 +168,8 @@ export default {
       },
       {
         title: '活动时间',
-        prop: 'date'
+        prop: 'date',
+        width: '160'
       },
       {
         title: '状态',
@@ -220,7 +231,23 @@ export default {
     const addGroupBuy = () => {
       $router.push({ path: '/groupBuyAdd' })
     }
-
+    const isQueryRowWide = ref(false)
+    const getQueryRowWide = () => {
+      // console.log(document.querySelector('.query-row').clientWidth)
+      // await nextTick()
+      if (document.querySelector('.query-row')) {
+        isQueryRowWide.value = document.querySelector('.query-row').clientWidth > 1200
+      } else {
+        isQueryRowWide.value = false
+      }
+    }
+    window.addEventListener('resize', getQueryRowWide)
+    const getRowWidth = async () => {
+      await nextTick()
+      getQueryRowWide()
+    }
+    getRowWidth()
+    const store = useStore()
     return {
       queryInfo,
       getgroupbuylist,
@@ -234,7 +261,9 @@ export default {
       groupList,
       editDetail,
       closeActivity,
-      addGroupBuy
+      addGroupBuy,
+      isQueryRowWide,
+      store
     }
   }
 }
