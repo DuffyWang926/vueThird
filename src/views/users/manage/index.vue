@@ -32,7 +32,7 @@
         <el-col :span="8">
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="queryInfo.roleId" placeholder="请选择" filterable>
-              <el-option :label="请选择" value="" v-show="false"></el-option>
+              <el-option label="全部" value=""></el-option>
               <el-option v-for="item in allRoles" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
@@ -153,7 +153,17 @@ export default {
       limit: 10
     })
     const getUsers = async () => {
-      const { data: res } = await service.post('backend/getAdminList', queryInfo)
+      const queryInfoCopy = {}
+      queryInfoCopy.username = queryInfo.username
+      queryInfoCopy.name = queryInfo.name
+      queryInfoCopy.number = queryInfo.number
+      queryInfoCopy.phone = queryInfo.phone
+      if (queryInfo.roleId) {
+        queryInfoCopy.roleId = queryInfo.roleId
+      }
+      queryInfoCopy.page = queryInfo.page
+      queryInfoCopy.limit = queryInfo.limit
+      const { data: res } = await service.post('backend/getAdminList', queryInfoCopy)
       users.value = res.users
       users.value.forEach((item) => {
         if (item.status == 0) {
