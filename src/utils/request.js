@@ -83,11 +83,12 @@ service.interceptors.response.use(
     }
   },
   error => {
-    ElMessage({
-      message: error.message,
-      type: 'error',
-      duration: 2 * 1000
-    })
+    // ElMessage({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 2 * 1000
+    // })
+    console.log(error.message)
     return Promise.reject(error)
   }
 )

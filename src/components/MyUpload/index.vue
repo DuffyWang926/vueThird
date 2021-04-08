@@ -26,17 +26,16 @@
     <img :src="currentFile" v-else />
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false"
-          >结束预览</el-button
-        >
+        <el-button type="primary" @click="dialogVisible = false">结束预览</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script>
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import service from '@/utils/request'
 import axios from 'axios'
 export default {
   name: 'MyUpload',
@@ -67,10 +66,10 @@ export default {
     }
   },
   setup(props, { emit }) {
+    // const loading = ref(false)
     const qiniuData = reactive({
       key: '',
-      token:
-        'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:R6gozWM7ovWwONqrggxfdtSYP-o=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE2NjczODkwfQ=='
+      token: 'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:q9MBDEg5hNcr0vQW1KSM9P9xxhk=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE3Nzg4MTA2fQ=='
     })
     const imageList = props.imageList
     const myFileList = ref(
@@ -85,16 +84,7 @@ export default {
     const handleBeforeUpload = (file) => {
       console.log('handle before upload')
       if (props.isVideo) {
-        if (
-          [
-            'video/mp4',
-            'video/ogg',
-            'video/flv',
-            'video/avi',
-            'video/wmv',
-            'video/rmvb'
-          ].indexOf(file.type) == -1
-        ) {
+        if (['video/mp4', 'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb'].indexOf(file.type) == -1) {
           ElMessage.error('上传视频只能是 mp4、ogg、flv、avi、wmv、rmvb 格式!')
           return false
         }
@@ -118,9 +108,7 @@ export default {
       }
       const extName = file.name.slice(file.name.lastIndexOf('.'))
       const mainName = file.name.slice(0, file.name.indexOf('.'))
-      qiniuData.key = `${Math.floor(Math.random() * 200)}/${Math.floor(
-        Math.random() * 200
-      )}/${mainName}${extName}`
+      qiniuData.key = `${Math.floor(Math.random() * 200)}/${Math.floor(Math.random() * 200)}/${mainName}${extName}`
       console.log(qiniuData.key)
     }
     const handlePreview = (file) => {
@@ -128,7 +116,8 @@ export default {
       currentFile.value = file.url
       dialogVisible.value = true
     }
-    const handleSuccess = (res) => {
+    const handleSuccess = async (res) => {
+      // loading.value = true
       console.log('handle success')
       console.log(res)
       imageList.push('https://image.huashangjk.com/' + res.key)
@@ -148,6 +137,8 @@ export default {
       } else {
         emit('update:image-list', imageList)
       }
+      await nextTick()
+      // loading.value = false
     }
     const handleBeforeRemove = (file, fileList) => {
       console.log('handle before remove')
@@ -160,7 +151,9 @@ export default {
       )
       emit('update:image-list', imageList)
     }
-    const uploadRequest = (param) => {
+    const uploadRequest = async (param) => {
+      // const res = await service.post('https://uatadmin.huashangjk.com/nssc/product/qiniu_token')
+      // qiniuData.token = res.QINIU_TOKEN
       let fileObj = param.file
       let form = new FormData()
       form.append('file', fileObj)
@@ -206,6 +199,7 @@ export default {
       currentFile.value = ''
     }
     return {
+      // loading,
       qiniuData,
       handleBeforeUpload,
       handlePreview,
@@ -233,14 +227,16 @@ export default {
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
+    overflow: hidden;
   }
   /deep/.el-upload-list__item.is-ready,
   /deep/.el-upload-list__item.is-uploading,
   // /deep/.el-upload-list__item.el-list-enter-active,
   // /deep/.el-upload-list__item.el-list-enter-to,
-  // /deep/.el-upload-list__item.el-list-leave-active,
-  /deep/.el-upload-list__item.el-list-leave-to {
-    display: none;
+  /deep/.el-upload-list__item.el-list-leave-to
+  // /deep/.el-upload-list__item.el-list-leave-active
+  {
+    display: none !important;
   }
 }
 .upload-demo {

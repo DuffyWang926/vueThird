@@ -10,4 +10,5 @@ import './users'
 import './login'
 import './group'
 import './menus'
+import './qualification'
 const Mock = require('mockjs')

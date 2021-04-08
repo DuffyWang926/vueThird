@@ -251,8 +251,8 @@ export default {
             ElMessage.success('删除成功')
           }
           if (users.value.length === 1) {
-            if (queryInfo.pagenum > 1) {
-              queryInfo.pagenum--
+            if (queryInfo.page > 1) {
+              queryInfo.page--
             }
           }
           getUsers()
