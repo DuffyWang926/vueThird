@@ -15,7 +15,7 @@ Mock.mock('http://127.0.0.1:8079/login', options => {
   }
 })
  */
-Mock.mock('http://127.0.0.1:8079/loginregis/oauth/token', options => {
+Mock.mock(RegExp('http://127.0.0.1:8079/loginregis/oauth/token' + '?.*'), options => {
   console.log(options.body)
   return {
     is_succ: 1,

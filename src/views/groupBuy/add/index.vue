@@ -77,12 +77,12 @@
           <el-col :span="7">
             <el-select placeholder="----请选择----" v-model="addForm.canSingleBuy" @click="addFormRef.validateField('canSingleBuy')" style="width: 100%">
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
-              <el-option :value="2" label="可以单独购买"></el-option>
-              <el-option :value="1" label="不可单独购买"></el-option>
+              <el-option :value="2" label="可单独购买"></el-option>
+              <el-option :value="1" label="不单独购买"></el-option>
             </el-select>
           </el-col>
           <el-col :span="17">
-            <el-alert title="是否可以按照原价单独购买" type="info" show-icon :closable="false"> </el-alert>
+            <el-alert title="是否可按照原价单独购买" type="info" show-icon :closable="false"> </el-alert>
           </el-col>
         </el-row>
       </el-form-item>
@@ -105,7 +105,7 @@
       <el-form-item label="活动规则概述" prop="activityRules">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input placeholder="活动概述（不超过20个字符）" v-model="addForm.activityRules" @blur="addForm.activityRules = addForm.activityRules.trim()"></el-input>
+            <el-input placeholder="活动概述（不超过20个字）" v-model="addForm.activityRules" @blur="addForm.activityRules = addForm.activityRules.trim()"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert title="显示在商品详情页，结算页面" type="info" show-icon :closable="false"> </el-alert>
@@ -116,7 +116,7 @@
         <el-row class="w800">
           <el-col :span="10">
             <el-input
-              placeholder="开团规则描述（不超过120个字符）"
+              placeholder="开团规则描述（不超过500个字）"
               v-model="addForm.startGroupBuyRules"
               @blur="addForm.startGroupBuyRules = addForm.startGroupBuyRules.trim()"
               type="textarea"
@@ -133,7 +133,7 @@
         <el-row class="w800">
           <el-col :span="10">
             <el-input
-              placeholder="成团规则描述（不超过120个字符）"
+              placeholder="成团规则描述（不超过500个字）"
               v-model="addForm.finishGroupByRules"
               @blur="addForm.finishGroupByRules = addForm.finishGroupByRules.trim()"
               type="textarea"
@@ -149,7 +149,7 @@
       <el-form-item label="分享文案" prop="shareText">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input placeholder="分享文案（不超过20个字符）" v-model="addForm.shareText" @blur="addForm.shareText = addForm.shareText.trim()"></el-input>
+            <el-input placeholder="分享文案（不超过20个字）" v-model="addForm.shareText" @blur="addForm.shareText = addForm.shareText.trim()"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert title="显示在小程序分享卡片上" type="info" show-icon :closable="false"> </el-alert>
@@ -219,7 +219,7 @@
           <el-checkbox label="v3"></el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="参团新人数量要求" prop="v0MinNum">
+      <el-form-item label="参团新人数量要求" prop="v0MinNum" v-if="addForm.joinGroupBuyLevels.indexOf('v0') !== -1">
         <el-row class="w800">
           <el-col :span="7">
             <el-input v-model="addForm.v0MinNum" @blur="addForm.v0MinNum = isNaN(parseInt(addForm.v0MinNum)) ? '请输入合法数值' : parseInt(addForm.v0MinNum)"></el-input>
@@ -341,7 +341,7 @@ export default {
       canSingleBuy: [
         {
           required: true,
-          message: '请选择是否可以单独购买！',
+          message: '请选择是否可单独购买！',
           trigger: ['blur', 'change']
         }
       ],
@@ -371,7 +371,7 @@ export default {
         {
           validator: (rule, value, callback) => {
             if (value.length > 20) {
-              callback(new Error('活动规则概述长度不能超过20个字符！'))
+              callback(new Error('活动规则概述长度不能超过20个字！'))
             } else {
               callback()
             }
@@ -388,7 +388,7 @@ export default {
         {
           validator: (rule, value, callback) => {
             if (value.length > 120) {
-              callback(new Error('开团规则描述长度不能超过120个字符！'))
+              callback(new Error('开团规则描述长度不能超过500个字！'))
             } else {
               callback()
             }
@@ -405,7 +405,7 @@ export default {
         {
           validator: (rule, value, callback) => {
             if (value.length > 120) {
-              callback(new Error('成团规则描述长度不能超过120个字符！'))
+              callback(new Error('成团规则描述长度不能超过500个字！'))
             } else {
               callback()
             }
@@ -422,7 +422,7 @@ export default {
         {
           validator: (rule, value, callback) => {
             if (value.length > 20) {
-              callback(new Error('分享文案长度不能超过20个字符！'))
+              callback(new Error('分享文案长度不能超过20个字！'))
             } else {
               callback()
             }
@@ -498,6 +498,8 @@ export default {
           validator: (rule, value, callback) => {
             if (isNaN(value) || value <= 0) {
               callback(new Error('总人数要求必须为正整数！'))
+            } else if (value < addForm.v0MinNum && addForm.joinGroupBuyLevels.indexOf('v0') != -1) {
+              callback(new Error('总人数最低要求不能低于新人最低要求！'))
             } else {
               callback()
             }
@@ -556,11 +558,11 @@ export default {
       if (productId.value == null || subProductIds.value.length == 0) {
         return ElMessage.error('请选择商品及规格！')
       }
-      if (String(productId.value).indexOf('P') !== -1) {
+      if (String(productId.value).indexOf('P') !== -1 && String(productId.value.indexOf('p') !== -1)) {
         productId.value = parseInt(String(productId.value).slice(2))
       }
       subProductIds.value.forEach((item, index) => {
-        if (String(item).indexOf('I') !== -1) {
+        if (String(item).indexOf('I') !== -1 && String(item).indexOf('i') !== -1) {
           subProductIds.value[index] = parseInt(String(item).slice(2))
         }
       })
@@ -622,8 +624,8 @@ export default {
           if (isNaN(product.groupPrice) || product.groupPrice <= 0) {
             return ElMessage.error('团购价格必须为正数！')
           }
-          if (isNaN(product.groupPoints) || product.groupPoints <= 0) {
-            return ElMessage.error('团购积分必须为正整数！')
+          if (isNaN(product.groupPoints) || product.groupPoints < 0) {
+            return ElMessage.error('团购积分必须大于等于0！')
           }
           if (isNaN(product.eachNum) || product.eachNum <= 0) {
             return ElMessage.error('每份购买数量必须为正整数！')
@@ -658,6 +660,15 @@ export default {
           if (id) {
             groupBuy.id = id
           }
+          // 重新更新productID
+          if (String(productId.value).indexOf('P') !== -1 && String(productId.value.indexOf('p') !== -1)) {
+            productId.value = parseInt(String(productId.value).slice(2))
+          }
+          subProductIds.value.forEach((item, index) => {
+            if (String(item).indexOf('I') !== -1 && String(item).indexOf('i') !== -1) {
+              subProductIds.value[index] = parseInt(String(item).slice(2))
+            }
+          })
           // groupBuy.startDate = dateFormat(addForm.startDate)
           // groupBuy.endDate = dateFormat(addForm.endDate)
           groupBuy.groupDesc = addForm.activityRules
@@ -667,7 +678,12 @@ export default {
           groupBuy.leaderRequire = addForm.startGroupBuyRequirement
           groupBuy.groupMinNum = addForm.totalMinNum
           groupBuy.expiryDate = addForm.duration
-          groupBuy.newMemberMin = addForm.v0MinNum
+          // groupBuy.newMemberMin = addForm.v0MinNum
+          if (addForm.joinGroupBuyLevels.indexOf('v0') === -1) {
+            groupBuy.newMemberMin = 0
+          } else {
+            groupBuy.newMemberMin = addForm.v0MinNum
+          }
           // 。。。
           data.groupBuy = groupBuy
           // --- groupBuyProduct
@@ -819,6 +835,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4e73df;
+  font-weight: bold;
+}
 .seperator {
   color: #5f86ff;
   line-height: 36px;

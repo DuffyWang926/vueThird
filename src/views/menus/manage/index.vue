@@ -81,6 +81,9 @@
       <el-form-item label="菜单url" v-if="addForm.type === 2" prop="url">
         <el-input v-model="addForm.url"></el-input>
       </el-form-item>
+      <el-form-item label="按钮url" v-if="addForm.type === 3" prop="url">
+        <el-input v-model="addForm.url"></el-input>
+      </el-form-item>
       <el-form-item label="上级目录" v-if="addForm.type === 2" prop="pid">
         <el-select v-model="addForm.pid">
           <el-option v-for="item in allCategoryList" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -298,6 +301,7 @@ export default {
               break
             case 3:
               addFormCopy.pid = addForm.pid
+              addFormCopy.url = addForm.url
               break
           }
           const res = await service.post('backend/addMenu', addFormCopy)
@@ -331,6 +335,7 @@ export default {
               break
             case 3:
               addFormCopy.pid = addForm.pid
+              addFormCopy.url = addForm.url
               break
           }
           const res = await service.post('backend/editMenu', addFormCopy)

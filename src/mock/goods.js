@@ -53,7 +53,7 @@ for (let i = 37; i <= 100; i++) {
     })
   )
 }
-Mock.mock(RegExp('http://127.0.0.1:8079/getproductbyid' + '?.*'), options => {
+Mock.mock(RegExp('http://127.0.0.1:8079/backend/getproductbyid' + '?.*'), options => {
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
   return {
@@ -94,7 +94,7 @@ for (let i = 101; i < 200; i++) {
 //   goodsTree = goodsTree.filter(item => goodsTree.find(subItem => subItem.pid === item.id) || item.level === 4)
 // }
 
-Mock.mock(RegExp('http://127.0.0.1:8079/getproductitembyid' + '?.*'), options => {
+Mock.mock(RegExp('http://127.0.0.1:8079/backend/getproductitembyid' + '?.*'), options => {
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
   return {
@@ -116,7 +116,7 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getproductitembyid' + '?.*'), options =>
 //   }
 // })
 
-Mock.mock('http://127.0.0.1:8079/getAllCategory', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getAllCategory', options => {
   return {
     status: 0,
     data: goodsTree
