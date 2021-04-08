@@ -102,3 +102,11 @@
 body {
   font-size: 16px !important;
 }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4e73df;
+  font-weight: bold;
+}

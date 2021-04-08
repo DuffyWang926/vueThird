@@ -73,6 +73,7 @@ import { ref, reactive, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import service from '@/utils/request'
 import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'GroupList',
   setup() {
@@ -100,8 +101,11 @@ export default {
       } else {
         queryInfo.id = groupBuyList.value[0].id
       }
-      // console.log(queryInfo)
       appedgrouplist()
+      // console.log(queryInfo)
+      // if (queryInfo.id) {
+      //   appedgrouplist()
+      // }
     }
     getAllGroupBuy()
     const groupInfo = ref([])
@@ -111,6 +115,7 @@ export default {
       // queryInfo.page = queryInfo.pagenum
       // queryInfo.limit = queryInfo.pagesize
       // debugger
+      if (!queryInfo.id) return
       const queryInfoCopy = {}
       queryInfoCopy.id = queryInfo.id
       queryInfoCopy.name = queryInfo.name
@@ -150,7 +155,11 @@ export default {
     }
     const handleSubmit = () => {
       queryInfo.pagenum = 1
-      appedgrouplist()
+      if (queryInfo.id) {
+        appedgrouplist()
+      } else {
+        ElMessage.error('请至少选择一个团购活动。')
+      }
     }
     const columns = [
       {
