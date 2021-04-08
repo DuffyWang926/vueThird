@@ -90,7 +90,7 @@
         <el-row class="w800">
           <el-col :span="7" style="display: flex">
             <el-input
-              placeholder="请输入拼团时效"
+              placeholder="请输入开团后有效时长"
               v-model="addForm.duration"
               @blur="addForm.duration = isNaN(parseInt(addForm.duration)) ? '请输入合法数值' : parseInt(addForm.duration)"
               style="flex: 1"
