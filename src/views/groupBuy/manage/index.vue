@@ -106,7 +106,7 @@ export default {
         queryInfoCopy.page = queryInfo.pagenum
         queryInfoCopy.limit = queryInfo.pagesize
         console.log(queryInfo.activityTime)
-        if (queryInfo.activityTime.length == 2) {
+        if (queryInfo.activityTime && queryInfo.activityTime.length == 2) {
           queryInfoCopy.startDate = formatTime(queryInfo.activityTime[0]) || ''
           queryInfoCopy.endDate = formatTime(queryInfo.activityTime[1]) || ''
         } else {

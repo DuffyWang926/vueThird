@@ -231,17 +231,17 @@ body {
     height: 41.6px;
   }
   /deep/.el-form-item__error {
-        top: -56%;
-        left: 28%;
-    }
-  /deep/ .el-input__inner{
+    top: -56%;
+    left: 28%;
+  }
+  /deep/ .el-input__inner {
     font-size: 16px;
     height: 35px;
   }
-  /deep/.el-form-item__label{
+  /deep/.el-form-item__label {
     padding: 0 0 3px;
   }
-  }
+}
 
 .el-input {
   color: #000000;
@@ -269,7 +269,7 @@ body {
   }
 }
 .idetify-box {
-  height: 38px;
+  height: 35px;
 }
 .btn-submit {
   background: linear-gradient(90deg, #ff6900, #fe7e01, #ffd203);
