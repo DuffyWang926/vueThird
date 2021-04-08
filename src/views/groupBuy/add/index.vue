@@ -387,7 +387,7 @@ export default {
         },
         {
           validator: (rule, value, callback) => {
-            if (value.length > 120) {
+            if (value.length > 500) {
               callback(new Error('开团规则描述长度不能超过500个字！'))
             } else {
               callback()
@@ -404,7 +404,7 @@ export default {
         },
         {
           validator: (rule, value, callback) => {
-            if (value.length > 120) {
+            if (value.length > 500) {
               callback(new Error('成团规则描述长度不能超过500个字！'))
             } else {
               callback()
