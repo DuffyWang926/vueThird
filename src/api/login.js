@@ -13,7 +13,7 @@ export function loginApi(params) {
 export function menuApi(params) {
   return request({
     url: apiUrl.menuUrl,
-    method: 'post',
+    method: 'get',
     data: params
   })
 }

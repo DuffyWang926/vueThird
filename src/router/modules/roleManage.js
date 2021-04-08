@@ -4,7 +4,7 @@ export default [
     name: 'role',
     meta: {
       index: 2,
-      id: 21,
+      id: 2,
       title: '权限管理',
       parent: '安全管理',
       sort: 1

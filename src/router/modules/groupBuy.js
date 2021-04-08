@@ -5,7 +5,7 @@ export default [
     redirect: '/groupBuyManage',
     meta: {
       index: 2,
-      id: 2,
+      id: 6,
       title: '团购管理',
       parent: '营销管理',
       sort: 1

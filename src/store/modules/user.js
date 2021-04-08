@@ -9,7 +9,8 @@ const state = {
   expires_in: window.localStorage.getItem('expires_in') || '',
   scope: window.localStorage.getItem('scope') || '',
   username: window.localStorage.getItem('username') || '',
-  rights: JSON.parse(window.localStorage.getItem('rights')) || [],
+  // rights: JSON.parse(window.localStorage.getItem('rights')) || [],
+  rights: window.localStorage.getItem('rights') && window.localStorage.getItem('rights') != 'undefined' ? JSON.parse(window.localStorage.getItem('rights')) : [],
   // rights: [],
   jti: window.localStorage.getItem('jti') || ''
 }
@@ -69,23 +70,37 @@ const actions = {
           if (response.status == 0) {
             commit('loginMutation', response.data)
             console.log(menuApi)
-            menuApi().then(res => {
-              commit('menuMutation', res.data)
-              if (res.status == 0) {
-                ElMessage.success({
-                  message: '您已成功登录',
-                  type: 'success',
-                  center: true
-                })
-              }
-              resolve()
-            })
+            menuApi()
+              .then(res => {
+                if (res.status == 0) {
+                  ElMessage.success({
+                    message: '您已成功登录',
+                    type: 'success',
+                    center: true
+                  })
+                  commit('menuMutation', res.data)
+                }
+                resolve()
+              })
+              .catch(error => {
+                console.log(error)
+                // ElMessage.error('获取权限列表失败！')
+              })
           }
         })
         .catch(error => {
           console.log(error)
-          reject(error)
+          // reject(error)
+          ElMessage.error('登录失败！')
         })
+    })
+  },
+  getMenus({ commit, state }) {
+    menuApi().then(res => {
+      if (res.status == 0) {
+        commit('menuMutation', res.data)
+      }
+      // resolve()
     })
   }
 }
@@ -96,21 +111,21 @@ const mutations = {
 
   loginMutation(state, data) {
     console.log(state, data)
-    state.access_token = data.access_token
-    state.token_type = data.token_type
-    state.refresh_token = data.refresh_token
-    state.expires_in = data.expires_in
-    state.scope = data.scope
-    state.jti = data.jti
+    state.access_token = data.access_token || ''
+    state.token_type = data.token_type || ''
+    state.refresh_token = data.refresh_token || ''
+    state.expires_in = data.expires_in || ''
+    state.scope = data.scope || ''
+    state.jti = data.jti || ''
 
     // state.username = data.username
     // state.rights = data.rights
-    window.localStorage.setItem('access_token', state.access_token)
-    window.localStorage.setItem('token_type', state.token_type)
-    window.localStorage.setItem('refresh_token', state.refresh_token)
-    window.localStorage.setItem('expires_in', state.expires_in)
-    window.localStorage.setItem('scope', state.scope)
-    window.localStorage.setItem('jti', state.jti)
+    window.localStorage.setItem('access_token', state.access_token || '')
+    window.localStorage.setItem('token_type', state.token_type || '')
+    window.localStorage.setItem('refresh_token', state.refresh_token || '')
+    window.localStorage.setItem('expires_in', state.expires_in || '')
+    window.localStorage.setItem('scope', state.scope || '')
+    window.localStorage.setItem('jti', state.jti || '')
 
     // window.localStorage.setItem('rights', JSON.stringify(state.rights))
     // window.localStorage.setItem('username', state.username)
@@ -133,7 +148,6 @@ const mutations = {
     window.localStorage.removeItem('expires_in')
     window.localStorage.removeItem('scope')
     window.localStorage.removeItem('jti')
-
     window.localStorage.removeItem('rights')
     window.localStorage.removeItem('username')
   },
@@ -141,8 +155,8 @@ const mutations = {
     const { username, rights } = data
     state.rights = rights
     state.username = username
-    window.localStorage.setItem('username', username)
-    window.localStorage.setItem('rights', JSON.stringify(rights))
+    window.localStorage.setItem('username', username || '')
+    window.localStorage.setItem('rights', rights ? JSON.stringify(rights) : JSON.stringify([]))
   }
 }
 

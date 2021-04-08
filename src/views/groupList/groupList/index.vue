@@ -47,7 +47,7 @@
         ></el-col>
         <el-col :span="5">
           <el-form-item label-width="0">
-            <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
+            <el-button size="medium" type="success" @click="handleSubmit" v-show="store.getters['user/getRightById'](29)">查询</el-button>
           </el-form-item></el-col
         >
       </el-row>
@@ -72,6 +72,8 @@
 import { ref, reactive, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import service from '@/utils/request'
+import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'GroupList',
   setup() {
@@ -81,7 +83,7 @@ export default {
       // id: route.params.id,
       id: route.params.id,
       name: '',
-      activityTime: '',
+      activityTime: [],
       groupStatus: '',
       memberNum: '',
       pagenum: 1,
@@ -99,8 +101,11 @@ export default {
       } else {
         queryInfo.id = groupBuyList.value[0].id
       }
-      // console.log(queryInfo)
       appedgrouplist()
+      // console.log(queryInfo)
+      // if (queryInfo.id) {
+      //   appedgrouplist()
+      // }
     }
     getAllGroupBuy()
     const groupInfo = ref([])
@@ -123,6 +128,7 @@ export default {
       // queryInfo.page = queryInfo.pagenum
       // queryInfo.limit = queryInfo.pagesize
       // debugger
+      if (!queryInfo.id) return
       const queryInfoCopy = {}
       queryInfoCopy.id = queryInfo.id
       queryInfoCopy.name = queryInfo.name
@@ -130,7 +136,7 @@ export default {
       queryInfoCopy.page = queryInfo.pagenum
       queryInfoCopy.limit = queryInfo.pagesize
       queryInfoCopy.memberNum = queryInfo.memberNum
-      if (queryInfo.activityTime) {
+      if (queryInfo.activityTime.length == 2) {
         queryInfoCopy.startDate = formatTime(queryInfo.activityTime[0]) || ''
         queryInfoCopy.endDate = formatTime(queryInfo.activityTime[1]) || ''
       } else {
@@ -162,7 +168,11 @@ export default {
     }
     const handleSubmit = () => {
       queryInfo.pagenum = 1
-      appedgrouplist()
+      if (queryInfo.id) {
+        appedgrouplist()
+      } else {
+        ElMessage.error('请至少选择一个团购活动。')
+      }
     }
     const columns = [
       {
@@ -210,6 +220,7 @@ export default {
       appedgrouplist()
     }
     const currentPage = ref(1)
+    const store = useStore()
     return {
       queryInfo,
       groupBuyList,
@@ -220,7 +231,8 @@ export default {
       handleCurrentChange,
       currentPage,
       appedgrouplist,
-      handleSubmit
+      handleSubmit,
+      store
     }
   }
 }

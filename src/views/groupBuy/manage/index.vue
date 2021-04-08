@@ -12,9 +12,17 @@
         </el-col>
         <el-col :span="10">
           <el-form-item label="创建时间">
-            <el-date-picker v-model="queryInfo.activityTime" type="daterange" align="center" unlink-panels
-              range-separator="——" start-placeholder="开始日期" end-placeholder="结束日期" :shortcuts="shortcuts"
-              style="width: 100%">
+            <el-date-picker
+              v-model="queryInfo.activityTime"
+              type="daterange"
+              align="center"
+              unlink-panels
+              range-separator="——"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :shortcuts="shortcuts"
+              style="width: 100%"
+            >
             </el-date-picker>
           </el-form-item>
         </el-col>
@@ -39,240 +47,236 @@
     <template #header>
       <div class="card-header">数据列表</div>
     </template>
-    <my-table :data="groupsInfo" :columns="columns" :operation-width="260" edit-show @edit="editDetail" edit-text="编辑"
-      preview-show @preview="groupList" preiview-text="拼团列表">
+    <my-table :data="groupsInfo" :columns="columns" :operation-width="260" edit-show @edit="editDetail" edit-text="编辑" preview-show @preview="groupList" preiview-text="拼团列表">
       <template v-slot:userbtns="scope">
-        <el-button size="mini" type="danger" @click="closeActivity(scope.row.id)" v-if="scope.row.state != 3">关闭
-        </el-button>
+        <el-button size="mini" type="danger" @click="closeActivity(scope.row.id)" v-if="scope.row.state != 3">关闭 </el-button>
       </template>
     </my-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-      :current-page="queryInfo.pagenum" :page-sizes="[10, 20, 50, 100]" :page-size="queryInfo.pagesize"
-      layout="total, sizes, prev, pager, next, jumper" :total="count" background>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="queryInfo.pagenum"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="queryInfo.pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="count"
+      background
+    >
     </el-pagination>
   </el-card>
 </template>
 
 <script>
-  import {
-    ref,
-    reactive
-  } from 'vue'
-  import {
-    useRouter
-  } from 'vue-router'
-  import service from '@/utils/request'
-  import {
-    ElMessage,
-    ElMessageBox
-  } from 'element-plus'
-  export default {
-    name: 'GroupBuyManage',
-    setup() {
-      const $router = useRouter()
-      const queryInfo = reactive({
-        activityName: '',
-        activityTime: [],
-        name: '',
-        pagenum: 1,
-        pagesize: 10
-      })
-      const groupsInfo = ref([])
-      const formatTime = (date) => {
-        date = new Date(date)
-        const year = date.getFullYear()
-        const month = date.getMonth() + 1
-        const day = date.getDate()
-        const hour = date.getHours()
-        const minute = date.getMinutes()
-        const second = date.getSeconds()
-        return [year, month, day].map(padZero).join('-') + ' ' + [hour, minute, second].map(padZero).join(':')
-      }
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import service from '@/utils/request'
+import { ElMessage, ElMessageBox } from 'element-plus'
+export default {
+  name: 'GroupBuyManage',
+  setup() {
+    const $router = useRouter()
+    const queryInfo = reactive({
+      activityName: '',
+      activityTime: [],
+      name: '',
+      pagenum: 1,
+      pagesize: 10
+    })
+    const groupsInfo = ref([])
+    const formatTime = (date) => {
+      date = new Date(date)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      const hour = date.getHours()
+      const minute = date.getMinutes()
+      const second = date.getSeconds()
+      return [year, month, day].map(padZero).join('-') + ' ' + [hour, minute, second].map(padZero).join(':')
+    }
 
-      function padZero(num) {
-        return num < 10 ? '0' + num : num
-      }
+    function padZero(num) {
+      return num < 10 ? '0' + num : num
+    }
 
-      const getgroupbuylist = async () => {
-        try {
-          const queryInfoCopy = {}
-          queryInfoCopy.activityName = queryInfo.activityName
-          queryInfoCopy.name = queryInfo.name
-          queryInfoCopy.page = queryInfo.pagenum
-          queryInfoCopy.limit = queryInfo.pagesize
-          console.log(queryInfo.activityTime)
-          if (queryInfo.activityTime) {
-            queryInfoCopy.startDate = formatTime(queryInfo.activityTime[0]) || ''
-            queryInfoCopy.endDate = formatTime(queryInfo.activityTime[1]) || ''
-          } else {
-            queryInfoCopy.startDate = ''
-            queryInfoCopy.endDate = ''
-          }
-          const {
-            data: res
-          } = await service.get('backend/getgroupbuylist', {
-            params: queryInfoCopy
-          })
-          console.log(res)
-          res.groupBuyListVos.forEach((item) => {
-            switch (item.state) {
-              case 0:
-                item.stateStr = '未开始'
-                break
-              case 1:
-                item.stateStr = '进行中'
-                break
-              case 2:
-                item.stateStr = '已结束'
-                break
-              case 3:
-                item.stateStr = '已关闭'
-                break
-            }
-          })
-          // for (let index = 0; index < res.groupBuyListVos.length; index++) {
-          //   const item = res.groupBuyListVos[index]
-          //   const { data: numberRes } = await service.get('getgroupNumber', {
-          //     params: {
-          //       groupId: item.id
-          //     }
-          //   })
-          //   item.openNumber = numberRes.openNumber
-          //   item.groupNumber = numberRes.groupNumber
-          // }
-          groupsInfo.value = res.groupBuyListVos
-          count.value = res.total
-        } catch (err) {
-          console.log(err)
+    const getgroupbuylist = async () => {
+      try {
+        const queryInfoCopy = {}
+        queryInfoCopy.activityName = queryInfo.activityName
+        queryInfoCopy.name = queryInfo.name
+        queryInfoCopy.page = queryInfo.pagenum
+        queryInfoCopy.limit = queryInfo.pagesize
+        console.log(queryInfo.activityTime)
+        if (queryInfo.activityTime.length == 2) {
+          queryInfoCopy.startDate = formatTime(queryInfo.activityTime[0]) || ''
+          queryInfoCopy.endDate = formatTime(queryInfo.activityTime[1]) || ''
+        } else {
+          queryInfoCopy.startDate = ''
+          queryInfoCopy.endDate = ''
         }
-      }
-      getgroupbuylist()
-      const handleSubmit = () => {
-        queryInfo.pagenum = 1
-        getgroupbuylist()
-      }
-      const columns = [{
-          title: '活动名称',
-          prop: 'name'
-        },
-        {
-          title: '拼团商品',
-          prop: 'productName'
-        },
-        {
-          title: '团购价',
-          prop: 'price'
-        },
-        {
-          title: '拼购积分',
-          prop: 'point'
-        },
-        {
-          title: '活动时间',
-          prop: 'date'
-        },
-        {
-          title: '状态',
-          prop: 'stateStr'
-        },
-        {
-          title: '开团数量',
-          prop: 'openNumber'
-        },
-        {
-          title: '成团数量',
-          prop: 'groupNumber'
-        }
-      ]
-      const count = ref(0)
-      const handleSizeChange = (val) => {
-        queryInfo.pagenum = 1
-        queryInfo.pagesize = val
-        getgroupbuylist()
-      }
-      const handleCurrentChange = (val) => {
-        queryInfo.pagenum = val
-        getgroupbuylist()
-      }
-      const groupList = (id) => {
-        let path = '/groupList/' + id //动态路由跳转的路径声明方式
-        $router.push(path)
-      }
-      const currentPage = ref(1)
-      const editDetail = (id) => {
-        let path = '/groupBuyEdit'
-        $router.push('/groupBuyEdit/' + id)
-      }
-      const closeActivity = (id) => {
-        ElMessageBox.confirm('确定关闭活动吗？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-          .then(async () => {
-            const res = await service.get('backend/updatestate', {
-              params: {
-                groupId: id,
-                state: 3
-              }
-            })
-            if (res.status == 0) {
-              ElMessage.success('已成功关闭！')
-            }
-            getgroupbuylist()
-          })
-          .catch(() => {
-            ElMessage({
-              type: 'info',
-              message: '已取消删除'
-            })
-          })
-      }
-      const addGroupBuy = () => {
-        $router.push({
-          path: '/groupBuyAdd'
+        const { data: res } = await service.get('backend/getgroupbuylist', {
+          params: queryInfoCopy
         })
-      }
-
-      return {
-        queryInfo,
-        getgroupbuylist,
-        handleSubmit,
-        groupsInfo,
-        columns,
-        count,
-        handleSizeChange,
-        handleCurrentChange,
-        currentPage,
-        groupList,
-        editDetail,
-        closeActivity,
-        addGroupBuy
+        console.log(res)
+        res.groupBuyListVos.forEach((item) => {
+          switch (item.state) {
+            case 0:
+              item.stateStr = '未开始'
+              break
+            case 1:
+              item.stateStr = '进行中'
+              break
+            case 2:
+              item.stateStr = '已结束'
+              break
+            case 3:
+              item.stateStr = '已关闭'
+              break
+          }
+        })
+        // for (let index = 0; index < res.groupBuyListVos.length; index++) {
+        //   const item = res.groupBuyListVos[index]
+        //   const { data: numberRes } = await service.get('getgroupNumber', {
+        //     params: {
+        //       groupId: item.id
+        //     }
+        //   })
+        //   item.openNumber = numberRes.openNumber
+        //   item.groupNumber = numberRes.groupNumber
+        // }
+        groupsInfo.value = res.groupBuyListVos
+        count.value = res.total
+      } catch (err) {
+        console.log(err)
       }
     }
+    getgroupbuylist()
+    const handleSubmit = () => {
+      queryInfo.pagenum = 1
+      getgroupbuylist()
+    }
+    const columns = [
+      {
+        title: '活动名称',
+        prop: 'name'
+      },
+      {
+        title: '拼团商品',
+        prop: 'productName'
+      },
+      {
+        title: '团购价',
+        prop: 'price'
+      },
+      {
+        title: '拼购积分',
+        prop: 'point'
+      },
+      {
+        title: '活动时间',
+        prop: 'date'
+      },
+      {
+        title: '状态',
+        prop: 'stateStr'
+      },
+      {
+        title: '开团数量',
+        prop: 'openNumber'
+      },
+      {
+        title: '成团数量',
+        prop: 'groupNumber'
+      }
+    ]
+    const count = ref(0)
+    const handleSizeChange = (val) => {
+      queryInfo.pagenum = 1
+      queryInfo.pagesize = val
+      getgroupbuylist()
+    }
+    const handleCurrentChange = (val) => {
+      queryInfo.pagenum = val
+      getgroupbuylist()
+    }
+    const groupList = (id) => {
+      let path = '/groupList/' + id //动态路由跳转的路径声明方式
+      $router.push(path)
+    }
+    const currentPage = ref(1)
+    const editDetail = (id) => {
+      let path = '/groupBuyEdit'
+      $router.push('/groupBuyEdit/' + id)
+    }
+    const closeActivity = (id) => {
+      ElMessageBox.confirm('确定关闭活动吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await service.get('backend/updatestate', {
+            params: {
+              groupId: id,
+              state: 3
+            }
+          })
+          if (res.status == 0) {
+            ElMessage.success('已成功关闭！')
+          }
+          getgroupbuylist()
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
+    const addGroupBuy = () => {
+      $router.push({
+        path: '/groupBuyAdd'
+      })
+    }
+
+    return {
+      queryInfo,
+      getgroupbuylist,
+      handleSubmit,
+      groupsInfo,
+      columns,
+      count,
+      handleSizeChange,
+      handleCurrentChange,
+      currentPage,
+      groupList,
+      editDetail,
+      closeActivity,
+      addGroupBuy
+    }
   }
+}
 </script>
 
 <style scoped>
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #4e73df;
-    font-weight: bold;
-  }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4e73df;
+  font-weight: bold;
+}
 
-  /* .demo-form-inline {
+/* .demo-form-inline {
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #858796;
   border-bottom: 1px solid #e3e6f0;
 } */
-  .el-pagination {
-    /* display: flex;
+.el-pagination {
+  /* display: flex;
   justify-content: space-around;
   align-items: center; */
-    margin: 20px 0;
-  }
+  margin: 20px 0;
+}
 </style>

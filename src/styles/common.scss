@@ -16,6 +16,14 @@
 .el-popper.menupopper {
   border-radius: 10px;
   margin-left: 20px !important;
+  .el-menu-item {
+    display: flex !important;
+    width: 100%！ !important;
+    height: 24px !important;
+    background-color: #fff !important;
+    line-height: 24px !important;
+    font-size: 12px !important;
+  }
   // left: 20px !important;
   // transform: translate(110px, 178px)!important;
 }
@@ -93,4 +101,12 @@
 
 body {
   font-size: 16px !important;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4e73df;
+  font-weight: bold;
 }

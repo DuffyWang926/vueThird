@@ -10,7 +10,7 @@ for (let i = 1; i <= 10; i++) {
       name: '@cname',
       type: 1,
       // url: '@url',
-      'index|1-10': 1,
+      'order|1-10': 1,
       'isShow|1': [true, false],
       createTime: '@datetime("yyyy-MM-dd HH:mm:ss")'
     })
@@ -25,7 +25,7 @@ for (let i = 11; i <= 30; i++) {
       name: '@cname',
       type: 2,
       url: '@url',
-      'index|1-10': 1,
+      'order|1-10': 1,
       'isShow|1': [true, false],
       createTime: '@datetime("yyyy-MM-dd HH:mm:ss")'
     })
@@ -40,7 +40,7 @@ for (let i = 31; i <= 50; i++) {
       name: '@cname',
       type: 3,
       // url: '@url',
-      'index|1-10': 1,
+      'order|1-10': 1,
       'isShow|1': [true, false],
       createTime: '@datetime("yyyy-MM-dd HH:mm:ss")'
     })
@@ -48,20 +48,20 @@ for (let i = 31; i <= 50; i++) {
 }
 1
 
-Mock.mock('http://127.0.0.1:8079/getMenus', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenus', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
-  console.log(queryInfo.pagenum, queryInfo.pagesize)
+  console.log(queryInfo.page, queryInfo.limit)
   return {
     status: 0,
     data: {
-      menus: menus.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
+      menus: menus.slice((queryInfo.page - 1) * queryInfo.limit, queryInfo.page * queryInfo.limit),
       count: menus.length
     }
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getMenuById', options => {
+Mock.mock('http://127.0.0.1:8079/backend/getMenuById', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -70,7 +70,7 @@ Mock.mock('http://127.0.0.1:8079/getMenuById', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/deleteMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/deleteMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -79,7 +79,7 @@ Mock.mock('http://127.0.0.1:8079/deleteMenu', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/changeIsShow', options => {
+Mock.mock('http://127.0.0.1:8079/backend/changeIsShow', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -87,29 +87,41 @@ Mock.mock('http://127.0.0.1:8079/changeIsShow', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getAllCategories', options => {
-  return {
-    status: 0,
-    data: menus
-      .filter(item => item.type === 1)
-      .map(item => {
-        return { id: item.id, name: item.name }
-      })
+Mock.mock('http://127.0.0.1:8079/backend/getMenuListByType', options => {
+  const queryInfo = JSON.parse(options.body)
+  if (queryInfo.type == 1) {
+    return {
+      status: 0,
+      data: menus
+        .filter(item => item.type === 1 || item.type === 2)
+        .map(item => {
+          return { id: item.id, name: item.name }
+        })
+    }
+  } else {
+    return {
+      status: 0,
+      data: menus
+        .filter(item => item.type === 1)
+        .map(item => {
+          return { id: item.id, name: item.name }
+        })
+    }
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/getAllMenus', options => {
-  return {
-    status: 0,
-    data: menus
-      .filter(item => item.type === 2)
-      .map(item => {
-        return { id: item.id, name: item.name }
-      })
-  }
-})
+// Mock.mock('http://127.0.0.1:8079/getAllMenus', options => {
+//   return {
+//     status: 0,
+//     data: menus
+//       .filter(item => item.type === 2)
+//       .map(item => {
+//         return { id: item.id, name: item.name }
+//       })
+//   }
+// })
 
-Mock.mock('http://127.0.0.1:8079/addMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/addMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {
@@ -117,7 +129,7 @@ Mock.mock('http://127.0.0.1:8079/addMenu', options => {
   }
 })
 
-Mock.mock('http://127.0.0.1:8079/editMenu', options => {
+Mock.mock('http://127.0.0.1:8079/backend/editMenu', options => {
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   return {

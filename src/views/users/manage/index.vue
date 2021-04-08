@@ -32,22 +32,41 @@
         <el-col :span="8">
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="queryInfo.roleId" placeholder="请选择" filterable>
-              <el-option :label="请选择" value="" v-show="false"></el-option>
+              <el-option label="全部" value=""></el-option>
               <el-option v-for="item in allRoles" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button size="large" type="primary" @click="handleSearch">查询</el-button>
-          <el-button size="large" type="success" @click="addDialogVisible = true">新增</el-button>
+          <el-button size="large" type="primary" @click="handleSearch" v-show="store.getters['user/getRightById'](19)">查询</el-button>
+          <el-button size="large" type="success" @click="addDialogVisible = true" v-show="store.getters['user/getRightById'](20)">新增</el-button>
         </el-col>
       </el-row>
     </el-form>
-    <my-table :data="users" :columns="columns" operation-width="280px">
+    <my-table
+      :data="users"
+      :columns="columns"
+      operation-width="280px"
+      :operation-show="store.getters['user/getRightById'](21) || store.getters['user/getRightById'](22) || store.getters['user/getRightById'](23)"
+    >
       <template v-slot:userbtns="scope">
-        <el-button size="mini" type="primary" @click="editPassword(scope.row.id)">修改密码</el-button>
-        <el-button size="mini" type="success" @click="editInfo(scope.row.id)">修改信息</el-button>
-        <el-button v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'" size="mini" type="danger" @click="deleteUser(scope.row.id)">删除</el-button>
+        <el-button
+          size="mini"
+          type="primary"
+          @click="editPassword(scope.row.id)"
+          v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'"
+          v-show="store.getters['user/getRightById'](21)"
+          >修改密码</el-button
+        >
+        <el-button size="mini" type="success" @click="editInfo(scope.row.id)" v-show="store.getters['user/getRightById'](22)">修改信息</el-button>
+        <el-button
+          v-if="scope.row.status != 2 && scope.row.id != 2 && scope.row.username != 'admin'"
+          size="mini"
+          type="danger"
+          @click="deleteUser(scope.row.id)"
+          v-show="store.getters['user/getRightById'](23)"
+          >删除</el-button
+        >
       </template>
     </my-table>
     <el-pagination
@@ -120,6 +139,7 @@
 import { ref, reactive, nextTick } from 'vue'
 import service from '@/utils/request'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useStore } from 'vuex'
 export default {
   name: 'UsersManage',
   setup() {
@@ -133,7 +153,17 @@ export default {
       limit: 10
     })
     const getUsers = async () => {
-      const { data: res } = await service.post('backend/getAdminList', queryInfo)
+      const queryInfoCopy = {}
+      queryInfoCopy.username = queryInfo.username
+      queryInfoCopy.name = queryInfo.name
+      queryInfoCopy.number = queryInfo.number
+      queryInfoCopy.phone = queryInfo.phone
+      if (queryInfo.roleId) {
+        queryInfoCopy.roleId = queryInfo.roleId
+      }
+      queryInfoCopy.page = queryInfo.page
+      queryInfoCopy.limit = queryInfo.limit
+      const { data: res } = await service.post('backend/getAdminList', queryInfoCopy)
       users.value = res.users
       users.value.forEach((item) => {
         if (item.status == 0) {
@@ -147,7 +177,7 @@ export default {
       count.value = res.count
     }
     const handleSearch = () => {
-      queryInfo.pagenum = 1
+      queryInfo.page = 1
       getUsers()
     }
     getUsers()
@@ -221,8 +251,8 @@ export default {
             ElMessage.success('删除成功')
           }
           if (users.value.length === 1) {
-            if (queryInfo.pagenum > 1) {
-              queryInfo.pagenum--
+            if (queryInfo.page > 1) {
+              queryInfo.page--
             }
           }
           getUsers()
@@ -306,7 +336,7 @@ export default {
             .then(async () => {
               const formCopy = {}
               formCopy.username = addForm.username
-              formCopy.name = addForm.username
+              formCopy.name = addForm.name
               formCopy.number = addForm.number
               formCopy.phone = addForm.phone
               formCopy.password = addForm.password
@@ -343,7 +373,7 @@ export default {
               const formCopy = {}
               formCopy.id = currentEditId.value
               formCopy.username = addForm.username
-              formCopy.name = addForm.username
+              formCopy.name = addForm.name
               formCopy.number = addForm.number
               formCopy.phone = addForm.phone
               formCopy.roleId = addForm.roleId.join(',')
@@ -471,6 +501,7 @@ export default {
         trigger: 'blur'
       }
     ]
+    const store = useStore()
     return {
       queryInfo,
       handleSearch,
@@ -497,7 +528,8 @@ export default {
       handlePasswordChange,
       passwordRules,
       confirmPasswordRules,
-      confirmPasswordRules2
+      confirmPasswordRules2,
+      store
     }
   }
 }

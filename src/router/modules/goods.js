@@ -5,6 +5,7 @@ export default [
     redirect: '/goodsManage',
     meta: {
       index: 2,
+      id: 2,
       // id: 52,
       title: '商品管理',
       parent: '商城管理',

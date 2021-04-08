@@ -64,6 +64,11 @@ service.interceptors.response.use(
         res.status = 1
       }
     }
+    if (res.is_succ == -2) {
+      router.push({ path: '/login' })
+      ElMessage.error('登录凭证过期，请重新登录')
+      return response.data
+    }
     if (Number(res.status) !== 0) {
       ElMessage({
         message: res.message || res.msg,
@@ -78,11 +83,12 @@ service.interceptors.response.use(
     }
   },
   error => {
-    ElMessage({
-      message: error.message,
-      type: 'error',
-      duration: 2 * 1000
-    })
+    // ElMessage({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 2 * 1000
+    // })
+    console.log(error.message)
     return Promise.reject(error)
   }
 )

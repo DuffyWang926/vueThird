@@ -39,7 +39,7 @@
       </div>
     </el-aside>
     <el-container>
-      <el-header>
+      <el-header :class="[links.length > 0 ? 'h72' : 'h42']">
         <div class="top">
           <i class="el-icon-s-fold hamburger" v-if="!isCollapse" @click="isCollapse = true"></i>
           <i class="el-icon-s-unfold hamburger" v-else @click="isCollapse = false"></i>
@@ -64,7 +64,7 @@
             </template>
           </el-dropdown>
         </div>
-        <div class="links-wrapper">
+        <div class="links-wrapper" v-show="links.length > 0">
           <div class="left"><i class="el-icon-arrow-left"></i></div>
           <div class="links">
             <!-- <el-tag
@@ -139,26 +139,53 @@ export default {
     console.log('rights:', rights)
 
     const getSubMenus = () => {
-      let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
-        return {
-          title: item,
-          children: []
-        }
-      })
-      const activeRights = rights.filter((item) => item.checked && item.pid !== 0)
-      indexRouter.children.forEach((item) => {
-        if (activeRights.find((right) => item.meta.id === right.id)) {
-          const subMenu = subMenus.find((subMenu) => subMenu.title === item.meta.parent)
-          const menuItem = {
-            index: item.path,
-            title: item.meta.title,
-            sort: item.meta.sort
+      // let subMenus = ['系统配置', '安全管理', '会员管理', '商城管理', '订单管理', '营销管理', '报表', '客服', '仓库与运费', '首页配置', '返利管理', '日志管理'].map((item) => {
+      //   return {
+      //     title: item,
+      //     children: []
+      //   }
+      // })
+      // const activeRights = rights.filter((item) => item.checked && item.pid !== 0)
+      // indexRouter.children.forEach((item) => {
+      //   if (activeRights.find((right) => item.meta.id === right.id)) {
+      //     const subMenu = subMenus.find((subMenu) => subMenu.title === item.meta.parent)
+      //     const menuItem = {
+      //       index: item.path,
+      //       title: item.meta.title,
+      //       sort: item.meta.sort
+      //     }
+      //     subMenu.children.push(menuItem)
+      //   }
+      // })
+      // subMenus = subMenus.filter((item) => item.children.length > 0)
+      let subMenus = rights
+        .filter((item) => item.level == 1 && item.checked)
+        .map((item) => {
+          return {
+            id: item.id,
+            title: item.name,
+            children: [],
+            order: item.order || 0
           }
-          subMenu.children.push(menuItem)
-        }
+        })
+      let menuItems = rights
+        .filter((item) => item.level == 2 && item.checked)
+        .map((item) => {
+          return {
+            id: item.id,
+            pid: item.pid,
+            title: item.name,
+            index: item.url,
+            order: item.order || 0
+          }
+        })
+      console.log(subMenus, menuItems)
+      menuItems.forEach((menuItem) => {
+        const subMenu = subMenus.find((subMenu) => subMenu.id == menuItem.pid)
+        subMenu.children.push(menuItem)
       })
-      subMenus = subMenus.filter((item) => item.children.length > 0)
-      subMenus.forEach((subMenu) => subMenu.children.sort((a, b) => a.sort - b.sort))
+      subMenus.forEach((subMenu) => subMenu.children.sort((a, b) => a.order - b.order))
+      subMenus.sort((a, b) => a.order - b.order)
       return subMenus
     }
     const subMenus = computed(getSubMenus)
@@ -190,6 +217,7 @@ export default {
         router.push('/')
       }
       store.commit('links/deleteLink', item)
+      store.commit('menu/setActivePath', null)
     }
     const handleLinkClick = (item) => {
       router.push(item.url)
@@ -269,9 +297,10 @@ export default {
             .then(async () => {
               const passwordFormCopy = {}
               // passwordFormCopy.id = passwordForm.id
-              passwordFormCopy.username = store.getters['user/getUsername']
+              // passwordFormCopy.username = store.getters['user/getUsername']
+              passwordFormCopy.oldPassword = passwordForm.oldPassword
               passwordFormCopy.newPassword = passwordForm.newPassword
-              const res = await service.post('modifySelfPwd', passwordFormCopy)
+              const res = await service.post('backend/modifySelfPwd', passwordFormCopy)
               if (res.status === 0) {
                 ElMessage.success('密码修改成功')
               }
@@ -327,6 +356,8 @@ export default {
     ]
     const logout = () => {
       store.commit('user/logoutMutation')
+      store.commit('links/clear')
+      store.commit('menu/setActivePath', '')
       ElMessage.success('已退出登录')
       router.push('/login')
     }
@@ -373,12 +404,20 @@ export default {
   overflow-x: hidden;
 }
 
+.h72 {
+  height: 72px !important;
+}
+
+.h42 {
+  height: 42px !important;
+}
+
 .el-header {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  height: 72px !important;
+
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;
@@ -584,6 +623,8 @@ export default {
   }
   /deep/.el-menu--inline {
     margin: 10px 10px !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
     background-color: #fff !important;
     border-radius: 5px !important;
     .el-menu-item {
