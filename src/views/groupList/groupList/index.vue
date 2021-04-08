@@ -128,7 +128,7 @@ export default {
       // queryInfo.page = queryInfo.pagenum
       // queryInfo.limit = queryInfo.pagesize
       // debugger
-      if (!queryInfo.id) return
+      if (!queryInfo.id) return //解决拼团列表当没有拼团活动id时点击查询的弹出
       const queryInfoCopy = {}
       queryInfoCopy.id = queryInfo.id
       queryInfoCopy.name = queryInfo.name

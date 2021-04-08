@@ -261,6 +261,7 @@ body {
   }
 }
 .seccode {
+  position: relative;
   /deep/.el-form-item__content {
     display: flex;
     flex-direction: row;
@@ -270,6 +271,10 @@ body {
 }
 .idetify-box {
   height: 35px;
+  position: absolute;
+  top: 5px;
+  left: 215px;
+  border-radius: 4px;
 }
 .btn-submit {
   background: linear-gradient(90deg, #ff6900, #fe7e01, #ffd203);
