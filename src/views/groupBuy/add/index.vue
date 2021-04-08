@@ -78,7 +78,7 @@
             <el-select placeholder="----请选择----" v-model="addForm.canSingleBuy" @click="addFormRef.validateField('canSingleBuy')" style="width: 100%">
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
               <el-option :value="2" label="可单独购买"></el-option>
-              <el-option :value="1" label="不单独购买"></el-option>
+              <el-option :value="1" label="不可单独购买"></el-option>
             </el-select>
           </el-col>
           <el-col :span="17">
