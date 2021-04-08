@@ -7,7 +7,7 @@ export default [
       index: 2,
       title: "会员绑卡信息",
       parent: "会员管理",
-      id: 42,
+      id: 2,
       sort: 2
     },
     component: () => import('@/views/memberManagement/index'),

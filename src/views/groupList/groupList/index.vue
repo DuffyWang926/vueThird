@@ -104,6 +104,19 @@ export default {
     }
     getAllGroupBuy()
     const groupInfo = ref([])
+    const formatTime = (date) => {
+      date = new Date(date)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      const hour = date.getHours()
+      const minute = date.getMinutes()
+      const second = date.getSeconds()
+      return [year, month, day].map(padZero).join('-') + ' ' + [hour, minute, second].map(padZero).join(':')
+    }
+    function padZero(num) {
+      return num < 10 ? '0' + num : num
+    }
     const appedgrouplist = async () => {
       // queryInfo.startDate = queryInfo.activityTime[0]
       // queryInfo.endDate = queryInfo.activityTime[1]
@@ -118,8 +131,8 @@ export default {
       queryInfoCopy.limit = queryInfo.pagesize
       queryInfoCopy.memberNum = queryInfo.memberNum
       if (queryInfo.activityTime) {
-        queryInfoCopy.startDate = queryInfo.activityTime[0] || ''
-        queryInfoCopy.endDate = queryInfo.activityTime[1] || ''
+        queryInfoCopy.startDate = formatTime(queryInfo.activityTime[0]) || ''
+        queryInfoCopy.endDate = formatTime(queryInfo.activityTime[1]) || ''
       } else {
         queryInfoCopy.startDate = ''
         queryInfoCopy.endDate = ''

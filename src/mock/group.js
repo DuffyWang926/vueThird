@@ -64,7 +64,8 @@ for (let i = 1; i <= 1000; i++) {
       'totalNumber|0-99': 100 //参团总人数
     })
   )
-} //post请求
+} 
+//post请求
 
 /* Mock.mock('http://127.0.0.1:8079/appedgrouplist', options => {
   const queryInfo = JSON.parse(options.body)
