@@ -558,11 +558,11 @@ export default {
       if (productId.value == null || subProductIds.value.length == 0) {
         return ElMessage.error('请选择商品及规格！')
       }
-      if (String(productId.value).indexOf('P') !== -1 && String(productId.value.indexOf('p') !== -1)) {
+      if (String(productId.value).indexOf('P') !== -1 || String(productId.value.indexOf('p') !== -1)) {
         productId.value = parseInt(String(productId.value).slice(2))
       }
       subProductIds.value.forEach((item, index) => {
-        if (String(item).indexOf('I') !== -1 && String(item).indexOf('i') !== -1) {
+        if (String(item).indexOf('I') !== -1 || String(item).indexOf('i') !== -1) {
           subProductIds.value[index] = parseInt(String(item).slice(2))
         }
       })
@@ -661,11 +661,11 @@ export default {
             groupBuy.id = id
           }
           // 重新更新productID
-          if (String(productId.value).indexOf('P') !== -1 && String(productId.value.indexOf('p') !== -1)) {
+          if (String(productId.value).indexOf('P') !== -1 || String(productId.value.indexOf('p') !== -1)) {
             productId.value = parseInt(String(productId.value).slice(2))
           }
           subProductIds.value.forEach((item, index) => {
-            if (String(item).indexOf('I') !== -1 && String(item).indexOf('i') !== -1) {
+            if (String(item).indexOf('I') !== -1 || String(item).indexOf('i') !== -1) {
               subProductIds.value[index] = parseInt(String(item).slice(2))
             }
           })
