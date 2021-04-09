@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="菜单URL" prop="url"></el-table-column>
       <el-table-column label="菜单排序" prop="order"></el-table-column>
-      <el-table-column label="是否显示" prop="isShow">
+      <el-table-column label="是否显示" prop="isShow" v-show="store.getters['user/getRightById'](30)">
         <template #default="scope">
           <el-switch :model-value="scope.row.isShow == 1" @click="changeIsShow(scope.row.id, 3 - scope.row.isShow)"></el-switch>
         </template>

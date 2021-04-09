@@ -15,8 +15,8 @@ const routes = [
     path: '/login',
     name: 'login',
     meta: {
-        title: '管理员登录',
-        index: 1
+      title: '管理员登录',
+      index: 1
     },
     component: () => import('@/views/login/index')
   },

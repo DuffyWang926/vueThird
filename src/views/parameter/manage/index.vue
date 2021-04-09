@@ -36,12 +36,12 @@
           <li class="list-item">
             <span class="title">管理员可取消订单时间<br />（推送ERP时间）</span>
             <span class="value">{{ data.canAdminCancelOrderTime }}分</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="canAdminCancelOrderTimeClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">自提订单超时未提取自动取消订单时间</span>
             <span class="value">{{ data.selfPickupTimeoutAutoCancelTime }}天</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="selfPickupTimeoutAutoCancelTimeClicked">设置</el-button>
           </li>
         </ul>
       </el-card>
@@ -54,13 +54,13 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">手续费费率设置</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.handlingFeeRate }}%</span>
+            <el-button type="primary" size="medium" @click="handlingFeeRateClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">提现最低金额</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.withdrawMin }}元</span>
+            <el-button type="primary" size="medium" @click="withdrawMinClicked">设置</el-button>
           </li>
         </ul>
       </el-card>
@@ -73,11 +73,11 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">标题设置</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="titleClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">LOGO设置</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="logoClicked">设置</el-button>
           </li>
         </ul>
       </el-card>
@@ -90,20 +90,20 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">分享微信标题设置</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="shareWechatTitleClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">分享微信logo设置</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="shareWechatLogoClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">小程序分享券列表标题设置</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="miniProgramTitleClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">分享券发放范围-白名单</span>
             <div class="switch-wrap">
-              <el-switch></el-switch>
+              <el-switch :model-value="data.shareCouponWhiteList"></el-switch>
             </div>
           </li>
         </ul>
@@ -119,18 +119,18 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">发票收款人</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.invoicePayee }}</span>
+            <el-button type="primary" size="medium" @click="invoicePayeeClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">发票复核人</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.invoiceReviewer }}</span>
+            <el-button type="primary" size="medium" @click="invoiceReviewerClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">发票可申请时间</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.invoiceApplyTime }}天</span>
+            <el-button type="primary" size="medium" @click="invoiceApplyTimeClicked">设置</el-button>
           </li>
         </ul>
       </el-card>
@@ -143,8 +143,8 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">提示"库存紧张"数量</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.stockTightPrompt }}件</span>
+            <el-button type="primary" size="medium" @click="stockTightPromptClicked">设置</el-button>
           </li>
         </ul>
       </el-card>
@@ -157,33 +157,33 @@
         <ul class="list">
           <li class="list-item">
             <span class="title">敏感词参数</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="sensitiveWordsClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">优秀社群达标标准</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.excellentCommunityStandard }}积分</span>
+            <el-button type="primary" size="medium" @click="excellentCommunityStandardClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">优秀社群达标差额提示标准</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.excellentCommunityPromptStandard }}积分</span>
+            <el-button type="primary" size="medium" @click="excellentCommunityPromptStandardClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">基础绩效达标标准</span>
-            <span class="value">1时</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <span class="value">{{ data.basicPerformanceStandard }}积分</span>
+            <el-button type="primary" size="medium" @click="basicPerformanceStandardClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">微信支付是否已经开通</span>
             <div class="switch-wrap">
-              <el-switch></el-switch>
+              <el-switch :model-value="data.wechatPayEnabled"></el-switch>
             </div>
           </li>
           <li class="list-item">
             <span class="title">支付宝支付是否已经开通</span>
             <div class="switch-wrap">
-              <el-switch></el-switch>
+              <el-switch :model-value="data.alipayEnabled"></el-switch>
             </div>
           </li>
           <li class="list-item">
@@ -205,7 +205,8 @@
       <template #title>{{ editDialogSettings.title }}</template>
       <el-form :model="editForm" ref="editFormRef" label-position="top" class="edit-form">
         <el-form-item :label="editDialogSettings.label" prop="value" :rules="editDialogSettings.rules">
-          <el-input v-model="editForm.value" @blur="parse"></el-input>
+          <el-input v-model="editForm.value" @blur="parse" v-if="!editDialogSettings.textarea"></el-input>
+          <el-input type="textarea" v-model="editForm.value" v-if="editDialogSettings.textarea" resize="none" rows="3"></el-input>
           <span class="suffix">{{ editDialogSettings.suffix }}</span>
         </el-form-item>
         <el-row class="tip">{{ editDialogSettings.tip || '' }}</el-row>
@@ -214,6 +215,39 @@
         <span class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="handleEdit">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="logoDialogVisible" width="500px" @close="handleLogoClose" destroy-on-close>
+      <template #title>修改LOGO</template>
+      <el-form :model="logoForm" ref="logoFormRef" label-position="top" class="edit-form">
+        <el-form-item
+          label="设置LOGO"
+          prop="value"
+          :rules="[
+            { required: true, message: 'LOGO不能为空！', trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                if (value.length !== 1) {
+                  console.log('LOGO不能为空！')
+                  callback(new Error('请选择LOGO！'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: ['blur, change']
+            }
+          ]"
+        >
+          <my-upload v-model:image-list="logoForm.value">
+            <div style="font-size: 16px; color: red">注：图片上传不得超过10M。</div>
+          </my-upload>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="logoDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleEditLogo">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -227,13 +261,38 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 export default {
   setup() {
     const data = reactive({
+      // 订单参数设置
       autoCancelTime: 1,
       autoReceiveTime: 30,
       canAfterSaleTime: 30,
       minPayment: 0.01,
       canCancelOrderTime: 30,
       canAdminCancelOrderTime: 30,
-      selfPickupTimeoutAutoCancelTime: 3
+      selfPickupTimeoutAutoCancelTime: 3,
+      // 提现参数设置
+      handlingFeeRate: 4,
+      withdrawMin: 0.01,
+      // 商品海报设置
+      title: '',
+      logo: 'https://image.huashangjk.com/121/2/17/1615950359740zRYkUyOu8d.jpg',
+      // 分享券设置
+      shareWechatTitle: '',
+      shareWechatLogo: 'https://image.huashangjk.com/120/6/10/1594311544641IDcTt7dxnj.jpg',
+      miniProgramTitle: '',
+      shareCouponWhiteList: true,
+      // 发票参数设置
+      invoicePayee: '屋大维',
+      invoiceReviewer: '赵玺斌',
+      invoiceApplyTime: 30,
+      // 库存提醒设置
+      stockTightPrompt: 1,
+      // 其他参数设置
+      sensitiveWords: 'a,b,c',
+      excellentCommunityStandard: 50000,
+      excellentCommunityPromptStandard: 1,
+      basicPerformanceStandard: 3300,
+      wechatPayEnabled: true,
+      alipayEnabled: true
     })
     const editDialogVisible = ref(false)
     const editDialogSettings = reactive({
@@ -245,7 +304,8 @@ export default {
       rules: [],
       tip: '',
       integer: false,
-      float: false
+      float: false,
+      textarea: false
     })
     const editForm = reactive({
       value: ''
@@ -260,6 +320,7 @@ export default {
       editDialogSettings.tip = ''
       editDialogSettings.integer = false
       editDialogSettings.float = false
+      editDialogSettings.textarea = false
       editForm.value = ''
     }
     const btns = reactive({
@@ -272,7 +333,7 @@ export default {
           { required: true, message: '自动取消时间不能为空！', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!/^[1-9]\d*$/.test(value + '')) {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
                 callback(new Error('自动取消时间必须为正整数！'))
               } else {
                 callback()
@@ -293,7 +354,7 @@ export default {
           { required: true, message: '自动收货时间不能为空！', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!/^[1-9]\d*$/.test(value + '')) {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
                 callback(new Error('自动收货时间必须为正整数！'))
               } else {
                 callback()
@@ -314,7 +375,7 @@ export default {
           { required: true, message: '可售后时段不能为空！', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!/^[1-9]\d*$/.test(value + '')) {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
                 callback(new Error('可售后时段必须为正整数！'))
               } else {
                 callback()
@@ -335,7 +396,7 @@ export default {
           { required: true, message: '最小订单支付金额不能为空！', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!/^([0-9]*|\d*\.\d{1}?\d*)$/.test(value + '')) {
+              if (!/^([0-9]*|\d*\.\d{1}?\d*)$/.test(value + '') || value <= 0) {
                 callback(new Error('最小订单支付金额必须为正数！'))
               } else {
                 callback()
@@ -356,7 +417,7 @@ export default {
           { required: true, message: '用户可取消订单时间不能为空！', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!/^[1-9]\d*$/.test(value + '')) {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
                 callback(new Error('用户可取消订单时间必须为正整数！'))
               } else {
                 callback()
@@ -368,7 +429,193 @@ export default {
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.canCancelOrderTime
-      }
+      },
+      canAdminCancelOrderTimeClicked: () => {
+        editDialogSettings.label = '管理员可取消订单时间（推送ERP时间）'
+        editDialogSettings.suffix = '分钟'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '推送ERP时间不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('推送ERP时间必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.canAdminCancelOrderTime
+      },
+      selfPickupTimeoutAutoCancelTimeClicked: () => {
+        editDialogSettings.label = '自提订单超时未提取自动取消订单时间设置'
+        editDialogSettings.suffix = '天'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '超时未提取自动取消订单时间不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('超时未提取自动取消订单时间必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.selfPickupTimeoutAutoCancelTime
+      },
+      handlingFeeRateClicked: () => {
+        editDialogSettings.label = '手续费设置'
+        editDialogSettings.suffix = '%'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '手续费费率不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^([0-9]*|\d*\.\d{1}?\d*)$/.test(value + '') || value <= 0) {
+                callback(new Error('手续费费率必须为正数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.float = true
+        editDialogVisible.value = true
+        editForm.value = data.handlingFeeRate
+      },
+      withdrawMinClicked: () => {
+        editDialogSettings.label = '最低提现金额设置'
+        editDialogSettings.suffix = '元'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '最低提现金额不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^([0-9]*|\d*\.\d{1}?\d*)$/.test(value + '') || value <= 0) {
+                callback(new Error('最低提现金额必须为正数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.float = true
+        editDialogVisible.value = true
+        editForm.value = data.withdrawMin
+      },
+      titleClicked: () => {
+        editDialogSettings.label = '分享标题设置'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '分享标题不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editDialogSettings.textarea = true
+        editForm.value = data.title
+      },
+      logoClicked: () => {
+        logoForm.value = [data.logo]
+        logoForm.url = 'backend/editAutoCancelTime'
+        logoDialogVisible.value = true
+      },
+      shareWechatTitleClicked: () => {
+        editDialogSettings.label = '微信分享券标题设置'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '微信分享券标题不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editDialogSettings.textarea = true
+        editForm.value = data.shareWechatTitle
+      },
+      shareWechatLogoClicked: () => {
+        logoForm.value = [data.shareWechatLogo]
+        logoForm.url = 'backend/editAutoCancelTime'
+        logoDialogVisible.value = true
+      },
+      miniProgramTitleClicked: () => {
+        editDialogSettings.label = '小程序分享券列表标题设置'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '小程序分享券列表标题不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editDialogSettings.textarea = true
+        editForm.value = data.miniProgramTitle
+      },
+      invoicePayeeClicked: () => {
+        editDialogSettings.label = '发票收款人设置'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '发票收款人不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editForm.value = data.invoicePayee
+      },
+      invoiceReviewerClicked: () => {
+        editDialogSettings.label = '发票复核人设置'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '发票复核人不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editForm.value = data.invoiceReviewer
+      },
+      invoiceApplyTimeClicked: () => {
+        editDialogSettings.label = '发票可申请时间'
+        editDialogSettings.suffix = '天'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '发票可申请时间不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('发票可申请时间必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.invoiceApplyTime
+      },
+      stockTightPromptClicked: () => {
+        editDialogSettings.label = '库存紧张提醒数量'
+        editDialogSettings.suffix = '件'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '库存紧张提醒数量不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('库存紧张提醒数量必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.stockTightPrompt
+      },
+      sensitiveWordsClicked: () => {
+        editDialogSettings.label = '敏感词汇'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [{ required: true, message: '敏感词汇不能为空！', trigger: 'blur' }]
+        editDialogVisible.value = true
+        editDialogSettings.textarea = true
+        editDialogSettings.tip = '敏感词汇设置需使用英文逗号隔开'
+        editForm.value = data.sensitiveWords
+      },
+      excellentCommunityStandardClicked: () => {},
+      excellentCommunityPromptStandardClicked: () => {},
+      basicPerformanceStandardClicked: () => {}
     })
     const parse = () => {
       if (editDialogSettings.integer) {
@@ -409,6 +656,43 @@ export default {
         }
       })
     }
+    const logoDialogVisible = ref(false)
+    const logoForm = {
+      value: [],
+      url: 'backend/editAutoCancelTime'
+    }
+    const logoFormRef = ref(null)
+    const handleLogoClose = () => {
+      logoForm.value = []
+    }
+    const handleEditLogo = () => {
+      logoFormRef.value.validate((valid) => {
+        if (valid) {
+          ElMessageBox.confirm('确定修改吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(async () => {
+              const res = await service.post(logoForm.url, {
+                value: logoForm.value[0]
+              })
+              if (res.status == 0) {
+                ElMessage.success('修改成功！')
+              }
+              logoDialogVisible.value = false
+            })
+            .catch(() => {
+              ElMessage({
+                type: 'info',
+                message: '已取消修改'
+              })
+            })
+        } else {
+          ElMessage.error('修改失败！请检查是否上传了图片！')
+        }
+      })
+    }
     return {
       data,
       editDialogVisible,
@@ -418,7 +702,12 @@ export default {
       handleClose,
       ...toRefs(btns),
       parse,
-      handleEdit
+      handleEdit,
+      logoDialogVisible,
+      logoForm,
+      logoFormRef,
+      handleLogoClose,
+      handleEditLogo
     }
   }
 }
@@ -437,11 +726,13 @@ export default {
     align-items: center;
     padding-bottom: 15px;
     margin-bottom: 15px;
+    min-height: 52px;
     color: #666;
     &:last-child {
       border-bottom: none;
       padding-bottom: 0;
       margin-bottom: 0;
+      min-height: 36px;
     }
     .title {
       flex: 1;
@@ -474,6 +765,10 @@ export default {
 
 .el-input {
   width: 80%;
+}
+
+.el-textarea {
+  width: 100%;
 }
 
 .edit-form {

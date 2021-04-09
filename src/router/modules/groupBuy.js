@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/groupBuy',
+    path: '/getgroupbuylist',
     name: 'groupBuy',
     redirect: '/groupBuyManage',
     meta: {

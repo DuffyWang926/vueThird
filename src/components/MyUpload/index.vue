@@ -1,6 +1,6 @@
 <template>
   <el-upload
-    style="margin-right: auto; margin-left: 0"
+    style="margin-right: auto; margin-left: 0; overflow-y: hidden"
     class="upload-demo"
     :list-type="isVideo ? 'text' : 'picture-card'"
     :http-request="uploadRequest"
@@ -14,6 +14,7 @@
     :limit="limit"
     :file-list="myFileList"
     v-loading="currentFiles > 0"
+    element-loading-background="rgba(255, 255, 255, 1)"
   >
     <el-button type="primary">{{ uploadText }}</el-button>
     <template #tip>
@@ -69,7 +70,7 @@ export default {
     // const loading = ref(false)
     const qiniuData = reactive({
       key: '',
-      token: 'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:q9MBDEg5hNcr0vQW1KSM9P9xxhk=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE3Nzg4MTA2fQ=='
+      token: 'rlmWmpY-dufqi0VdSO-UznDKPdpD_Vlcnb0pDq9a:_H_Yn_N6uKHwzuVHwTorYA86tNc=:eyJzY29wZSI6ImJqamtrZGF0YSIsImRlYWRsaW5lIjoxNjE3OTU2ODY4fQ=='
     })
     const imageList = props.imageList
     const myFileList = ref(
@@ -165,11 +166,15 @@ export default {
         .then((res) => {
           console.log(res)
           handleSuccess(res.data)
-          currentFiles.value--
+          setTimeout(() => {
+            currentFiles.value--
+          }, 500)
         })
         .catch((res) => {
           console.error('Error！')
-          currentFiles.value--
+          setTimeout(() => {
+            currentFiles.value--
+          }, 500)
         })
     }
     const handleExceed = () => {
