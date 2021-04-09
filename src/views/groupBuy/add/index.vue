@@ -51,18 +51,18 @@
             <template #default="scope">
               <el-input
                 v-model="scope.row.groupPrice"
-                @blur="scope.row.groupPrice = isNaN(parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))) ? '请输入合法数值' : parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))"
+                @blur="scope.row.groupPrice = isNaN(parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))) ? scope.row.groupPrice : parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))"
               ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="团购积分" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.groupPoints" @blur="scope.row.groupPoints = isNaN(parseInt(scope.row.groupPoints)) ? '请输入合法数值' : parseInt(scope.row.groupPoints)"></el-input>
+              <el-input v-model="scope.row.groupPoints" @blur="scope.row.groupPoints = isNaN(parseInt(scope.row.groupPoints)) ? scope.row.groupPoints : parseInt(scope.row.groupPoints)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="每份购买数量" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.eachNum" @blur="scope.row.eachNum = isNaN(parseInt(scope.row.eachNum)) ? '请输入合法数值' : parseInt(scope.row.eachNum)"></el-input>
+              <el-input v-model="scope.row.eachNum" @blur="scope.row.eachNum = isNaN(parseInt(scope.row.eachNum)) ? scope.row.eachNum : parseInt(scope.row.eachNum)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="参团规格">
@@ -92,7 +92,7 @@
             <el-input
               placeholder="请输入开团后有效时长"
               v-model="addForm.duration"
-              @blur="addForm.duration = isNaN(parseInt(addForm.duration)) ? '请输入合法数值' : parseInt(addForm.duration)"
+              @blur="addForm.duration = isNaN(parseInt(addForm.duration)) ? addForm.duration : parseInt(addForm.duration)"
               style="flex: 1"
             ></el-input>
             <span style="width: 40px; padding-left: 10px">小时</span>
@@ -169,16 +169,35 @@
         <el-row class="money-row w800">
           <el-col :span="7">
             <el-form :model="addForm.groupBuyRewards">
-              <el-form-item :label="key" label-width="40px" v-for="(value, key) in addForm.groupBuyRewards" :key="key" style="padding-bottom: 10px">
+              <el-form-item
+                :label="key"
+                label-width="40px"
+                v-for="(value, key) in addForm.groupBuyRewards"
+                :key="key"
+                style="padding-bottom: 22px"
+                :prop="key"
+                :rules="{
+                  validator: (rule, value, callback) => {
+                    console.log(value)
+                    if (isNaN(value) || value < 0) {
+                      callback(new Error('开团人成团奖励必须大于等于0！'))
+                    } else {
+                      callback()
+                    }
+                  },
+                  message: '开团人成团奖励必须大于等于0！',
+                  trigger: ['blur', 'change']
+                }"
+              >
                 <el-input
                   v-model="addForm.groupBuyRewards[key]"
                   @blur="
                     addForm.groupBuyRewards[key] = isNaN(parseFloat(parseFloat(addForm.groupBuyRewards[key]).toFixed(2)))
-                      ? '请输入合法数值'
+                      ? addForm.groupBuyRewards[key]
                       : parseFloat(parseFloat(addForm.groupBuyRewards[key]).toFixed(2))
                   "
                 ></el-input>
-                <span style="width: 60px; text-align: center">元/件</span>
+                <span style="width: 60px; text-align: center">元/份</span>
               </el-form-item>
             </el-form>
           </el-col>
@@ -222,7 +241,7 @@
       <el-form-item label="参团新人数量要求" prop="v0MinNum" v-if="addForm.joinGroupBuyLevels.indexOf('v0') !== -1">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input v-model="addForm.v0MinNum" @blur="addForm.v0MinNum = isNaN(parseInt(addForm.v0MinNum)) ? '请输入合法数值' : parseInt(addForm.v0MinNum)"></el-input>
+            <el-input v-model="addForm.v0MinNum" @blur="addForm.v0MinNum = isNaN(parseInt(addForm.v0MinNum)) ? addForm.v0MinNum : parseInt(addForm.v0MinNum)"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert title="新人：指V0。" type="info" show-icon :closable="false" style="line-height: 40px"> </el-alert>
@@ -232,7 +251,7 @@
       <el-form-item label="参团总人数要求" prop="totalMinNum">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input v-model="addForm.totalMinNum" @blur="addForm.totalMinNum = isNaN(parseInt(addForm.totalMinNum)) ? '请输入合法数值' : parseInt(addForm.totalMinNum)"></el-input>
+            <el-input v-model="addForm.totalMinNum" @blur="addForm.totalMinNum = isNaN(parseInt(addForm.totalMinNum)) ? addForm.totalMinNum : parseInt(addForm.totalMinNum)"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert
@@ -355,7 +374,7 @@ export default {
         },
         {
           validator: (rule, value, callback) => {
-            if (isNaN(value) || value < 0) {
+            if (isNaN(value) || value <= 0) {
               callback(new Error('拼团时效必须为正整数！'))
             } else {
               callback()
@@ -569,17 +588,17 @@ export default {
         }
       })
       await getProducts()
-      dialogVisible.value = false
     }
     const getProducts = async () => {
-      productFlag.value = false
-      product.subProducts = []
+      // productFlag.value = false
+      // product.subProducts = []
       const { data: productRes } = await service.get('backend/getproductbyid', {
         params: {
           id: parseInt(productId.value)
         }
       })
-      product.name = productRes.name
+      // product.name = productRes.name
+      const subProducts = []
       for (let index = 0; index < subProductIds.value.length; index++) {
         const item = subProductIds.value[index]
         const { data: productItemRes } = await service.get('backend/getproductitembyid', {
@@ -587,17 +606,49 @@ export default {
             id: item
           }
         })
-        product.subProducts.push(productItemRes)
+        subProducts.push(productItemRes)
       }
+      const subPrice0 = subProducts[0].nowPrice
+      const subPoint0 = subProducts[0].points
+      for (let index = 0; index < subProducts.length; index++) {
+        const item = subProducts[index]
+        if (item.nowPrice != subPrice0) {
+          productId.value = product.id
+          subProductIds.value = product.subProducts.map((item) => item.id)
+          treeValue.value = []
+          // product.name = ''
+          // product.subProducts = []
+          // productFlag.value = false
+          // productId.value = null
+          // subProductIds.value = []
+          return ElMessage.error('选择的商品规格的现价格不一致！')
+        }
+        if (item.points != subPoint0) {
+          productId.value = product.id
+          subProductIds.value = product.subProducts.map((item) => item.id)
+          treeValue.value = []
+          // product.name = ''
+          // product.subProducts = []
+          // productFlag.value = false
+          // productId.value = null
+          // subProductIds.value = []
+          return ElMessage.error('选择的商品规格的积分不一致！')
+        }
+      }
+      product.id = productId.value
+      product.name = productRes.name
+      product.subProducts = subProducts
       product.groupPrice = product.subProducts[0].nowPrice
       product.groupPoints = product.subProducts[0].points
       product.eachNum = 1
       productFlag.value = true
+      dialogVisible.value = false
     }
     const treeValue = ref([])
     const productId = ref(null)
     const subProductIds = ref([])
     const product = reactive({
+      id: '',
       name: '',
       subProducts: [],
       groupPrice: 0,
@@ -693,7 +744,7 @@ export default {
           product.subProducts.forEach((item) => {
             const groupBuyProductItem = {}
             groupBuyProductItem.productName = product.name
-            groupBuyProductItem.productId = productId.value
+            groupBuyProductItem.productId = product.id
             groupBuyProductItem.productItemId = item.id
             groupBuyProductItem.productSalePrice = product.groupPrice
             groupBuyProductItem.productSalePoint = product.groupPoints
