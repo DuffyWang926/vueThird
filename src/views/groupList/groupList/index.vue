@@ -148,7 +148,7 @@ export default {
       queryInfoCopy.memberNum = queryInfo.memberNum
       if (queryInfo.activityTime && queryInfo.activityTime.length == 2) {
         queryInfoCopy.startDate = formatStartTime(queryInfo.activityTime[0]) || ''
-        queryInfoCopy.endDate = formatEndTimes(queryInfo.activityTime[1]) || ''
+        queryInfoCopy.endDate = formatEndTime(queryInfo.activityTime[1]) || ''
       } else {
         queryInfoCopy.startDate = ''
         queryInfoCopy.endDate = ''
