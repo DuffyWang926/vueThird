@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/users',
+    path: '/getAdminList',
     name: 'users',
     redirect: '/usersManage',
     meta: {

@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/menus',
+    path: '/getMenus',
     name: 'menus',
     redirect: '/menusManage',
     meta: {

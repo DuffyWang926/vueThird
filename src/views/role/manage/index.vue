@@ -24,7 +24,7 @@
     <my-table :data="roles" :columns="columns" :operation-width="200">
       <template v-slot:userbtns="scope">
         <el-button size="mini" type="warning" @click="editRole(scope.row.id)" v-show="store.getters['user/getRightById'](17)">修改</el-button>
-        <el-button size="mini" type="danger" @click="deleteRole(scope.row.id)" v-show="store.getters['user/getRightById'](18)">删除</el-button>
+        <el-button size="mini" type="danger" @click="deleteRole(scope.row.id)" v-show="store.getters['user/getRightById'](33)">删除</el-button>
         <!-- :disabled="scope.row.roleName === '超级管理员'" -->
       </template>
     </my-table>

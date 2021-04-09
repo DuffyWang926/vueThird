@@ -18,13 +18,13 @@
         <el-row class="date-row w800">
           <el-col :span="7">
             <el-form-item prop="startDate">
-              <el-date-picker v-model="addForm.startDate" type="datetime" placeholder="开始日期"> </el-date-picker>
+              <el-date-picker v-model="addForm.startDate" type="datetime" placeholder="开始日期" :disabled="id"> </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="2">至</el-col>
           <el-col :span="7">
             <el-form-item prop="endDate">
-              <el-date-picker v-model="addForm.endDate" type="datetime" placeholder="结束日期"> </el-date-picker>
+              <el-date-picker v-model="addForm.endDate" type="datetime" placeholder="结束日期" :disabled="id"> </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -52,17 +52,22 @@
               <el-input
                 v-model="scope.row.groupPrice"
                 @blur="scope.row.groupPrice = isNaN(parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))) ? scope.row.groupPrice : parseFloat(parseFloat(scope.row.groupPrice).toFixed(2))"
+                :disabled="id"
               ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="团购积分" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.groupPoints" @blur="scope.row.groupPoints = isNaN(parseInt(scope.row.groupPoints)) ? scope.row.groupPoints : parseInt(scope.row.groupPoints)"></el-input>
+              <el-input
+                v-model="scope.row.groupPoints"
+                @blur="scope.row.groupPoints = isNaN(parseInt(scope.row.groupPoints)) ? scope.row.groupPoints : parseInt(scope.row.groupPoints)"
+                :disabled="id"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="每份购买数量" width="150">
             <template #default="scope">
-              <el-input v-model="scope.row.eachNum" @blur="scope.row.eachNum = isNaN(parseInt(scope.row.eachNum)) ? scope.row.eachNum : parseInt(scope.row.eachNum)"></el-input>
+              <el-input v-model="scope.row.eachNum" @blur="scope.row.eachNum = isNaN(parseInt(scope.row.eachNum)) ? scope.row.eachNum : parseInt(scope.row.eachNum)" :disabled="id"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="参团规格">
@@ -75,7 +80,7 @@
       <el-form-item label="能否单独购买" prop="canSingleBuy">
         <el-row class="w800">
           <el-col :span="7">
-            <el-select placeholder="----请选择----" v-model="addForm.canSingleBuy" @click="addFormRef.validateField('canSingleBuy')" style="width: 100%">
+            <el-select placeholder="----请选择----" v-model="addForm.canSingleBuy" @click="addFormRef.validateField('canSingleBuy')" style="width: 100%" :disabled="id">
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
               <el-option :value="2" label="可单独购买"></el-option>
               <el-option :value="1" label="不可单独购买"></el-option>
@@ -94,6 +99,7 @@
               v-model="addForm.duration"
               @blur="addForm.duration = isNaN(parseInt(addForm.duration)) ? addForm.duration : parseInt(addForm.duration)"
               style="flex: 1"
+              :disabled="id"
             ></el-input>
             <span style="width: 40px; padding-left: 10px">小时</span>
           </el-col>
@@ -158,7 +164,7 @@
       </el-form-item>
       <div class="seperator" style="margin-top: 10px">会员条件设置</div>
       <el-form-item label="开团人员级别限制" prop="startGroupBuyLevels">
-        <el-checkbox-group v-model="addForm.startGroupBuyLevels">
+        <el-checkbox-group v-model="addForm.startGroupBuyLevels" :disabled="id">
           <el-checkbox label="v0"></el-checkbox>
           <el-checkbox label="v1"></el-checkbox>
           <el-checkbox label="v2"></el-checkbox>
@@ -196,6 +202,7 @@
                       ? addForm.groupBuyRewards[key]
                       : parseFloat(parseFloat(addForm.groupBuyRewards[key]).toFixed(2))
                   "
+                  :disabled="id"
                 ></el-input>
                 <span style="width: 60px; text-align: center">元/份</span>
               </el-form-item>
@@ -211,7 +218,7 @@
       <el-form-item label="开团人购买要求" prop="startGroupBuyRequirement" style="margin-top: 10px">
         <el-row class="w800">
           <el-col :span="7">
-            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%">
+            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%" :disabled="id">
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
               <el-option :value="2" label="无需购买"></el-option>
               <el-option :value="1" label="首次开团购买"></el-option>
@@ -231,7 +238,7 @@
         </el-row>
       </el-form-item>
       <el-form-item label="参团人员级别限制" prop="joinGroupBuyLevels">
-        <el-checkbox-group v-model="addForm.joinGroupBuyLevels">
+        <el-checkbox-group v-model="addForm.joinGroupBuyLevels" :disabled="id">
           <el-checkbox label="v0"></el-checkbox>
           <el-checkbox label="v1"></el-checkbox>
           <el-checkbox label="v2"></el-checkbox>
@@ -241,7 +248,7 @@
       <el-form-item label="参团新人数量要求" prop="v0MinNum" v-if="addForm.joinGroupBuyLevels.indexOf('v0') !== -1">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input v-model="addForm.v0MinNum" @blur="addForm.v0MinNum = isNaN(parseInt(addForm.v0MinNum)) ? addForm.v0MinNum : parseInt(addForm.v0MinNum)"></el-input>
+            <el-input v-model="addForm.v0MinNum" @blur="addForm.v0MinNum = isNaN(parseInt(addForm.v0MinNum)) ? addForm.v0MinNum : parseInt(addForm.v0MinNum)" :disabled="id"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert title="新人：指V0。" type="info" show-icon :closable="false" style="line-height: 40px"> </el-alert>
@@ -251,7 +258,7 @@
       <el-form-item label="参团总人数要求" prop="totalMinNum">
         <el-row class="w800">
           <el-col :span="7">
-            <el-input v-model="addForm.totalMinNum" @blur="addForm.totalMinNum = isNaN(parseInt(addForm.totalMinNum)) ? addForm.totalMinNum : parseInt(addForm.totalMinNum)"></el-input>
+            <el-input v-model="addForm.totalMinNum" @blur="addForm.totalMinNum = isNaN(parseInt(addForm.totalMinNum)) ? addForm.totalMinNum : parseInt(addForm.totalMinNum)" :disabled="id"></el-input>
           </el-col>
           <el-col :span="17">
             <el-alert

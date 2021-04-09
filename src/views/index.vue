@@ -58,7 +58,7 @@
             </template>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="passwordDialogVisible = true">修改密码</el-dropdown-item>
+                <el-dropdown-item @click="passwordDialogVisible = true" v-show="store.getters['user/getRightById'](32)">修改密码</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>

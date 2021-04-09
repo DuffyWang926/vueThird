@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/role',
+    path: '/getRoleList',
     name: 'role',
     meta: {
       index: 2,
