@@ -51,6 +51,18 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getHotWord?' + '.*'), options => {
   }
 )
 
+ Mock.mock('http://127.0.0.1:8079/editHotNameById', options => {
+  console.log(options)
+  console.log(options.body)
+ /* const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo) */
+  return {
+    status: 0,
+    data:hotWordInfo.find(item => item.id == queryInfo.id)
+    }
+  }
+)
+
 /*Mock.mock(RegExp('http://127.0.0.1:8079/matchMemCard?' + '.*'), options => {
   const queryInfo = parseGetParams(options.url)
   console.log(queryInfo)
