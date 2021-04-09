@@ -165,18 +165,33 @@ export default {
     })
     let goodsFilterTimer = null
     let emitTimer = null
+    const parseProductId = (id) => {
+      if (String(id).indexOf('P') !== -1 || String(id).indexOf('p') !== -1) {
+        return parseInt(String(id).slice(2))
+      } else {
+        return id
+      }
+    }
+    const parseSubProductId = (id) => {
+      if (String(id).indexOf('I') !== -1 || String(id).indexOf('i') !== -1) {
+        return parseInt(String(id).slice(2))
+      } else {
+        return id
+      }
+    }
     const handleGoodsCheckChange = () => {
       clearTimeout(emitTimer)
       emitTimer = setTimeout(() => {
         emit('update:modelValue', goodsTreeRef.value.getCheckedKeys())
         emit('update:leafValue', goodsTreeRef.value.getCheckedKeys(true))
-        emit('update:productId', goodsTreeRef.value.getCheckedNodes(false, true).filter((item) => item.level == 4)[0].id)
+        emit('update:productId', parseProductId(goodsTreeRef.value.getCheckedNodes(false, true).filter((item) => item.level == 4)[0].id))
         emit(
           'update:subProductIds',
           goodsTreeRef.value
             .getCheckedNodes()
             .filter((item) => item.level == 5)
             .map((item) => item.id)
+            .map(parseSubProductId)
         )
       }, 100)
     }
