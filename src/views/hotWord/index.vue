@@ -1,15 +1,15 @@
 <template>
  <el-card class="box-card">
     <template #header>
-      <div class="card-header">热搜词管理</div>
+       <div class="card-header">热搜词管理</div>
     </template>
     <el-form :inline="true" class="demo-form-inline">
-      <el-form-item label="名称" >
-        <el-input size="medium" placeholder="请输入名称" v-model="queryInfo.hotWordName"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
-      </el-form-item>
+       <el-form-item label="名称" >
+          <el-input size="medium" placeholder="请输入名称" v-model="queryInfo.hotWordName"></el-input>
+       </el-form-item>
+       <el-form-item>
+          <el-button size="medium" type="success" @click="handleSubmit">查询</el-button>
+       </el-form-item>
       <el-form-item>
         <el-button size="medium" type="warning" @click="handleAddDia = true">新增</el-button>
       </el-form-item>
@@ -20,10 +20,10 @@
         :operation-width="200"
       >
         <template v-slot:userbtns="scope">
-          <el-button type="warning" size="medium" @click="handleAddDia = true">编辑</el-button>
-          <el-button type="danger" size="medium">删除</el-button>
+           <el-button type="warning" size="medium" @click="editHotWord(scope.row.id)">编辑</el-button>
+           <el-button type="danger" size="medium">删除</el-button>
         </template>
-      </my-table>
+    </my-table>
     <el-pagination
           @size-change= "handleSizeChange"
           @current-change="handleCurrentChange"
@@ -38,18 +38,18 @@
 
     <el-dialog v-model="handleAddDia" width="500px">
         <template #title>
-           <div class="card-header">新增/编辑</div>
+            <div class="card-header">新增/编辑</div>
         </template>
         <el-form label-position="left" label-width="80px" :model="addForm" ref="addFormRef">
-          <el-form-item label="名称" required="true" >
-            <el-input size="medium" placeholder="请输入名称" v-model="addForm.hotWordName"></el-input>
-          </el-form-item>
+           <el-form-item label="名称" required="true" >
+              <el-input size="medium" placeholder="请输入名称" v-model="addForm.hotWordName"></el-input>
+           </el-form-item>
         </el-form>
         <template #footer>
-          <span class="addFooter">
-            <el-button @click="handleAdd" type="primary" size="medium">保存</el-button>
-            <el-button @click="handleAddDia = false">取消</el-button>
-          </span>
+           <span class="addFooter">
+              <el-button @click="handleAdd" type="primary" size="medium">保存</el-button>
+              <el-button @click="handleAddDia = false">取消</el-button>
+           </span>
         </template>
     </el-dialog>
 
@@ -71,7 +71,7 @@
     </el-dialog> -->
 
 
-  </el-card>
+ </el-card>
 </template>
 
 <script>
@@ -167,6 +167,16 @@ export default {
       addForm.hotWordName = ''
     }
 
+    const editHotWord = async (id) => {
+      const { data : res} = await service.post('editHotNameById', {
+        id
+      })
+      const resInfo = res
+      console.log(resInfo)
+      addForm.hotWordName = resInfo.hotWordName
+      handleAddDia.value = true
+    }
+
     return {
       queryInfo,
       hotWordInfo,
@@ -180,7 +190,8 @@ export default {
       handleAddDia,
       addForm,
       addFormRef,
-      handleEditDia
+      handleEditDia,
+      editHotWord
     }
   }
 }
