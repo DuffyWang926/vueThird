@@ -103,7 +103,10 @@
           <li class="list-item">
             <span class="title">分享券发放范围-白名单</span>
             <div class="switch-wrap">
-              <el-switch :model-value="data.shareCouponWhiteList"></el-switch>
+              <el-switch
+                :model-value="data.shareCouponWhiteList"
+                @click="handleSwitch('backend/editAutoCancelTime', !data.shareCouponWhiteList, 'value', '确定启用白名单限制吗', '确定关闭白名单限制吗？')"
+              ></el-switch>
             </div>
           </li>
         </ul>
@@ -177,26 +180,32 @@
           <li class="list-item">
             <span class="title">微信支付是否已经开通</span>
             <div class="switch-wrap">
-              <el-switch :model-value="data.wechatPayEnabled"></el-switch>
+              <el-switch
+                :model-value="data.wechatPayEnabled"
+                @click="handleSwitch('backend/editAutoCancelTime', !data.wechatPayEnabled, 'value', '确定启用微信支付吗', '确定关闭微信支付吗？')"
+              ></el-switch>
             </div>
           </li>
           <li class="list-item">
             <span class="title">支付宝支付是否已经开通</span>
             <div class="switch-wrap">
-              <el-switch :model-value="data.alipayEnabled"></el-switch>
+              <el-switch
+                :model-value="data.alipayEnabled"
+                @click="handleSwitch('backend/editAutoCancelTime', !data.alipayEnabled, 'value', '确定启用支付宝支付吗', '确定关闭支付宝支付吗？')"
+              ></el-switch>
             </div>
           </li>
           <li class="list-item">
             <span class="title">清除首页缓存</span>
-            <el-button type="primary" size="medium">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
           </li>
           <li class="list-item">
             <span class="title">清除分类页面缓存</span>
-            <el-button type="primary" size="medium">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
           </li>
           <li class="list-item">
             <span class="title">清除推荐产品缓存</span>
-            <el-button type="primary" size="medium">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
           </li>
         </ul>
       </el-card>
@@ -298,6 +307,7 @@ export default {
     const editDialogSettings = reactive({
       title: '参数修改',
       label: '',
+      prop: '',
       // value: '',
       suffix: '',
       url: '',
@@ -314,6 +324,7 @@ export default {
     const handleClose = () => {
       editDialogSettings.title = '参数修改'
       editDialogSettings.label = ''
+      editDialogSettings.prop = ''
       editDialogSettings.suffix = ''
       editDialogSettings.url = ''
       editDialogSettings.rules = []
@@ -328,6 +339,7 @@ export default {
         // editDialogSettings.title = '修改自动取消时间'
         editDialogSettings.label = '自动取消时间设置'
         editDialogSettings.suffix = '小时'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '自动取消时间不能为空！', trigger: 'blur' },
@@ -349,6 +361,7 @@ export default {
       autoReceiveTimeClicked: () => {
         editDialogSettings.label = '自动收货时间设置'
         editDialogSettings.suffix = '天'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '自动收货时间不能为空！', trigger: 'blur' },
@@ -370,6 +383,7 @@ export default {
       canAfterSaleTimeClicked: () => {
         editDialogSettings.label = '可售后时段'
         editDialogSettings.suffix = '天'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '可售后时段不能为空！', trigger: 'blur' },
@@ -391,6 +405,7 @@ export default {
       minPaymentClicked: () => {
         editDialogSettings.label = '订单最低金额支付'
         editDialogSettings.suffix = '元'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '最小订单支付金额不能为空！', trigger: 'blur' },
@@ -412,6 +427,7 @@ export default {
       canCancelOrderTimeClicked: () => {
         editDialogSettings.label = '用户可取消订单时间设置'
         editDialogSettings.suffix = '分钟'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '用户可取消订单时间不能为空！', trigger: 'blur' },
@@ -433,6 +449,7 @@ export default {
       canAdminCancelOrderTimeClicked: () => {
         editDialogSettings.label = '管理员可取消订单时间（推送ERP时间）'
         editDialogSettings.suffix = '分钟'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '推送ERP时间不能为空！', trigger: 'blur' },
@@ -454,6 +471,7 @@ export default {
       selfPickupTimeoutAutoCancelTimeClicked: () => {
         editDialogSettings.label = '自提订单超时未提取自动取消订单时间设置'
         editDialogSettings.suffix = '天'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '超时未提取自动取消订单时间不能为空！', trigger: 'blur' },
@@ -475,6 +493,7 @@ export default {
       handlingFeeRateClicked: () => {
         editDialogSettings.label = '手续费设置'
         editDialogSettings.suffix = '%'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '手续费费率不能为空！', trigger: 'blur' },
@@ -496,6 +515,7 @@ export default {
       withdrawMinClicked: () => {
         editDialogSettings.label = '最低提现金额设置'
         editDialogSettings.suffix = '元'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '最低提现金额不能为空！', trigger: 'blur' },
@@ -516,6 +536,7 @@ export default {
       },
       titleClicked: () => {
         editDialogSettings.label = '分享标题设置'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '分享标题不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
@@ -525,10 +546,12 @@ export default {
       logoClicked: () => {
         logoForm.value = [data.logo]
         logoForm.url = 'backend/editAutoCancelTime'
+        logoForm.prop = 'value'
         logoDialogVisible.value = true
       },
       shareWechatTitleClicked: () => {
         editDialogSettings.label = '微信分享券标题设置'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '微信分享券标题不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
@@ -538,10 +561,12 @@ export default {
       shareWechatLogoClicked: () => {
         logoForm.value = [data.shareWechatLogo]
         logoForm.url = 'backend/editAutoCancelTime'
+        logoForm.prop = 'value'
         logoDialogVisible.value = true
       },
       miniProgramTitleClicked: () => {
         editDialogSettings.label = '小程序分享券列表标题设置'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '小程序分享券列表标题不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
@@ -550,6 +575,7 @@ export default {
       },
       invoicePayeeClicked: () => {
         editDialogSettings.label = '发票收款人设置'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '发票收款人不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
@@ -557,6 +583,7 @@ export default {
       },
       invoiceReviewerClicked: () => {
         editDialogSettings.label = '发票复核人设置'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '发票复核人不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
@@ -565,6 +592,7 @@ export default {
       invoiceApplyTimeClicked: () => {
         editDialogSettings.label = '发票可申请时间'
         editDialogSettings.suffix = '天'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '发票可申请时间不能为空！', trigger: 'blur' },
@@ -586,6 +614,7 @@ export default {
       stockTightPromptClicked: () => {
         editDialogSettings.label = '库存紧张提醒数量'
         editDialogSettings.suffix = '件'
+        editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [
           { required: true, message: '库存紧张提醒数量不能为空！', trigger: 'blur' },
@@ -607,15 +636,79 @@ export default {
       sensitiveWordsClicked: () => {
         editDialogSettings.label = '敏感词汇'
         editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.prop = 'value'
         editDialogSettings.rules = [{ required: true, message: '敏感词汇不能为空！', trigger: 'blur' }]
         editDialogVisible.value = true
         editDialogSettings.textarea = true
         editDialogSettings.tip = '敏感词汇设置需使用英文逗号隔开'
         editForm.value = data.sensitiveWords
       },
-      excellentCommunityStandardClicked: () => {},
-      excellentCommunityPromptStandardClicked: () => {},
-      basicPerformanceStandardClicked: () => {}
+      excellentCommunityStandardClicked: () => {
+        editDialogSettings.label = '优秀社群达标标准'
+        editDialogSettings.suffix = '积分'
+        editDialogSettings.prop = 'value'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '优秀社群达标标准不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('优秀社群达标标准必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.excellentCommunityStandard
+      },
+      excellentCommunityPromptStandardClicked: () => {
+        editDialogSettings.label = '优秀社群达标差额提示标准'
+        editDialogSettings.suffix = '积分'
+        editDialogSettings.prop = 'value'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '优秀社群达标差额提示标准不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('优秀社群达标差额提示标准必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.excellentCommunityPromptStandard
+      },
+      basicPerformanceStandardClicked: () => {
+        editDialogSettings.label = '基础绩效达标标准'
+        editDialogSettings.suffix = '积分'
+        editDialogSettings.prop = 'value'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '基础绩效达标标准不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '') || value <= 0) {
+                callback(new Error('基础绩效达标标准必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.basicPerformanceStandard
+      }
     })
     const parse = () => {
       if (editDialogSettings.integer) {
@@ -628,6 +721,7 @@ export default {
         }
       }
     }
+    const getInfo = async () => {}
     const handleEdit = () => {
       editFormRef.value.validate((valid) => {
         if (valid) {
@@ -638,14 +732,15 @@ export default {
           })
             .then(async () => {
               const res = await service.post(editDialogSettings.url, {
-                value: editForm.value
+                [editDialogSettings.prop]: editForm.value
               })
               if (res.status == 0) {
                 ElMessage.success('修改成功！')
+                await getInfo()
+                editDialogVisible.value = false
               }
-              editDialogVisible.value = false
             })
-            .catch(() => {
+            .catch((e) => {
               ElMessage({
                 type: 'info',
                 message: '已取消修改'
@@ -656,14 +751,59 @@ export default {
         }
       })
     }
+    const handleSwitch = (url, value, prop, openText, closeText) => {
+      ElMessageBox.confirm(value ? openText : closeText, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await service.post(url, {
+            [prop]: value
+          })
+          if (res.status == 0) {
+            ElMessage.success('修改成功！')
+            await getInfo()
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
+    const handleClear = (url) => {
+      ElMessageBox.confirm('确定清除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await service.post(url)
+          if (res.status == 0) {
+            ElMessage.success('清除成功！')
+            await getInfo()
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消'
+          })
+        })
+    }
     const logoDialogVisible = ref(false)
     const logoForm = {
       value: [],
-      url: 'backend/editAutoCancelTime'
+      url: 'backend/editAutoCancelTime',
+      prop: ''
     }
     const logoFormRef = ref(null)
     const handleLogoClose = () => {
       logoForm.value = []
+      logoForm.url = ''
+      logoForm.prop = ''
     }
     const handleEditLogo = () => {
       logoFormRef.value.validate((valid) => {
@@ -675,7 +815,7 @@ export default {
           })
             .then(async () => {
               const res = await service.post(logoForm.url, {
-                value: logoForm.value[0]
+                [logoForm.prop]: logoForm.value[0]
               })
               if (res.status == 0) {
                 ElMessage.success('修改成功！')
@@ -703,6 +843,8 @@ export default {
       ...toRefs(btns),
       parse,
       handleEdit,
+      handleSwitch,
+      handleClear,
       logoDialogVisible,
       logoForm,
       logoFormRef,
