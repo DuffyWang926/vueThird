@@ -19,8 +19,12 @@ const actions = {}
 // mutations
 const mutations = {
   addLink(state, link) {
-    if (!state.links.find(item => item.url === link.url)) {
+    if (!state.links.find(item => item.url === link.url || item.title == link.title)) {
       state.links.push(link)
+    }
+    const titleFind = state.links.find(item => item.title == link.title)
+    if (titleFind) {
+      titleFind.url = link.url
     }
     state.currentLink = link.url
   },
