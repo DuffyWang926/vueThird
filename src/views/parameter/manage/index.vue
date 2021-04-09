@@ -16,22 +16,22 @@
           <li class="list-item">
             <span class="title">自动收货时间</span>
             <span class="value">{{ data.autoReceiveTime }}天</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="autoReceiveTimeClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">可售后时段</span>
             <span class="value">{{ data.canAfterSaleTime }}天</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="canAfterSaleTimeClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">最小订单支付金额</span>
             <span class="value">{{ data.minPayment }}元</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="minPaymentClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">用户可取消订单时间</span>
             <span class="value">{{ data.canCancelOrderTime }}分</span>
-            <el-button type="primary" size="medium">设置</el-button>
+            <el-button type="primary" size="medium" @click="canCancelOrderTimeClicked">设置</el-button>
           </li>
           <li class="list-item">
             <span class="title">管理员可取消订单时间<br />（推送ERP时间）</span>
@@ -284,13 +284,101 @@ export default {
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.autoCancelTime
+      },
+      autoReceiveTimeClicked: () => {
+        editDialogSettings.label = '自动收货时间设置'
+        editDialogSettings.suffix = '天'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '自动收货时间不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '')) {
+                callback(new Error('自动收货时间必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.autoReceiveTime
+      },
+      canAfterSaleTimeClicked: () => {
+        editDialogSettings.label = '可售后时段'
+        editDialogSettings.suffix = '天'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '可售后时段不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '')) {
+                callback(new Error('可售后时段必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.canAfterSaleTime
+      },
+      minPaymentClicked: () => {
+        editDialogSettings.label = '订单最低金额支付'
+        editDialogSettings.suffix = '元'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '最小订单支付金额不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^([0-9]*|\d*\.\d{1}?\d*)$/.test(value + '')) {
+                callback(new Error('最小订单支付金额必须为正数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.float = true
+        editDialogVisible.value = true
+        editForm.value = data.minPayment
+      },
+      canCancelOrderTimeClicked: () => {
+        editDialogSettings.label = '用户可取消订单时间设置'
+        editDialogSettings.suffix = '分钟'
+        editDialogSettings.url = 'backend/editAutoCancelTime'
+        editDialogSettings.rules = [
+          { required: true, message: '用户可取消订单时间不能为空！', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (!/^[1-9]\d*$/.test(value + '')) {
+                callback(new Error('用户可取消订单时间必须为正整数！'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+        editDialogSettings.integer = true
+        editDialogVisible.value = true
+        editForm.value = data.canCancelOrderTime
       }
     })
     const parse = () => {
       if (editDialogSettings.integer) {
-        editForm.value = parseInt(editForm.value)
+        if (!isNaN(parseInt(editForm.value))) {
+          editForm.value = parseInt(editForm.value)
+        }
       } else if (editDialogSettings.float) {
-        editForm.value = parseFloat(editForm.value)
+        if (!isNaN(parseFloat(editForm.value))) {
+          editForm.value = parseFloat(editForm.value)
+        }
       }
     }
     const handleEdit = () => {
