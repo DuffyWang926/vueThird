@@ -52,8 +52,10 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getHotWord?' + '.*'), options => {
 )
 
  Mock.mock('http://127.0.0.1:8079/editHotNameById', options => {
-  console.log(options)
+
   console.log(options.body)
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo)
  /* const queryInfo = JSON.parse(options.body)
   console.log(queryInfo) */
   return {

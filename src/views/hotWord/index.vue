@@ -20,7 +20,7 @@
         :operation-width="200"
       >
         <template v-slot:userbtns="scope">
-           <el-button type="warning" size="medium" @click="handleAddDia = true">编辑</el-button>
+           <el-button type="warning" size="medium" @click="editHotWord(scope.row.id)">编辑</el-button>
            <el-button type="danger" size="medium">删除</el-button>
         </template>
     </my-table>
@@ -167,6 +167,16 @@ export default {
       addForm.hotWordName = ''
     }
 
+    const editHotWord = async (id) => {
+      const { data : res} = await service.post('editHotNameById', {
+        id
+      })
+      const resInfo = res
+      console.log(resInfo)
+      addForm.hotWordName = resInfo.hotWordName
+      handleAddDia.value = true
+    }
+
     return {
       queryInfo,
       hotWordInfo,
@@ -180,7 +190,8 @@ export default {
       handleAddDia,
       addForm,
       addFormRef,
-      handleEditDia
+      handleEditDia,
+      editHotWord
     }
   }
 }
