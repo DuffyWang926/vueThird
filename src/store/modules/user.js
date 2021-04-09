@@ -42,6 +42,9 @@ const getters = {
   },
 
   getRightById: state => id => {
+    if (!state.rights) {
+      return null
+    }
     const right = state.rights.find(item => item.id == id)
     if (right != null) {
       return right.checked
