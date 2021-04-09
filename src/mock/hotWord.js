@@ -46,13 +46,12 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getHotWord?' + '.*'), options => {
  /* const queryInfo = JSON.parse(options.body)
   console.log(queryInfo) */
   return {
-    status: 0,
+    status: 0
     }
   }
 )
 
  Mock.mock('http://127.0.0.1:8079/editHotNameById', options => {
-
   console.log(options.body)
   const queryInfo = JSON.parse(options.body)
   console.log(queryInfo)
@@ -64,6 +63,32 @@ Mock.mock(RegExp('http://127.0.0.1:8079/getHotWord?' + '.*'), options => {
     }
   }
 )
+
+ Mock.mock('http://127.0.0.1:8079/editHotWord', options => {
+  console.log(options.body)
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo)
+ /* const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo) */
+  return {
+    status: 0,
+    msg: '修改成功'
+    }
+  }
+)
+
+Mock.mock('http://127.0.0.1:8079/deleteHotWord', options => {
+  console.log(options.body)
+  const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo)
+ /* const queryInfo = JSON.parse(options.body)
+  console.log(queryInfo) */
+  return {
+    status: 0,
+    msg: '删除成功'
+    }
+  })
+
 
 /*Mock.mock(RegExp('http://127.0.0.1:8079/matchMemCard?' + '.*'), options => {
   const queryInfo = parseGetParams(options.url)
