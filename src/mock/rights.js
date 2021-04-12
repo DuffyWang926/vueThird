@@ -30,7 +30,19 @@ const rights = [
   { level: 3, name: '账户管理--修改当前用户密码', checked: true, pid: 4, id: 32, url: '/modifySelfPwd' },
   { level: 3, name: '权限管理--删除按钮', checked: true, pid: 2, id: 33, url: '/deleteRole' },
   { level: 3, name: '权限管理--获取所有角色', checked: true, pid: 2, id: 34, url: '/getAllRoles' },
-  { level: 3, name: '权限管理--获取所有权限', checked: true, pid: 2, id: 35, url: '/getAllMenu' }
+  { level: 3, name: '权限管理--获取所有权限', checked: true, pid: 2, id: 35, url: '/getAllMenu' },
+  { level: 1, name: '系统配置', checked: true, pid: 0, id: 36, order: '1' },
+  { level: 2, name: '系统参数配置', checked: true, pid: 36, id: 37, url: '/parameter', order: '1' },
+  { level: 2, name: '资质管理', checked: true, pid: 36, id: 38, url: '/qualification', order: '2' },
+  { level: 2, name: '热搜词管理', checked: true, pid: 36, id: 39, url: '/hotWord', order: '3' },
+  { level: 2, name: '规则政策说明', checked: true, pid: 36, id: 40, url: '/hotWord', order: '4' },
+  { level: 1, name: '会员管理', checked: true, pid: 0, id: 41, order: '1' },
+  { level: 2, name: '会员列表', checked: true, pid: 41, id: 42, url: '/memberList', order: '1' },
+  { level: 2, name: '会员绑卡信息', checked: true, pid: 41, id: 43, url: '/memberManagement', order: '2' },
+  { level: 1, name: '商品管理', checked: true, pid: 0, id: 44, order: '4' },
+  { level: 2, name: '商品管理', checked: true, pid: 44, id: 45, url: '/goods', order: '1' },
+  { level: 2, name: '分类管理', checked: true, pid: 44, id: 46, url: '/category', order: '2' },
+  { level: 2, name: '限售区域管理', checked: true, pid: 44, id: 46, url: '/restrictRegion', order: '3' }
 ]
 
 export default rights

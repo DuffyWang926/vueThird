@@ -197,15 +197,15 @@
           </li>
           <li class="list-item">
             <span class="title">清除首页缓存</span>
-            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime', '您确定清除首页缓存吗？')">清除</el-button>
           </li>
           <li class="list-item">
             <span class="title">清除分类页面缓存</span>
-            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime', '您确认清除分类页面缓存吗?')">清除</el-button>
           </li>
           <li class="list-item">
             <span class="title">清除推荐产品缓存</span>
-            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime')">清除</el-button>
+            <el-button type="primary" size="medium" @click="handleClear('backend/editAutoCancelTime', '您确认清除推荐产品缓存吗?')">清除</el-button>
           </li>
         </ul>
       </el-card>
@@ -313,6 +313,7 @@ export default {
       url: '',
       rules: [],
       tip: '',
+      confirmText: '',
       integer: false,
       float: false,
       textarea: false
@@ -354,6 +355,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改自动取消时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.autoCancelTime
@@ -376,6 +378,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改自动收货时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.autoReceiveTime
@@ -398,6 +401,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改可申请售后时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.canAfterSaleTime
@@ -420,6 +424,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改订单最低金额支付吗？'
         editDialogSettings.float = true
         editDialogVisible.value = true
         editForm.value = data.minPayment
@@ -442,6 +447,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定设置用户可取消订单时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.canCancelOrderTime
@@ -464,6 +470,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定设置管理员可取消订单时间（推送ERP时间）？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.canAdminCancelOrderTime
@@ -486,6 +493,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定设置自提订单超时未提取自动取消订单时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.selfPickupTimeoutAutoCancelTime
@@ -508,6 +516,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改手续费费率吗？'
         editDialogSettings.float = true
         editDialogVisible.value = true
         editForm.value = data.handlingFeeRate
@@ -530,6 +539,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改提现最低金额吗？'
         editDialogSettings.float = true
         editDialogVisible.value = true
         editForm.value = data.withdrawMin
@@ -539,6 +549,7 @@ export default {
         editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '分享标题不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改产品分享标题设置？'
         editDialogVisible.value = true
         editDialogSettings.textarea = true
         editForm.value = data.title
@@ -547,6 +558,7 @@ export default {
         logoForm.value = [data.logo]
         logoForm.url = 'backend/editAutoCancelTime'
         logoForm.prop = 'value'
+        logoForm.confirmText = '确定修改产品分享LOGO设置？'
         logoDialogVisible.value = true
       },
       shareWechatTitleClicked: () => {
@@ -554,6 +566,7 @@ export default {
         editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '微信分享券标题不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改分享券标题设置？'
         editDialogVisible.value = true
         editDialogSettings.textarea = true
         editForm.value = data.shareWechatTitle
@@ -562,6 +575,7 @@ export default {
         logoForm.value = [data.shareWechatLogo]
         logoForm.url = 'backend/editAutoCancelTime'
         logoForm.prop = 'value'
+        logoForm.confirmText = '确定修改分享券LOGO设置？'
         logoDialogVisible.value = true
       },
       miniProgramTitleClicked: () => {
@@ -569,6 +583,7 @@ export default {
         editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '小程序分享券列表标题不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改小程序分享券列表标题设置设置？'
         editDialogVisible.value = true
         editDialogSettings.textarea = true
         editForm.value = data.miniProgramTitle
@@ -578,6 +593,7 @@ export default {
         editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '发票收款人不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改发票收款人？'
         editDialogVisible.value = true
         editForm.value = data.invoicePayee
       },
@@ -586,6 +602,7 @@ export default {
         editDialogSettings.prop = 'value'
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.rules = [{ required: true, message: '发票复核人不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改发票复核人？'
         editDialogVisible.value = true
         editForm.value = data.invoiceReviewer
       },
@@ -607,6 +624,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改发票可申请时间？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.invoiceApplyTime
@@ -629,6 +647,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改提醒库存紧张数量？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.stockTightPrompt
@@ -638,6 +657,7 @@ export default {
         editDialogSettings.url = 'backend/editAutoCancelTime'
         editDialogSettings.prop = 'value'
         editDialogSettings.rules = [{ required: true, message: '敏感词汇不能为空！', trigger: 'blur' }]
+        editDialogSettings.confirmText = '确定修改敏感词？'
         editDialogVisible.value = true
         editDialogSettings.textarea = true
         editDialogSettings.tip = '敏感词汇设置需使用英文逗号隔开'
@@ -661,6 +681,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改优秀社群达标标准？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.excellentCommunityStandard
@@ -683,6 +704,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改优秀社群达标差额提示标准？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.excellentCommunityPromptStandard
@@ -705,6 +727,7 @@ export default {
             trigger: 'blur'
           }
         ]
+        editDialogSettings.confirmText = '确定修改基础绩效达标标准？'
         editDialogSettings.integer = true
         editDialogVisible.value = true
         editForm.value = data.basicPerformanceStandard
@@ -725,7 +748,7 @@ export default {
     const handleEdit = () => {
       editFormRef.value.validate((valid) => {
         if (valid) {
-          ElMessageBox.confirm('确定修改吗？', '提示', {
+          ElMessageBox.confirm(editDialogSettings.confirmText, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -762,7 +785,7 @@ export default {
             [prop]: value
           })
           if (res.status == 0) {
-            ElMessage.success('修改成功！')
+            ElMessage.success('操作成功！')
             await getInfo()
           }
         })
@@ -773,8 +796,8 @@ export default {
           })
         })
     }
-    const handleClear = (url) => {
-      ElMessageBox.confirm('确定清除吗？', '提示', {
+    const handleClear = (url, text) => {
+      ElMessageBox.confirm(text, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -797,18 +820,20 @@ export default {
     const logoForm = {
       value: [],
       url: 'backend/editAutoCancelTime',
-      prop: ''
+      prop: '',
+      confirmText: ''
     }
     const logoFormRef = ref(null)
     const handleLogoClose = () => {
       logoForm.value = []
       logoForm.url = ''
       logoForm.prop = ''
+      logoForm.confirmText = ''
     }
     const handleEditLogo = () => {
       logoFormRef.value.validate((valid) => {
         if (valid) {
-          ElMessageBox.confirm('确定修改吗？', '提示', {
+          ElMessageBox.confirm(logoForm.confirmText, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
