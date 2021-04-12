@@ -218,7 +218,7 @@
       <el-form-item label="开团人购买要求" prop="startGroupBuyRequirement" style="margin-top: 10px">
         <el-row class="w800">
           <el-col :span="7">
-            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%" :disabled="id">
+            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%" disabled>
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
               <el-option :value="2" label="无需购买"></el-option>
               <el-option :value="1" label="首次开团购买"></el-option>
@@ -323,7 +323,7 @@ export default {
       shareText: '',
       startGroupBuyLevels: [],
       groupBuyRewards: {},
-      startGroupBuyRequirement: '',
+      startGroupBuyRequirement: 0,
       joinGroupBuyLevels: [],
       v0MinNum: 0,
       totalMinNum: 0
