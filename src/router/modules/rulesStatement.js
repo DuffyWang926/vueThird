@@ -1,28 +1,36 @@
 export default [
   {
-    path: '/groupBuy',
-    name: 'groupBuy',
-    redirect: '/groupBuyManage',
+    path: '/rulesStatement',
+    name: 'rulesStatement',
+    redirect: '/list',
     meta: {
       index: 2,
-      id: 6,
-      title: '团购管理',
-      parent: '营销管理',
+      id: 40,
+      title: '规则政策说明',
+      parent: '系统配置',
       sort: 1
     },
-    component: () => import('@/views/groupBuy/index'),
+    component: () => import('@/views/rulesStatement/index'),
     children: [
       {
-        path: '/groupBuyManage',
-        name: 'groupBuyManage',
-        component: () => import('@/views/groupBuy/manage/index'),
+        path: '/list',
+        name: 'list',
+        component: () => import('@/views/rulesStatement/list/index'),
         meta: {
           index: 3,
-          title: '团购管理',
-          keepAlive: true
+          title: '规则政策列表'
         }
       },
       {
+        path: '/userAgreement',
+        name: 'userAgreement',
+        component: () => import('@/views/rulesStatement/userAgreement/index'),
+        meta: {
+          index: 3,
+          title: '用户协议编辑'
+        }
+      }
+/*      {
         path: '/groupBuyAdd',
         name: 'groupBuyAdd',
         component: () => import('@/views/groupBuy/add/index'),
@@ -42,7 +50,7 @@ export default [
           title: '修改团购',
           keepAlive: true
         }
-      }
+      } */
     ]
   }
 ]

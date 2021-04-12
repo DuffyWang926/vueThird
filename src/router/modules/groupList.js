@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/appedgrouplist',
+    path: '/groupList',
     name: 'groupList',
     redirect: '/groupList',
     meta: {

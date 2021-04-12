@@ -89,30 +89,3 @@ Mock.mock('http://127.0.0.1:8079/deleteHotWord', options => {
     }
   })
 
-
-/*Mock.mock(RegExp('http://127.0.0.1:8079/matchMemCard?' + '.*'), options => {
-  const queryInfo = parseGetParams(options.url)
-  console.log(queryInfo)
-  console.log(options)
-  // const matachMemInfo = membersInfo.filter(item => item.id == queryInfo.id)
-  return {
-    status: 0,
-    data: {
-      matchMemCardInfo: membersInfo.slice((queryInfo.pagenum - 1) * queryInfo.pagesize, queryInfo.pagenum * queryInfo.pagesize),
-      count: membersInfo.length
-    }
-  }
-})
-
-Mock.mock(RegExp('http://127.0.0.1:8079/showMembersInfo?' + '.*'), options => {
-  const queryInfo = parseGetParams(options.url)
-  console.log(queryInfo)
-  console.log(options)
-  return {
-    status: 0,
-    data: {
-      memberInfo: membersInfo.find(item => item.id == queryInfo.id)
-    }
-  }
-})
- */
