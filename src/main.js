@@ -19,17 +19,17 @@ import './mock/mock'
 
 import eventBus from './utils/eventBus'
 
-// import VueQuillEditor from 'vue-quill-editor'
-// import 'quill/dist/quill.core.css'
-// import 'quill/dist/quill.snow.css'
-// import 'quill/dist/quill.bubble.css'
+//import VueQuillEditor from 'vue-quill-editor'
+//import 'quill/dist/quill.core.css'
+//import 'quill/dist/quill.snow.css'
+//import 'quill/dist/quill.bubble.css'
 
 const app = createApp(App);
 app.use(store).use(router).mount('#app');
 app.use(components)
 app.use(eventBus)
 app.use(elementUI, { locale })
-// app.use(VueQuillEditor)
+//app.use(VueQuillEditor)
 
 router.beforeEach((to, from, next) => {
   /* 路由发生变化时修改title */
