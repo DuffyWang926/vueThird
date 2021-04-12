@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="20">
+  <el-row :gutter="20" v-show="!loading">
     <el-col :span="12">
       <el-card>
         <template #header>
@@ -104,7 +104,7 @@
             <span class="title">分享券发放范围-白名单</span>
             <div class="switch-wrap">
               <el-switch
-                :model-value="data.shareCouponWhiteList"
+                :model-value="data.shareCouponWhiteList == 1"
                 @click="handleSwitch('backend/editAutoCancelTime', !data.shareCouponWhiteList, 'value', '确定启用白名单限制吗', '确定关闭白名单限制吗？')"
               ></el-switch>
             </div>
@@ -181,7 +181,7 @@
             <span class="title">微信支付是否已经开通</span>
             <div class="switch-wrap">
               <el-switch
-                :model-value="data.wechatPayEnabled"
+                :model-value="data.wechatPayEnabled == 1"
                 @click="handleSwitch('backend/editAutoCancelTime', !data.wechatPayEnabled, 'value', '确定启用微信支付吗', '确定关闭微信支付吗？')"
               ></el-switch>
             </div>
@@ -190,7 +190,7 @@
             <span class="title">支付宝支付是否已经开通</span>
             <div class="switch-wrap">
               <el-switch
-                :model-value="data.alipayEnabled"
+                :model-value="data.alipayEnabled == 1"
                 @click="handleSwitch('backend/editAutoCancelTime', !data.alipayEnabled, 'value', '确定启用支付宝支付吗', '确定关闭支付宝支付吗？')"
               ></el-switch>
             </div>
@@ -264,44 +264,45 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs } from 'vue'
+import { nextTick, reactive, ref, toRefs } from 'vue'
 import service from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 export default {
   setup() {
+    const loading = ref(false)
     const data = reactive({
       // 订单参数设置
-      autoCancelTime: 1,
-      autoReceiveTime: 30,
-      canAfterSaleTime: 30,
-      minPayment: 0.01,
-      canCancelOrderTime: 30,
-      canAdminCancelOrderTime: 30,
-      selfPickupTimeoutAutoCancelTime: 3,
+      autoCancelTime: '',
+      autoReceiveTime: '',
+      canAfterSaleTime: '',
+      minPayment: '',
+      canCancelOrderTime: '',
+      canAdminCancelOrderTime: '',
+      selfPickupTimeoutAutoCancelTime: '',
       // 提现参数设置
-      handlingFeeRate: 4,
-      withdrawMin: 0.01,
+      handlingFeeRate: '',
+      withdrawMin: '',
       // 商品海报设置
       title: '',
-      logo: 'https://image.huashangjk.com/121/2/17/1615950359740zRYkUyOu8d.jpg',
+      logo: '',
       // 分享券设置
       shareWechatTitle: '',
-      shareWechatLogo: 'https://image.huashangjk.com/120/6/10/1594311544641IDcTt7dxnj.jpg',
+      shareWechatLogo: '',
       miniProgramTitle: '',
-      shareCouponWhiteList: true,
+      shareCouponWhiteList: 1,
       // 发票参数设置
-      invoicePayee: '屋大维',
-      invoiceReviewer: '赵玺斌',
-      invoiceApplyTime: 30,
+      invoicePayee: '',
+      invoiceReviewer: '',
+      invoiceApplyTime: '',
       // 库存提醒设置
-      stockTightPrompt: 1,
+      stockTightPrompt: '',
       // 其他参数设置
-      sensitiveWords: 'a,b,c',
-      excellentCommunityStandard: 50000,
-      excellentCommunityPromptStandard: 1,
-      basicPerformanceStandard: 3300,
-      wechatPayEnabled: true,
-      alipayEnabled: true
+      sensitiveWords: '',
+      excellentCommunityStandard: '',
+      excellentCommunityPromptStandard: '',
+      basicPerformanceStandard: '',
+      wechatPayEnabled: 1,
+      alipayEnabled: 1
     })
     const editDialogVisible = ref(false)
     const editDialogSettings = reactive({
@@ -744,7 +745,54 @@ export default {
         }
       }
     }
-    const getInfo = async () => {}
+    const getInfo = async () => {
+      const date = +new Date()
+      loading.value = true
+      const { data: res } = await service.get('backend/parameter/getAllParameters')
+
+      const orderParametersMap = res.orderParametersMap
+      data.autoCancelTime = orderParametersMap.auto_close_order_time
+      data.autoReceiveTime = orderParametersMap.auto_received_day
+      data.canAfterSaleTime = orderParametersMap.apply_after_sale_day
+      data.minPayment = orderParametersMap.minpay
+      data.selfPickupTimeoutAutoCancelTime = orderParametersMap.self_get_overtime
+      data.canAdminCancelOrderTime = orderParametersMap.ADMIN_CANCEL_ORDER_TIME
+      data.canCancelOrderTime = orderParametersMap.USER_CANCEL_ORDER_TIME
+
+      const invoiceParametersMap = res.invoiceParametersMap
+      data.invoicePayee = invoiceParametersMap.SKR
+      data.invoiceReviewer = invoiceParametersMap.FHR
+      data.invoiceApplyTime = invoiceParametersMap.FAPIAO_APPLAY_TIME
+
+      const repertoryParametersMap = res.repertoryParametersMap
+      data.stockTightPrompt = repertoryParametersMap.stock_number
+
+      const cashParametersMap = res.cashParametersMap
+      data.handlingFeeRate = cashParametersMap.cash_charge
+      data.withdrawMin = cashParametersMap.min_cash_money
+
+      const otherParametersMap = res.otherParametersMap
+      data.sensitiveWords = otherParametersMap.sensitive_word
+      data.excellentCommunityStandard = otherParametersMap.STANDARD_OF_EXCELLENT_COMMUNITY
+      data.excellentCommunityPromptStandard = otherParametersMap.DIFFERENCE_STANDARD_OF_EXCELLENT_COMMUNITY
+      data.basicPerformanceStandard = otherParametersMap.BASIC_PERFORMANCE_STANDARDS
+      data.wechatPayEnabled = parseInt(otherParametersMap.IS_WECHAT_PAY)
+      data.alipayEnabled = parseInt(otherParametersMap.IS_ALIPAY_PAY)
+
+      const posterParametersMap = res.posterParametersMap
+      data.title = posterParametersMap.shareProductTitle
+      data.logo = posterParametersMap.shareProductLogo
+
+      const couponParametersMap = res.couponParametersMap
+      data.shareWechatTitle = couponParametersMap.shareCouponTitle
+      data.shareWechatLogo = couponParametersMap.shareCouponLogo
+      data.miniProgramTitle = couponParametersMap.share_the_title
+      data.shareCouponWhiteList = parseInt(couponParametersMap.setWhite_user)
+      await nextTick()
+      console.log(+new Date() - date)
+      loading.value = false
+    }
+    getInfo()
     const handleEdit = () => {
       editFormRef.value.validate((valid) => {
         if (valid) {
@@ -859,6 +907,7 @@ export default {
       })
     }
     return {
+      loading,
       data,
       editDialogVisible,
       editDialogSettings,
