@@ -681,19 +681,19 @@ export default {
           if (!productFlag.value) {
             return ElMessage.error('请先选择团购商品！')
           }
-          if (isNaN(product.groupPrice) || product.groupPrice <= 0) {
+          if (product.groupPrice === '' || isNaN(product.groupPrice) || product.groupPrice <= 0) {
             return ElMessage.error('团购价格必须为正数！')
           }
-          if (isNaN(product.groupPoints) || product.groupPoints < 0) {
+          if (product.groupPoints === '' || isNaN(product.groupPoints) || product.groupPoints < 0) {
             return ElMessage.error('团购积分必须大于等于0！')
           }
-          if (isNaN(product.eachNum) || product.eachNum <= 0) {
+          if (product.eachNum === '' || isNaN(product.eachNum) || product.eachNum <= 0) {
             return ElMessage.error('每份购买数量必须为正整数！')
           }
           for (const key in addForm.groupBuyRewards) {
             const value = addForm.groupBuyRewards[key]
-            if (isNaN(value) || value < 0) {
-              return ElMessage.error('开团人成团奖励必须为正数！')
+            if (value === '' || isNaN(value) || value < 0) {
+              return ElMessage.error('开团人成团奖励必须大于等于0！')
             }
           }
           const data = {}
