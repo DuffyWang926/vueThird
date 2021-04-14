@@ -218,7 +218,7 @@
       <el-form-item label="开团人购买要求" prop="startGroupBuyRequirement" style="margin-top: 10px">
         <el-row class="w800">
           <el-col :span="7">
-            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%" :disabled="id">
+            <el-select placeholder="----请选择----" v-model="addForm.startGroupBuyRequirement" @click="addFormRef.validateField('startGroupBuyRequirement')" style="width: 100%" disabled>
               <el-option label="----请选择----" value="" disabled v-show="false"></el-option>
               <el-option :value="2" label="无需购买"></el-option>
               <el-option :value="1" label="首次开团购买"></el-option>
@@ -323,7 +323,7 @@ export default {
       shareText: '',
       startGroupBuyLevels: [],
       groupBuyRewards: {},
-      startGroupBuyRequirement: '',
+      startGroupBuyRequirement: 0,
       joinGroupBuyLevels: [],
       v0MinNum: 0,
       totalMinNum: 0
@@ -681,19 +681,19 @@ export default {
           if (!productFlag.value) {
             return ElMessage.error('请先选择团购商品！')
           }
-          if (isNaN(product.groupPrice) || product.groupPrice <= 0) {
+          if (product.groupPrice === '' || isNaN(product.groupPrice) || product.groupPrice <= 0) {
             return ElMessage.error('团购价格必须为正数！')
           }
-          if (isNaN(product.groupPoints) || product.groupPoints < 0) {
+          if (product.groupPoints === '' || isNaN(product.groupPoints) || product.groupPoints < 0) {
             return ElMessage.error('团购积分必须大于等于0！')
           }
-          if (isNaN(product.eachNum) || product.eachNum <= 0) {
+          if (product.eachNum === '' || isNaN(product.eachNum) || product.eachNum <= 0) {
             return ElMessage.error('每份购买数量必须为正整数！')
           }
           for (const key in addForm.groupBuyRewards) {
             const value = addForm.groupBuyRewards[key]
-            if (isNaN(value) || value < 0) {
-              return ElMessage.error('开团人成团奖励必须为正数！')
+            if (value === '' || isNaN(value) || value < 0) {
+              return ElMessage.error('开团人成团奖励必须大于等于0！')
             }
           }
           const data = {}
