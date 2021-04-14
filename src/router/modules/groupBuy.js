@@ -2,13 +2,13 @@ export default [
   {
     path: '/groupBuy',
     name: 'groupBuy',
-    redirect: '/groupBuyManage',
+    redirect: '/groupBuy/manage',
     meta: {
       index: 2,
-      id: 6,
+      id: 52,
       title: '团购管理',
       parent: '营销管理',
-      sort: 1
+      sort: 2
     },
     component: () => import('@/views/groupBuy/index'),
     children: [
@@ -18,8 +18,7 @@ export default [
         component: () => import('@/views/groupBuy/manage/index'),
         meta: {
           index: 3,
-          title: '团购管理',
-          keepAlive: true
+          title: '团购管理'
         }
       },
       {
@@ -28,21 +27,10 @@ export default [
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
-          title: '添加团购',
-          keepAlive: true
-        }
-      },
-      {
-        path: '/groupBuyEdit/:id',
-        name: 'groupBuyEdit',
-        props: true,
-        component: () => import('@/views/groupBuy/add/index'),
-        meta: {
-          index: 3,
-          title: '修改团购',
-          keepAlive: true
+          title: '添加团购'
         }
       }
     ]
   }
+
 ]
