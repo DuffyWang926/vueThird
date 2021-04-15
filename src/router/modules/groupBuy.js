@@ -1,11 +1,11 @@
 export default [
   {
-    path: '/groupBuy',
+    path: '/getgroupbuylist',
     name: 'groupBuy',
-    redirect: '/groupBuy/manage',
+    redirect: '/groupBuyManage',
     meta: {
       index: 2,
-      id: 52,
+      id: 12,
       title: '团购管理',
       parent: '营销管理',
       sort: 2

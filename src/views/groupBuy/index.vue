@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs' 
 export default {
   name: 'GroupBuy'
 }
