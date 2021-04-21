@@ -184,13 +184,22 @@ export default {
             groupInfo.value.forEach((item) => {
               switch (item.state) {
                 case -1:
+                item.stateStr = '未知'
+                break
+                case 4:
+                item.stateStr = '已取消'
+                break
+                case 0:
+                item.stateStr = '未确认'
+                break
+                case 3:
                   item.stateStr = '拼团失败'
                   break
                 case 1:
-                  item.stateStr = '拼团成功'
+                  item.stateStr = '进行中'
                   break
                 case 2:
-                  item.stateStr = '成团中'
+                  item.stateStr = '已成团'
               }
             })
             // count.value = res.count
