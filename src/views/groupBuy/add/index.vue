@@ -2,7 +2,7 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>添加团购活动</span>
+        <span>添加拼团活动</span>
       </div>
     </template>
     <el-form ref="addFormRef" :model="addForm" :rules="addFormRules" label-width="140px" label-position="right" v-loading="loading">
@@ -29,7 +29,7 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="团购商品" :rules="[{ required: true, message: '', trigger: 'blur' }]">
+      <el-form-item label="拼团商品" :rules="[{ required: true, message: '', trigger: 'blur' }]">
         <el-row class="w800">
           <el-button type="primary" size="medium" style="margin-right: 10px" @click="dialogVisible = true" v-if="!productFlag">选择商品</el-button>
           <el-button type="warning" size="medium" @click="dialogVisible = true" v-if="productFlag && !id">更换商品</el-button>
@@ -72,7 +72,7 @@
           </el-table-column>
           <el-table-column label="参团规格">
             <template #default="scope">
-              <el-row v-for="item in scope.row.subProducts">{{ [item.colour, item.size].join(';') }}</el-row>
+              <el-row v-for="item in scope.row.subProducts" :key="item.id">{{ [item.colour, item.size].join(';') }}</el-row>
             </template>
           </el-table-column>
         </el-table>

@@ -47,9 +47,11 @@
                         <!-- <el-input size="medium" placeholder="单行输入" v-model="queryInfo.groupStatus"></el-input> -->
                         <el-select v-model="queryInfo.groupStatus" placeholder="拼团状态" size="medium">
                             <el-option value="" label="全部"></el-option>
-                            <el-option :value="-1" label="拼团失败"></el-option>
-                            <el-option :value="1" label="拼团成功"></el-option>
-                            <el-option :value="2" label="成团中"></el-option>
+                            <el-option :value="0" label="未确认"></el-option>
+                            <el-option :value="1" label="进行中"></el-option>
+                            <el-option :value="2" label="已成团"></el-option>
+                            <el-option :value="3" label="拼团失败"></el-option>
+                            <el-option :value="4" label="已取消"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -183,23 +185,20 @@ export default {
             count.value = res.total
             groupInfo.value.forEach((item) => {
               switch (item.state) {
-                case -1:
-                item.stateStr = '未知'
-                break
                 case 4:
-                item.stateStr = '已取消'
-                break
+                    item.stateStr = '已取消'
+                    break
                 case 0:
-                item.stateStr = '未确认'
-                break
+                    item.stateStr = '未确认'
+                    break
                 case 3:
-                  item.stateStr = '拼团失败'
-                  break
+                    item.stateStr = '拼团失败'
+                    break
                 case 1:
-                  item.stateStr = '进行中'
-                  break
+                    item.stateStr = '进行中'
+                    break
                 case 2:
-                  item.stateStr = '已成团'
+                    item.stateStr = '已成团'
               }
             })
             // count.value = res.count

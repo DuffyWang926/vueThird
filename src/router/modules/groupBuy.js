@@ -6,7 +6,7 @@ export default [
     meta: {
       index: 2,
       id: 6,
-      title: '团购管理',
+      title: '拼团管理',
       parent: '营销管理',
       sort: 1
     },
@@ -18,7 +18,7 @@ export default [
         component: () => import('@/views/groupBuy/manage/index'),
         meta: {
           index: 3,
-          title: '团购管理',
+          title: '拼团管理',
           keepAlive: true
         }
       },
@@ -28,7 +28,7 @@ export default [
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
-          title: '添加团购',
+          title: '添加拼团',
           keepAlive: true
         }
       },
@@ -39,7 +39,7 @@ export default [
         component: () => import('@/views/groupBuy/add/index'),
         meta: {
           index: 3,
-          title: '修改团购',
+          title: '修改拼团',
           keepAlive: true
         }
       }
