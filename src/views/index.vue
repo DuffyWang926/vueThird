@@ -531,6 +531,7 @@ export default {
         flex-direction: row;
         align-items: center;
         background-color: #fff;
+        cursor: pointer;
         span {
           font-size: 14px;
           // font-weight: bold;
