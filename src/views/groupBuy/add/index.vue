@@ -33,7 +33,7 @@
         <el-row class="w800">
           <el-button type="primary" size="medium" style="margin-right: 10px" @click="dialogVisible = true" v-if="!productFlag">选择商品</el-button>
           <el-button type="warning" size="medium" @click="dialogVisible = true" v-if="productFlag && !id">更换商品</el-button>
-          <el-alert title="修改团购时，不能修改团购商品！" type="info" show-icon :closable="false" v-if="id" style="margin-left: -10px"> </el-alert>
+          <el-alert title="修改拼团时，不能修改拼团商品！" type="info" show-icon :closable="false" v-if="id" style="margin-left: -10px"> </el-alert>
         </el-row>
         <el-table :data="[product]" style="width: 800px; margin-top: 10px" v-if="productFlag" border>
           <el-table-column prop="name" label="商品"></el-table-column>
@@ -47,7 +47,7 @@
               {{ scope.row.subProducts[0].points }}
             </template>
           </el-table-column>
-          <el-table-column label="团购价格" width="150">
+          <el-table-column label="拼团价格" width="150">
             <template #default="scope">
               <el-input
                 v-model="scope.row.groupPrice"
@@ -56,7 +56,7 @@
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="团购积分" width="150">
+          <el-table-column label="拼团积分" width="150">
             <template #default="scope">
               <el-input
                 v-model="scope.row.groupPoints"
@@ -131,7 +131,7 @@
             ></el-input>
           </el-col>
           <el-col :span="14">
-            <el-alert title="显示在开团人的商品详情页和团购详细介绍处" type="info" show-icon :closable="false"> </el-alert>
+            <el-alert title="显示在开团人的商品详情页和拼团详细介绍处" type="info" show-icon :closable="false"> </el-alert>
           </el-col>
         </el-row>
       </el-form-item>
@@ -148,7 +148,7 @@
             ></el-input>
           </el-col>
           <el-col :span="14">
-            <el-alert title="显示在参团人的商品详情页和团购详细介绍处" type="info" show-icon :closable="false"> </el-alert>
+            <el-alert title="显示在参团人的商品详情页和拼团详细介绍处" type="info" show-icon :closable="false"> </el-alert>
           </el-col>
         </el-row>
       </el-form-item>
@@ -227,7 +227,7 @@
           </el-col>
           <el-col :span="17">
             <el-alert
-              title="只针对活动进行控制不针对产品，如选择“首次开团购买”，则同一个活动下次开团可不必购买，如同一个商品再次设置团购活动，则仍然是“首次开团购买”，则还需要再买一次才能开团。"
+              title="只针对活动进行控制不针对产品，如选择“首次开团购买”，则同一个活动下次开团可不必购买，如同一个商品再次设置拼团活动，则仍然是“首次开团购买”，则还需要再买一次才能开团。"
               type="info"
               show-icon
               :closable="false"
@@ -665,13 +665,13 @@ export default {
     const productFlag = ref(false)
     const handleSubmit = () => {
       // if (!productFlag.value) {
-      //   return ElMessage.error('请先选择团购商品！')
+      //   return ElMessage.error('请先选择拼团商品！')
       // }
       // if (isNaN(product.groupPrice) || product.groupPrice <= 0) {
-      //   return ElMessage.error('团购价格必须为正数！')
+      //   return ElMessage.error('拼团价格必须为正数！')
       // }
       // if (isNaN(product.groupPoints) || product.groupPoints <= 0) {
-      //   return ElMessage.error('团购积分必须为正整数！')
+      //   return ElMessage.error('拼团积分必须为正整数！')
       // }
       // if (isNaN(product.eachNum) || product.eachNum <= 0) {
       //   return ElMessage.error('每份购买数量必须为正整数！')
@@ -679,13 +679,13 @@ export default {
       addFormRef.value.validate(async (valid) => {
         if (valid) {
           if (!productFlag.value) {
-            return ElMessage.error('请先选择团购商品！')
+            return ElMessage.error('请先选择拼团商品！')
           }
           if (product.groupPrice === '' || isNaN(product.groupPrice) || product.groupPrice <= 0) {
-            return ElMessage.error('团购价格必须为正数！')
+            return ElMessage.error('拼团价格必须为正数！')
           }
           if (product.groupPoints === '' || isNaN(product.groupPoints) || product.groupPoints < 0) {
-            return ElMessage.error('团购积分必须大于等于0！')
+            return ElMessage.error('拼团积分必须大于等于0！')
           }
           if (product.eachNum === '' || isNaN(product.eachNum) || product.eachNum <= 0) {
             return ElMessage.error('每份购买数量必须为正整数！')

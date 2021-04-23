@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card">
     <template #header>
-      <div class="card-header">团购管理</div>
+      <div class="card-header">拼团管理</div>
     </template>
     <el-form :model="formInline" class="demo-form-inline" label-position="left" label-width="70px">
       <el-row :gutter="20">
@@ -213,7 +213,7 @@ export default {
         prop: 'productName'
       },
       {
-        title: '团购价',
+        title: '拼团价',
         prop: 'price'
       },
       {
